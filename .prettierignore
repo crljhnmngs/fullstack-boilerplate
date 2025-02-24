@@ -1,0 +1,34 @@
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+yarn-debug.log*
+npm-debug.log*
+
+# Environment variables
+.env
+.env.* 
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE/editor folders
+.idea/
+
+# Cache
+.cache/
+.next/
+out/
+
+# Coverage reports
+coverage/
+
+# Generated files
+public/
+generated/

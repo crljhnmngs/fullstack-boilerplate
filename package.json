@@ -1,0 +1,26 @@
+{
+  "name": "fullstack-boilerplate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:server": "cd server && npm run start:dev",
+    "start:client": "cd client && npm run dev",
+    "start": "concurrently \"npm run start:client\" \"npm run start:server\"",
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "install": "concurrently \"npm run install:client\" \"npm run install:server\"",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "Carl John G. Manigos",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "prettier": "3.5.2"
+  }
+}

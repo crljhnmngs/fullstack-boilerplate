@@ -1,0 +1,54 @@
+# Node modules (both client and server)
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output
+dist/
+build/
+client/dist/
+server/dist/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+client/.env
+server/.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Coverage directory for tests
+coverage/
+
+# Lint cache
+.eslintcache
+
+# Husky hooks
+.husky/_/
+
+# Dependency resolution
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Miscellaneous
+*.tgz
+*.gz
