@@ -41,9 +41,6 @@ coverage/
 # Lint cache
 .eslintcache
 
-# Husky hooks
-.husky/_/
-
 # Dependency resolution
 package-lock.json
 pnpm-lock.yaml
