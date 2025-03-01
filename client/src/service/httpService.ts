@@ -10,6 +10,7 @@ const http: AxiosInstance = axios.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
+        'x-api-secret': import.meta.env.VITE_API_SECRET_KEY,
     },
 });
 
@@ -25,7 +26,7 @@ http.interceptors.request.use(
     },
     (error: AxiosError) => {
         return Promise.reject(error);
-    },
+    }
 );
 
 //INTERCEPTORS FOR RESPONSE
@@ -35,7 +36,7 @@ http.interceptors.response.use(
     },
     (error: AxiosError) => {
         return Promise.reject(error);
-    },
+    }
 );
 
 export default http;

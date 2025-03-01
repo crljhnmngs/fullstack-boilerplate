@@ -13,12 +13,11 @@ export const getRandomUsers = async ({
                 nat: nationality,
             },
         });
-
         return response.data.results;
     } catch (error) {
         console.error('Failed to fetch random users:', error);
         throw new Error(
-            'Could not fetch random users. Please try again later.',
+            'Could not fetch random users. Please try again later.'
         );
     }
 };
