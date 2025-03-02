@@ -4,7 +4,7 @@ import { keys } from '../config/keys';
 export const connectDB = async () => {
     try {
         const conn = await mongoose.connect(keys.database.url, {
-            dbName: 'sample_supplies',
+            dbName: keys.database.name,
         });
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {

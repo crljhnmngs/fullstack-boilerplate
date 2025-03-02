@@ -9,7 +9,6 @@ import apiSecretMiddleware from './middlewares/apiSecretMiddleware';
 import limiter from './middlewares/limiter';
 
 const app = express();
-const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(helmet());

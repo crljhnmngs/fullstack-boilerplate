@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllSales } from '../services/saleService';
+import { getAllSales } from '../../services/Sale/saleService';
 
 export const getSales = async (req: Request, res: Response) => {
     try {
@@ -19,6 +19,9 @@ export const getSales = async (req: Request, res: Response) => {
             },
         });
     } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.log(error);
         res.status(400).json({ error: 'Failed to fetch sales' });
     }
 };

@@ -1,6 +1,6 @@
 //Entry point for all routes
 import { Router } from 'express';
-import { getSales } from '../controllers/saleController';
+import { getSales } from '../controllers/Sale/saleController';
 
 const router = Router();
 

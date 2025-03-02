@@ -5,7 +5,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start:dev": "nodemon --watch src --exec ts-node src/index.ts",
-        "start": "nodemon src/index.ts"
+        "start": "nodemon src/index.ts",
+        "lint": "eslint . --ext .ts,.mts,js,mjs"
     },
     "keywords": [],
     "author": "",
@@ -30,11 +31,15 @@
         "@types/express-session": "^1.18.1",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.13.5",
-        "@typescript-eslint/eslint-plugin": "^8.24.1",
-        "@typescript-eslint/parser": "^8.24.1",
+        "@typescript-eslint/eslint-plugin": "^8.25.0",
+        "@typescript-eslint/parser": "^8.25.0",
         "eslint": "^9.21.0",
         "eslint-plugin-node": "^11.1.0",
+        "lint-staged": "^15.4.3",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.7.3"
+    },
+    "lint-staged": {
+        "*.{js,mjs,ts,mts}": "npm run lint"
     }
 }

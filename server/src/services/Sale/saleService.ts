@@ -1,5 +1,5 @@
-import Sale from '../models/sales';
-import { ISale } from '../utils/interface';
+import Sale from '../../models/Sale/sales';
+import { ISale } from '../../utils/interface';
 
 export const getAllSales = async (
     page: number,
@@ -7,7 +7,6 @@ export const getAllSales = async (
     search: string
 ) => {
     const skip = (page - 1) * limit;
-
     const query = search
         ? {
               $or: [
