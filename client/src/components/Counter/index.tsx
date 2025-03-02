@@ -1,4 +1,3 @@
-import React from 'react';
 import { useCounter } from '../../store/counter/useCounter';
 
 export const Counter = () => {

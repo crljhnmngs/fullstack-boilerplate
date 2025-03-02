@@ -1,6 +1,5 @@
-import React from 'react';
-import { Item, Sale } from '../../store/sales/types';
-import { capitalizeFirstLetter, formatDate } from '../../lib/utils';
+import { Item, Sale } from '../../../store/sales/types';
+import { capitalizeFirstLetter, formatDate } from '../../../lib/utils';
 import { SalesTableProps } from '@/types/global';
 
 export function SalesTable({ sales, isLoading }: SalesTableProps) {

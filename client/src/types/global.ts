@@ -27,3 +27,11 @@ export type PaginationControlsProps = {
     handlePrevious: () => void;
     handleNext: () => void;
 };
+
+export type SeoProps = {
+    title?: string;
+    description?: string;
+    keywords?: string;
+    image?: string;
+    url?: string;
+};

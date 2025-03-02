@@ -1,4 +1,3 @@
-import React from 'react';
 import { PaginationControlsProps } from '@/types/global';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 

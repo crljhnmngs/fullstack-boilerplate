@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import logo from '../../assets/icons/logo.png';
 import { useUserStore } from '../../store/user/useUserStore';
 import { getRandomUsers } from '../../service/user/randomUserService';

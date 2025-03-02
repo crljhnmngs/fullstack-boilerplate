@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSaleStore } from '../store/sales/useSaleStore';
+import { useSaleStore } from '../../store/sales/useSaleStore';
 import { useQuery } from '@tanstack/react-query';
-import { getAllSales } from '../service/sale/saleService';
+import { getAllSales } from '../../service/sale/saleService';
 import { Pagination } from '@/types/global';
 import { useDebounce } from 'use-debounce';
 

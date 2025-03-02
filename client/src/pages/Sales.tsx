@@ -1,8 +1,7 @@
-import React from 'react';
 import { Header } from '../components/Header';
-import { useSales } from '../hooks/useSales';
+import { useSales } from '../hooks/Sales/useSales';
 import { SalesTable } from '../components/Tables/SalesTable';
-import { PaginationControls } from '../components/Tables/PaginationControls';
+import { PaginationControls } from '../components/Tables/Pagination';
 
 export const Sales = () => {
     const {

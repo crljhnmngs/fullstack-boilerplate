@@ -23,7 +23,6 @@ const Configuration = {
             ['FE', 'BE', 'common'], // Frontend, Backend, or Common
         ],
         'scope-empty': [2, 'never'], // Scope is now REQUIRED
-        'scope-case': [2, 'always', 'kebab-case'], // Scope should be in kebab-case (e.g., FE-cart)
         'subject-case': [2, 'always', 'lower-case'],
     },
 };
