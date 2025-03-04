@@ -4,11 +4,13 @@ import http from '../httpService';
 export const getAllSales = async (
     page: number,
     limit: number,
-    search: string
+    search?: string,
+    couponUsed?: boolean,
+    purchaseMethod?: string
 ): Promise<SaleApiResponse> => {
     try {
         const response = await http.get<SaleApiResponse>('/v1/sales', {
-            params: { page, limit, search },
+            params: { page, limit, search, couponUsed, purchaseMethod },
         });
         return response.data || [];
     } catch (error) {

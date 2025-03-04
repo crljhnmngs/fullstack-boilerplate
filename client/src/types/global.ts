@@ -15,17 +15,17 @@ export type PaginatedResponse<T> = {
 export type SalesTableProps = {
     sales: Sale[];
     isLoading: boolean;
+    pagination: Pagination;
+    setPage: (page: number) => void;
+    setPerPage: (value: number) => void;
 };
+
 export type PaginationControlsProps = {
     perPage: number;
     setPerPage: (value: number) => void;
-    startItem: number;
-    endItem: number;
-    totalItems: number;
     page: number;
     totalPages: number;
-    handlePrevious: () => void;
-    handleNext: () => void;
+    setPage: (page: number) => void;
 };
 
 export type SeoProps = {

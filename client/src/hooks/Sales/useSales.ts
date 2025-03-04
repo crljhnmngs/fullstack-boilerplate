@@ -15,16 +15,34 @@ export const useSales = () => {
         totalItems: 0,
         perPage: 10,
     });
-    const [startItem, setStartItem] = useState<number>(0);
-    const [endItem, setEndItem] = useState<number>(0);
-    const [perPage, setPerPage] = useState(5);
-    const [page, setPage] = useState(1);
+
     const [searchInput, setSearchInput] = useState('');
     const [search] = useDebounce(searchInput, 300);
 
+    const [couponValue, setCouponValue] = useState<boolean | undefined>(
+        undefined
+    );
+    const [purchaseValue, setPurchaseValue] = useState<string | undefined>(
+        undefined
+    );
+
     const { data: res, isLoading } = useQuery({
-        queryKey: ['sales', page, perPage, search],
-        queryFn: () => getAllSales(page, perPage, search),
+        queryKey: [
+            'sales',
+            pagination.currentPage,
+            pagination.perPage,
+            search,
+            couponValue,
+            purchaseValue,
+        ],
+        queryFn: () =>
+            getAllSales(
+                pagination.currentPage,
+                pagination.perPage,
+                search,
+                couponValue,
+                purchaseValue
+            ),
         refetchOnWindowFocus: false,
     });
 
@@ -35,38 +53,19 @@ export const useSales = () => {
         }
     }, [res, setSales]);
 
-    useEffect(() => {
-        const start = (pagination.currentPage - 1) * pagination.perPage + 1;
-        const end = Math.min(
-            start + pagination.perPage - 1,
-            pagination.totalItems
-        );
-
-        setStartItem(start);
-        setEndItem(end);
-    }, [pagination]);
-
-    const handlePrevious = () => {
-        if (page > 1 && !isLoading) setPage((prev) => prev - 1);
-    };
-
-    const handleNext = () => {
-        if (page < pagination.totalPages && !isLoading)
-            setPage((prev) => prev + 1);
-    };
-
     return {
         sales,
         isLoading,
         pagination,
-        startItem,
-        endItem,
-        perPage,
-        page,
+        setPage: (page: number) =>
+            setPagination((prev) => ({ ...prev, currentPage: page })),
+        setPerPage: (perPage: number) =>
+            setPagination((prev) => ({ ...prev, perPage })),
         searchInput,
         setSearchInput,
-        setPerPage,
-        handlePrevious,
-        handleNext,
+        couponValue,
+        setCouponValue,
+        purchaseValue,
+        setPurchaseValue,
     };
 };

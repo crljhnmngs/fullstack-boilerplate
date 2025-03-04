@@ -6,8 +6,18 @@ export const getSales = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
         const search = (req.query.search as string) || '';
+        const couponUsed = req.query.couponUsed
+            ? req.query.couponUsed === 'true'
+            : undefined;
+        const purchaseMethod = req.query.purchaseMethod as string | undefined;
 
-        const { sales, total } = await getAllSales(page, limit, search);
+        const { sales, total } = await getAllSales(
+            page,
+            limit,
+            search,
+            couponUsed,
+            purchaseMethod
+        );
 
         res.status(200).json({
             data: sales,
