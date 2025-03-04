@@ -35,3 +35,19 @@ export type SeoProps = {
     image?: string;
     url?: string;
 };
+
+export type DropdownPropsData<T> = {
+    value: T;
+    label: string;
+};
+
+export type DropdownProps<T> = {
+    data: DropdownPropsData<T>[];
+    value: T | undefined;
+    setValue: React.Dispatch<React.SetStateAction<T | undefined>>;
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    defaultText: string;
+    contentWith?: string;
+    triggerHeight?: string;
+};

@@ -2,20 +2,8 @@ import { useState } from 'react';
 import { Header } from '../components/Header';
 import { useSales } from '../hooks/Sales/useSales';
 import { SalesTable } from '../components/Tables/SalesTable';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '../components/ui/popover';
-import {
-    Command,
-    CommandGroup,
-    CommandItem,
-    CommandList,
-} from '../components/ui/command';
-import { Button } from '../components/ui/button';
-import { ChevronsUpDown } from 'lucide-react';
 import { couponUsed, purchaseMethods } from '../lib/const';
+import { Dropdown } from '../components/Dropdown';
 
 export const Sales = () => {
     const {
@@ -35,20 +23,6 @@ export const Sales = () => {
     const [couponOpen, setCouponOpen] = useState<boolean>(false);
     const [purchaseOpen, setPurchaseOpen] = useState<boolean>(false);
 
-    const handleCouponSelect = (selectedValue: boolean) => {
-        setCouponValue((currentValue) =>
-            currentValue === selectedValue ? undefined : selectedValue
-        );
-        setCouponOpen(false);
-    };
-
-    const handlePurchaseSelect = (selectedValue: string) => {
-        setPurchaseValue((currentValue) =>
-            currentValue === selectedValue ? undefined : selectedValue
-        );
-        setPurchaseOpen(false);
-    };
-
     return (
         <div className="h-screen w-screen overflow-x-hidden">
             <Header />
@@ -56,94 +30,23 @@ export const Sales = () => {
                 <div className="w-[80%]">
                     <div className="w-full flex justify-between mb-2">
                         <div className="flex gap-4">
-                            <Popover
+                            <Dropdown
+                                data={couponUsed}
+                                value={couponValue}
+                                setValue={setCouponValue}
                                 open={couponOpen}
-                                onOpenChange={setCouponOpen}
-                            >
-                                <PopoverTrigger asChild className="h-11">
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        aria-expanded={couponOpen}
-                                        className="w-[200px] justify-between"
-                                    >
-                                        {couponValue !== undefined
-                                            ? couponUsed.find(
-                                                  (item) =>
-                                                      item.value === couponValue
-                                              )?.label
-                                            : 'Select Coupon Used...'}
-                                        <ChevronsUpDown className="opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
-                                    <Command>
-                                        <CommandList>
-                                            <CommandGroup>
-                                                {couponUsed.map((item) => (
-                                                    <CommandItem
-                                                        key={item.label}
-                                                        value={item.label}
-                                                        onSelect={() =>
-                                                            handleCouponSelect(
-                                                                item.value
-                                                            )
-                                                        }
-                                                        className="p-2"
-                                                    >
-                                                        {item.label}
-                                                    </CommandItem>
-                                                ))}
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
-
-                            <Popover
+                                setOpen={setCouponOpen}
+                                defaultText="Select Coupon Used..."
+                            />
+                            <Dropdown
+                                data={purchaseMethods}
+                                value={purchaseValue}
+                                setValue={setPurchaseValue}
                                 open={purchaseOpen}
-                                onOpenChange={setPurchaseOpen}
-                            >
-                                <PopoverTrigger asChild className="h-11">
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        aria-expanded={purchaseOpen}
-                                        className="w-[230px] justify-between"
-                                    >
-                                        {purchaseValue !== undefined
-                                            ? purchaseMethods.find(
-                                                  (item) =>
-                                                      item.value ===
-                                                      purchaseValue
-                                              )?.label
-                                            : 'Select Purchase Method...'}
-                                        <ChevronsUpDown className="opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[250px] p-0">
-                                    <Command>
-                                        <CommandList>
-                                            <CommandGroup>
-                                                {purchaseMethods.map((item) => (
-                                                    <CommandItem
-                                                        key={item.label}
-                                                        value={item.label}
-                                                        onSelect={() =>
-                                                            handlePurchaseSelect(
-                                                                item.value
-                                                            )
-                                                        }
-                                                        className="p-2"
-                                                    >
-                                                        {item.label}
-                                                    </CommandItem>
-                                                ))}
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
+                                setOpen={setPurchaseOpen}
+                                defaultText="Select Purchase Method..."
+                                contentWith="230px"
+                            />
                         </div>
                         <input
                             type="text"

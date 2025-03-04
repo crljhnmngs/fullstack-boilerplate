@@ -11,13 +11,13 @@ import { SalesTableProps } from '@/types/global';
 import { useMemo } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
-export function SalesTable({
+export const SalesTable = ({
     sales,
     isLoading,
     pagination,
     setPage,
     setPerPage,
-}: SalesTableProps) {
+}: SalesTableProps) => {
     const columns: ColumnDef<Sale>[] = useMemo(
         () => [
             {
@@ -167,16 +167,16 @@ export function SalesTable({
                         <span className="text-gray-600 pl-2">
                             of {pagination.totalItems}
                         </span>
-                        <div className="flex space-x-2 pl-3">
+                        <div className="flex space-x-3 pl-3">
                             <button
-                                className={`cursor-pointer ${pagination.currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`${pagination.currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                 onClick={() => table.previousPage()}
                                 disabled={!table.getCanPreviousPage()}
                             >
                                 <IoChevronBack size={20} />
                             </button>
                             <button
-                                className={`cursor-pointer ${pagination.currentPage === pagination.totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`${pagination.currentPage === pagination.totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                 onClick={() => table.nextPage()}
                                 disabled={!table.getCanNextPage()}
                             >
@@ -188,4 +188,4 @@ export function SalesTable({
             </div>
         </div>
     );
-}
+};
