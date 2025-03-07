@@ -28,7 +28,10 @@ export const getAllSales = async (
         query.purchaseMethod = purchaseMethod;
     }
 
-    const sales: ISale[] = await Sale.find(query).skip(skip).limit(limit);
+    const sales: ISale[] = await Sale.find(query)
+        .sort({ saleDate: -1 })
+        .skip(skip)
+        .limit(limit);
     const total = await Sale.countDocuments(query);
 
     return { sales, total };

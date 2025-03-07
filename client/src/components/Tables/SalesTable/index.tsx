@@ -10,6 +10,8 @@ import { capitalizeFirstLetter, formatDate } from '../../../lib/utils';
 import { SalesTableProps } from '@/types/global';
 import { useMemo } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import { useSaleModalStore } from '../../../store/modal/sale/useSaleModalStore';
 
 export const SalesTable = ({
     sales,
@@ -18,6 +20,17 @@ export const SalesTable = ({
     setPage,
     setPerPage,
 }: SalesTableProps) => {
+    const openModal = useSaleModalStore((state) => state.openModal);
+
+    const handleEdit = (sale: Sale) => {
+        openModal('edit', sale);
+    };
+
+    const handleDelete = (sale: Sale) => {
+        console.log('Deleting sale:', sale);
+        // Implement delete logic (show a confirmation dialog)
+    };
+
     const columns: ColumnDef<Sale>[] = useMemo(
         () => [
             {
@@ -41,6 +54,27 @@ export const SalesTable = ({
                 cell: ({ getValue }) => (getValue() ? 'Yes' : 'No'),
             },
             { header: 'Purchase Method', accessorKey: 'purchaseMethod' },
+            {
+                header: 'Actions',
+                accessorKey: 'actions',
+                cell: ({ row }) => (
+                    <div className="flex justify-center gap-2">
+                        <button
+                            className="text-2xl cursor-pointer"
+                            onClick={() => handleEdit(row.original)}
+                        >
+                            <FaEdit />
+                        </button>
+
+                        <button
+                            className="text-2xl cursor-pointer"
+                            onClick={() => handleDelete(row.original)}
+                        >
+                            <FaTrash />
+                        </button>
+                    </div>
+                ),
+            },
         ],
         []
     );

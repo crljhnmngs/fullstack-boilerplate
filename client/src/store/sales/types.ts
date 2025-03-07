@@ -4,12 +4,12 @@ export type Item = {
     _id: string;
     name: string;
     tags: string[];
-    price: number;
+    price: { $numberDecimal: string };
     quantity: number;
 };
 
 type Customer = {
-    gender: string;
+    gender: 'M' | 'F';
     age: number;
     email: string;
     satisfaction: number;
@@ -22,7 +22,7 @@ export type Sale = {
     storeLocation: string;
     customer: Customer;
     couponUsed: boolean;
-    purchaseMethod: string;
+    purchaseMethod: 'Online' | 'In store' | 'Phone';
 };
 
 export type SaleState = {

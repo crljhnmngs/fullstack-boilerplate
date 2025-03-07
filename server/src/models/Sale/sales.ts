@@ -2,10 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import { ISale } from '../../utils/interface';
 
 const SalesSchema = new Schema<ISale>({
-    saleDate: {
-        type: Date,
-        required: true,
-    },
+    saleDate: { type: Date, default: Date.now, immutable: true },
     items: [
         {
             items: {
