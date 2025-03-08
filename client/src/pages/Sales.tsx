@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Header } from '../components/Header';
-import { useSales } from '../hooks/sales/useSales';
+import {
+    useGetSales,
+    useAddSale,
+    useUpdateSale,
+} from '../hooks/sales/useSales';
 import { SalesTable } from '../components/Tables/SalesTable';
 import { couponUsed, purchaseMethods } from '../lib/const';
 import { Dropdown } from '../components/Dropdown';
@@ -22,15 +26,19 @@ export const Sales = () => {
         setCouponValue,
         purchaseValue,
         setPurchaseValue,
-    } = useSales();
+    } = useGetSales();
 
     const openModal = useSaleModalStore((state) => state.openModal);
+    const mode = useSaleModalStore((state) => state.mode);
     const [couponOpen, setCouponOpen] = useState<boolean>(false);
     const [purchaseOpen, setPurchaseOpen] = useState<boolean>(false);
+    const { addSale } = useAddSale();
+    const { updateSale } = useUpdateSale();
 
-    const handleSubmit = (data: SaleFormData) => {
-        console.log('Submitted:', data);
-    };
+    const handleSubmit = (data: SaleFormData) =>
+        mode === 'add'
+            ? addSale(data)
+            : updateSale({ id: data._id ?? '', saleData: data });
 
     return (
         <div className="h-screen w-screen overflow-x-hidden">

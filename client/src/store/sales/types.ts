@@ -30,4 +30,4 @@ export type SaleState = {
     setSales: (sales: Sale[]) => void;
 };
 
-export type SaleApiResponse = PaginatedResponse<Sale>;
+export type GetSalesApiResponse = PaginatedResponse<Sale>;

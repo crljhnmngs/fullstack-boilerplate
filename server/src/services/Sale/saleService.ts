@@ -1,7 +1,7 @@
 import Sale from '../../models/Sale/sales';
 import { ISale } from '../../utils/interface';
 
-export const getAllSales = async (
+export const getAllSalesService = async (
     page: number,
     limit: number,
     search?: string,
@@ -35,4 +35,32 @@ export const getAllSales = async (
     const total = await Sale.countDocuments(query);
 
     return { sales, total };
+};
+
+export const createSaleService = async (saleData: ISale) => {
+    try {
+        const newSale = new Sale(saleData);
+        await newSale.save();
+        return newSale;
+    } catch (error) {
+        console.log(error);
+        throw new Error('Error creating sale');
+    }
+};
+
+export const updateSaleService = async (
+    id: string,
+    saleData: Partial<ISale>
+) => {
+    try {
+        const updatedSale = await Sale.findByIdAndUpdate(id, saleData, {
+            new: true,
+            runValidators: true,
+        });
+
+        return updatedSale;
+    } catch (error) {
+        console.log(error);
+        throw new Error('Failed to update sale');
+    }
 };

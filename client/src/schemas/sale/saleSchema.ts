@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const saleSchema = z.object({
+    _id: z.string().optional(),
     storeLocation: z.string().min(1, 'Store location is required'),
     purchaseMethod: z.enum(['Online', 'In store', 'Phone']),
     couponUsed: z.boolean(),

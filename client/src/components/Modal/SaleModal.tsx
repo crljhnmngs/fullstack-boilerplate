@@ -28,7 +28,7 @@ export const SaleModal = ({
         handleSubmit,
         reset,
         control,
-        formState: { errors },
+        formState: { errors, isDirty },
     } = useForm<SaleFormData>({
         resolver: zodResolver(saleSchema),
         defaultValues: {
@@ -212,6 +212,7 @@ export const SaleModal = ({
                                     <div className="flex flex-col">
                                         <Input
                                             type="number"
+                                            step="0.01"
                                             {...register(
                                                 `items.${index}.price`,
                                                 {
@@ -286,7 +287,7 @@ export const SaleModal = ({
                         >
                             Cancel
                         </Button>
-                        <Button type="submit">
+                        <Button type="submit" disabled={!isDirty}>
                             {mode === 'add' ? 'Add Sale' : 'Save Changes'}
                         </Button>
                     </DialogFooter>

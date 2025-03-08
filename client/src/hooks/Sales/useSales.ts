@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useSaleStore } from '../../store/sales/useSaleStore';
-import { useQuery } from '@tanstack/react-query';
-import { getAllSales } from '../../service/sale/saleService';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+    addSale,
+    getAllSales,
+    updateSale,
+} from '../../service/sale/saleService';
 import { Pagination } from '@/types/global';
 import { useDebounce } from 'use-debounce';
+import toast from 'react-hot-toast';
+import { SaleFormData } from '@/schemas/sale/saleSchema';
 
-export const useSales = () => {
+export const useGetSales = () => {
     const setSales = useSaleStore((state) => state.setSales);
     const sales = useSaleStore((state) => state.sales);
 
@@ -26,7 +32,11 @@ export const useSales = () => {
         undefined
     );
 
-    const { data: res, isLoading } = useQuery({
+    const {
+        data: res,
+        isLoading,
+        error,
+    } = useQuery({
         queryKey: [
             'sales',
             pagination.currentPage,
@@ -53,6 +63,14 @@ export const useSales = () => {
         }
     }, [res, setSales]);
 
+    useEffect(() => {
+        if (error) {
+            toast.error(error.message, {
+                position: 'top-right',
+            });
+        }
+    }, [error]);
+
     return {
         sales,
         isLoading,
@@ -67,5 +85,61 @@ export const useSales = () => {
         setCouponValue,
         purchaseValue,
         setPurchaseValue,
+    };
+};
+
+export const useAddSale = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: (saleData: SaleFormData) => addSale(saleData),
+        onSuccess: () => {
+            toast.success('Sale added successfully!', {
+                position: 'top-right',
+            });
+            queryClient.invalidateQueries({ queryKey: ['sales'] });
+        },
+        onError: (error: Error) => {
+            toast.error(error.message, {
+                position: 'top-right',
+            });
+        },
+    });
+
+    return {
+        addSale: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useUpdateSale = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: ({
+            id,
+            saleData,
+        }: {
+            id: string | undefined;
+            saleData: Partial<SaleFormData>;
+        }) => updateSale(id, saleData),
+        onSuccess: () => {
+            toast.success('Sale updated successfully!', {
+                position: 'top-right',
+            });
+            queryClient.invalidateQueries({ queryKey: ['sales'] });
+        },
+        onError: (error: Error) => {
+            toast.error(error.message, { position: 'top-right' });
+        },
+    });
+
+    return {
+        updateSale: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
     };
 };

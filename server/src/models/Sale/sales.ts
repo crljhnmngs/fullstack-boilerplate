@@ -5,7 +5,7 @@ const SalesSchema = new Schema<ISale>({
     saleDate: { type: Date, default: Date.now, immutable: true },
     items: [
         {
-            items: {
+            name: {
                 type: String,
                 required: true,
             },

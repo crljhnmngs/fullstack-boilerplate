@@ -15,13 +15,3 @@ export type FetchUsersParams = {
     results?: number;
     nationality?: string;
 };
-
-export type ApiResponse = {
-    results: User[];
-    info: {
-        seed: string;
-        results: number;
-        page: number;
-        version: string;
-    };
-};

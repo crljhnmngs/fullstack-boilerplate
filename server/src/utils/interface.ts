@@ -1,10 +1,9 @@
-import { Decimal128 } from 'mongodb';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 interface Item {
     items: string;
     tags: string[];
-    price: Decimal128;
+    price: Types.Decimal128;
     quantity: number;
 }
 
