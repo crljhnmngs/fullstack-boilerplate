@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSaleModalStore } from '../../store/modal/sale/useSaleModalStore';
-import { saleSchema, SaleFormData } from '../../schemas/sale/saleSchema';
+import { useSaleModalStore } from '../../../store/modal/sale/useSaleModalStore';
+import { saleSchema, SaleFormData } from '../../../schemas/sale/saleSchema';
 import {
     Dialog,
     DialogContent,
@@ -10,11 +10,11 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Checkbox } from '../ui/checkbox';
+} from '../../ui/dialog';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Checkbox } from '../../ui/checkbox';
 
 export const SaleModal = ({
     onSubmit,
@@ -29,6 +29,7 @@ export const SaleModal = ({
         reset,
         control,
         formState: { errors, isDirty },
+        setError,
     } = useForm<SaleFormData>({
         resolver: zodResolver(saleSchema),
         defaultValues: {
@@ -79,6 +80,18 @@ export const SaleModal = ({
         }
     }, [mode, initialData, reset]);
 
+    const handleFormSubmit = (data: SaleFormData) => {
+        if (data.items.length === 0) {
+            setError('items', {
+                type: 'manual',
+                message: 'At least one item is required',
+            });
+            return;
+        }
+        onSubmit(data);
+        closeModal();
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
             <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
@@ -93,10 +106,7 @@ export const SaleModal = ({
                     </DialogDescription>
                 </DialogHeader>
                 <form
-                    onSubmit={handleSubmit((data) => {
-                        onSubmit(data);
-                        closeModal();
-                    })}
+                    onSubmit={handleSubmit(handleFormSubmit)}
                     className="grid gap-4"
                 >
                     <Label>Store Location</Label>
@@ -185,7 +195,7 @@ export const SaleModal = ({
                     <div className="border p-4 rounded">
                         <h3 className="font-bold">Items</h3>
 
-                        {errors.items?.message && (
+                        {errors.items && (
                             <p className="text-red-500">
                                 {errors.items.message}
                             </p>
@@ -215,9 +225,7 @@ export const SaleModal = ({
                                             step="0.01"
                                             {...register(
                                                 `items.${index}.price`,
-                                                {
-                                                    valueAsNumber: true,
-                                                }
+                                                { valueAsNumber: true }
                                             )}
                                             placeholder="Price"
                                         />
@@ -236,9 +244,7 @@ export const SaleModal = ({
                                             type="number"
                                             {...register(
                                                 `items.${index}.quantity`,
-                                                {
-                                                    valueAsNumber: true,
-                                                }
+                                                { valueAsNumber: true }
                                             )}
                                             placeholder="Quantity"
                                         />
