@@ -12,6 +12,8 @@ import { useMemo } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useSaleModalStore } from '../../../store/modal/sale/useSaleModalStore';
+import { useDeleteSale } from '../../../hooks/sales/useSales';
+import { ConfirmationModal } from '../../../components/Modal/ConfirmationModal';
 
 export const SalesTable = ({
     sales,
@@ -21,14 +23,14 @@ export const SalesTable = ({
     setPerPage,
 }: SalesTableProps) => {
     const openModal = useSaleModalStore((state) => state.openModal);
+    const { deleteSale } = useDeleteSale();
 
     const handleEdit = (sale: Sale) => {
         openModal('edit', sale);
     };
 
     const handleDelete = (sale: Sale) => {
-        console.log('Deleting sale:', sale);
-        // Implement delete logic (show a confirmation dialog)
+        deleteSale(sale._id);
     };
 
     const columns: ColumnDef<Sale>[] = useMemo(
@@ -66,12 +68,14 @@ export const SalesTable = ({
                             <FaEdit />
                         </button>
 
-                        <button
-                            className="text-2xl cursor-pointer"
-                            onClick={() => handleDelete(row.original)}
-                        >
-                            <FaTrash />
-                        </button>
+                        <ConfirmationModal
+                            triggerText={<FaTrash size={22} />}
+                            title="Delete Sale?"
+                            description="Are you sure you want to delete this sale? This action cannot be undone."
+                            confirmText="Yes, Delete"
+                            cancelText="Cancel"
+                            onConfirm={() => handleDelete(row.original)}
+                        />
                     </div>
                 ),
             },

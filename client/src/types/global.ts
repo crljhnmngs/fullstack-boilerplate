@@ -51,3 +51,12 @@ export type DropdownProps<T> = {
     contentWith?: string;
     triggerHeight?: string;
 };
+
+export type ConfirmationModalProps = {
+    title?: string;
+    description?: string;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm: () => void;
+    triggerText: string | React.ReactNode;
+};

@@ -131,3 +131,36 @@ export const updateSale = async (
         throw new Error('Something went wrong while updating the sale.');
     }
 };
+
+export const deleteSale = async (id: string | undefined): Promise<void> => {
+    try {
+        await http.delete(`/v1/sales/${id}`);
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                const status = error.response.status;
+                const apiError = error.response.data as { message?: string };
+
+                let errorMessage = apiError.message || 'Failed to delete sale';
+
+                if (status === 400) {
+                    errorMessage = 'Invalid request. Please try again.';
+                } else if (status === 401) {
+                    errorMessage = 'Unauthorized. Please log in.';
+                } else if (status === 403) {
+                    errorMessage =
+                        'You do not have permission to delete this sale.';
+                } else if (status === 404) {
+                    errorMessage = 'Sale not found.';
+                } else if (status === 500) {
+                    errorMessage = 'Server error. Try again later.';
+                }
+
+                throw new Error(errorMessage);
+            } else if (error.request) {
+                throw new Error('Network error. Please check your connection.');
+            }
+        }
+        throw new Error('Something went wrong while deleting the sale.');
+    }
+};
