@@ -11,10 +11,12 @@ import { Pagination } from '@/types/global';
 import { useDebounce } from 'use-debounce';
 import toast from 'react-hot-toast';
 import { SaleFormData } from '@/schemas/sale/saleSchema';
+import { useLoadingStore } from '../../store/loading/useLoadingStore';
 
 export const useGetSales = () => {
     const setSales = useSaleStore((state) => state.setSales);
     const sales = useSaleStore((state) => state.sales);
+    const setLoading = useLoadingStore((state) => state.setLoading);
 
     const [pagination, setPagination] = useState<Pagination>({
         currentPage: 1,
@@ -46,14 +48,20 @@ export const useGetSales = () => {
             couponValue,
             purchaseValue,
         ],
-        queryFn: () =>
-            getAllSales(
-                pagination.currentPage,
-                pagination.perPage,
-                search,
-                couponValue,
-                purchaseValue
-            ),
+        queryFn: async () => {
+            setLoading(true);
+            try {
+                return await getAllSales(
+                    pagination.currentPage,
+                    pagination.perPage,
+                    search,
+                    couponValue,
+                    purchaseValue
+                );
+            } finally {
+                setLoading(false);
+            }
+        },
         refetchOnWindowFocus: false,
     });
 
@@ -91,9 +99,11 @@ export const useGetSales = () => {
 
 export const useAddSale = () => {
     const queryClient = useQueryClient();
+    const setLoading = useLoadingStore((state) => state.setLoading);
 
     const mutation = useMutation({
         mutationFn: (saleData: SaleFormData) => addSale(saleData),
+        onMutate: () => setLoading(true),
         onSuccess: () => {
             toast.success('Sale added successfully!', {
                 position: 'top-right',
@@ -105,6 +115,7 @@ export const useAddSale = () => {
                 position: 'top-right',
             });
         },
+        onSettled: () => setLoading(false),
     });
 
     return {
@@ -117,6 +128,7 @@ export const useAddSale = () => {
 
 export const useUpdateSale = () => {
     const queryClient = useQueryClient();
+    const setLoading = useLoadingStore((state) => state.setLoading);
 
     const mutation = useMutation({
         mutationFn: ({
@@ -126,6 +138,7 @@ export const useUpdateSale = () => {
             id: string | undefined;
             saleData: Partial<SaleFormData>;
         }) => updateSale(id, saleData),
+        onMutate: () => setLoading(true),
         onSuccess: () => {
             toast.success('Sale updated successfully!', {
                 position: 'top-right',
@@ -135,6 +148,7 @@ export const useUpdateSale = () => {
         onError: (error: Error) => {
             toast.error(error.message, { position: 'top-right' });
         },
+        onSettled: () => setLoading(false),
     });
 
     return {
@@ -147,9 +161,11 @@ export const useUpdateSale = () => {
 
 export const useDeleteSale = () => {
     const queryClient = useQueryClient();
+    const setLoading = useLoadingStore((state) => state.setLoading);
 
     const mutation = useMutation({
         mutationFn: (id: string | undefined) => deleteSale(id),
+        onMutate: () => setLoading(true),
         onSuccess: () => {
             toast.success('Sale deleted successfully!', {
                 position: 'top-right',
@@ -159,6 +175,7 @@ export const useDeleteSale = () => {
         onError: (error: Error) => {
             toast.error(error.message, { position: 'top-right' });
         },
+        onSettled: () => setLoading(false),
     });
 
     return {

@@ -60,3 +60,8 @@ export type ConfirmationModalProps = {
     onConfirm: () => void;
     triggerText: string | React.ReactNode;
 };
+
+export type LoadingState = {
+    isLoading: boolean;
+    setLoading: (loading: boolean) => void;
+};
