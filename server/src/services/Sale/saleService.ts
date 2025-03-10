@@ -64,3 +64,14 @@ export const updateSaleService = async (
         throw new Error('Failed to update sale');
     }
 };
+
+export const deleteSaleService = async (id: string) => {
+    try {
+        const deletedSale = await Sale.findByIdAndDelete(id);
+
+        return deletedSale;
+    } catch (error) {
+        console.log(error);
+        throw new Error('Failed to update sale');
+    }
+};

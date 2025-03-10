@@ -3,6 +3,7 @@ import {
     getAllSalesService,
     createSaleService,
     updateSaleService,
+    deleteSaleService,
 } from '../../services/Sale/saleService';
 
 export const getSales = async (req: Request, res: Response) => {
@@ -65,6 +66,25 @@ export const updateSale = async (req: Request, res: Response) => {
         }
 
         res.status(200).json(updatedSale);
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export const deleteSale = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const deletedSale = await deleteSaleService(id);
+
+        if (!deletedSale) {
+            res.status(404).json({ error: 'Sale not found' });
+            return;
+        }
+
+        res.status(200).json(deletedSale);
     } catch (error) {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details
