@@ -12,7 +12,15 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+    cors({
+        origin: keys.app.clientUrl,
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-api-secret'],
+    })
+);
+
 app.use(limiter);
 app.use(express.json());
 app.use(apiSecretMiddleware);
@@ -21,10 +29,21 @@ app.use(
         secret: keys.app.sesSecret,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: keys.app.env === 'DEV' ? false : true },
+        cookie: {
+            secure: keys.app.env === 'DEV' ? false : true,
+            httpOnly: true,
+            sameSite: 'none',
+        },
     })
 );
-connectDB().catch((error: any) => console.error(error));
+
+connectDB()
+    .then(() => console.log('Database connected successfully'))
+    .catch((error) => {
+        console.error('Database connection error:', error);
+        process.exit(1);
+    });
+
 // Routes
 app.use('/api/v1', routes);
 

@@ -8,6 +8,7 @@ export const keys = {
         env: process.env.ENVIRONMENT,
         sesSecret: process.env.SESSION_SECRET,
         apiSecret: process.env.API_SECRET_KEY,
+        clientUrl: process.env.CLIENT_URL,
     },
     port: process.env.PORT || 8080,
     database: {
