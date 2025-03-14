@@ -4,6 +4,7 @@ import {
     useGetSales,
     useAddSale,
     useUpdateSale,
+    useMultipleDeleteSale,
 } from '../hooks/sales/useSales';
 import { SalesTable } from '../components/Tables/SalesTable';
 import { couponUsed, purchaseMethods } from '../lib/const';
@@ -12,7 +13,9 @@ import { Button } from '../components/ui/button';
 import { SaleModal } from '../components/Modal/SaleModal';
 import { SaleFormData } from '../schemas/sale/saleSchema';
 import { useSaleModalStore } from '../store/modal/sale/useSaleModalStore';
-
+import { ConfirmationModal } from '../components/Modal/ConfirmationModal';
+import { FaTrash } from 'react-icons/fa';
+import { useSaleStore } from '../store/sales/useSaleStore';
 export const Sales = () => {
     const {
         sales,
@@ -34,11 +37,18 @@ export const Sales = () => {
     const [purchaseOpen, setPurchaseOpen] = useState<boolean>(false);
     const { addSale } = useAddSale();
     const { updateSale } = useUpdateSale();
+    const { deleteMultipleSale } = useMultipleDeleteSale();
+    const { resetSelectedSales, selectedSales } = useSaleStore();
 
     const handleSubmit = (data: SaleFormData) =>
         mode === 'add'
             ? addSale(data)
             : updateSale({ id: data._id ?? '', saleData: data });
+
+    const handleMultipleDelete = () => {
+        deleteMultipleSale(selectedSales);
+        resetSelectedSales();
+    };
 
     return (
         <div className="h-screen w-screen overflow-x-hidden">
@@ -52,7 +62,10 @@ export const Sales = () => {
                             <Dropdown
                                 data={couponUsed}
                                 value={couponValue}
-                                setValue={setCouponValue}
+                                setValue={(value) => {
+                                    setCouponValue(value);
+                                    resetSelectedSales();
+                                }}
                                 open={couponOpen}
                                 setOpen={setCouponOpen}
                                 defaultText="Select Coupon Used..."
@@ -60,7 +73,10 @@ export const Sales = () => {
                             <Dropdown
                                 data={purchaseMethods}
                                 value={purchaseValue}
-                                setValue={setPurchaseValue}
+                                setValue={(value) => {
+                                    setPurchaseValue(value);
+                                    resetSelectedSales();
+                                }}
                                 open={purchaseOpen}
                                 setOpen={setPurchaseOpen}
                                 defaultText="Select Purchase Method..."
@@ -68,11 +84,25 @@ export const Sales = () => {
                             />
                         </div>
                         <div className="flex gap-3">
+                            {selectedSales.length > 1 && (
+                                <ConfirmationModal
+                                    triggerText={<FaTrash size={22} />}
+                                    title="Delete Sales?"
+                                    description={`Are you sure you want to delete this ${selectedSales.length} sales? This action cannot be undone.`}
+                                    confirmText="Yes, Delete"
+                                    cancelText="Cancel"
+                                    onConfirm={() => handleMultipleDelete()}
+                                />
+                            )}
+
                             <input
                                 type="text"
                                 placeholder="Search"
                                 value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchInput(e.target.value);
+                                    resetSelectedSales();
+                                }}
                                 className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <Button

@@ -164,3 +164,39 @@ export const deleteSale = async (id: string | undefined): Promise<void> => {
         throw new Error('Something went wrong while deleting the sale.');
     }
 };
+
+export const deleteMultipleSale = async (
+    ids: string[] | undefined
+): Promise<{ message: string }> => {
+    try {
+        const response = await http.delete('/v1/sales', { data: { ids } });
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                const status = error.response.status;
+                const apiError = error.response.data as { message?: string };
+
+                let errorMessage = apiError.message || 'Failed to delete sales';
+
+                if (status === 400) {
+                    errorMessage = 'Invalid request. Please try again.';
+                } else if (status === 401) {
+                    errorMessage = 'Unauthorized. Please log in.';
+                } else if (status === 403) {
+                    errorMessage =
+                        'You do not have permission to delete this sales.';
+                } else if (status === 404) {
+                    errorMessage = 'Sale not found.';
+                } else if (status === 500) {
+                    errorMessage = 'Server error. Try again later.';
+                }
+
+                throw new Error(errorMessage);
+            } else if (error.request) {
+                throw new Error('Network error. Please check your connection.');
+            }
+        }
+        throw new Error('Something went wrong while deleting the sales.');
+    }
+};

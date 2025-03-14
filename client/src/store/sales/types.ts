@@ -27,7 +27,10 @@ export type Sale = {
 
 export type SaleState = {
     sales: Sale[];
+    selectedSales: string[];
     setSales: (sales: Sale[]) => void;
+    setSelectedSales: React.Dispatch<React.SetStateAction<string[]>>;
+    resetSelectedSales: () => void;
 };
 
 export type GetSalesApiResponse = PaginatedResponse<Sale>;

@@ -4,6 +4,7 @@ import {
     createSaleService,
     updateSaleService,
     deleteSaleService,
+    deleteMultipleSalesService,
 } from '../../services/Sale/saleService';
 
 export const getSales = async (req: Request, res: Response) => {
@@ -90,5 +91,31 @@ export const deleteSale = async (req: Request, res: Response) => {
         // This should include timestamps and error details
         console.log(error);
         res.status(500).json({ error: error.message });
+    }
+};
+
+export const deleteMultipleSales = async (req: Request, res: Response) => {
+    try {
+        const { ids } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            res.status(400).json({ message: 'Invalid or empty IDs array' });
+            return;
+        }
+
+        const result = await deleteMultipleSalesService(ids);
+
+        res.status(200).json(result);
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error(error);
+
+        if (error.message === 'No matching sales found') {
+            res.status(404).json({ error: error.message });
+            return;
+        }
+
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };

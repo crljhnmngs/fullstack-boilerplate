@@ -3,6 +3,7 @@ import { useSaleStore } from '../../store/sales/useSaleStore';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     addSale,
+    deleteMultipleSale,
     deleteSale,
     getAllSales,
     updateSale,
@@ -180,6 +181,33 @@ export const useDeleteSale = () => {
 
     return {
         deleteSale: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useMultipleDeleteSale = () => {
+    const queryClient = useQueryClient();
+    const setLoading = useLoadingStore((state) => state.setLoading);
+
+    const mutation = useMutation({
+        mutationFn: (ids: string[] | undefined) => deleteMultipleSale(ids),
+        onMutate: () => setLoading(true),
+        onSuccess: (data) => {
+            toast.success(data?.message || 'Sales deleted successfully!', {
+                position: 'top-right',
+            });
+            queryClient.invalidateQueries({ queryKey: ['sales'] });
+        },
+        onError: (error: Error) => {
+            toast.error(error.message, { position: 'top-right' });
+        },
+        onSettled: () => setLoading(false),
+    });
+
+    return {
+        deleteMultipleSale: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

@@ -14,6 +14,8 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useSaleModalStore } from '../../../store/modal/sale/useSaleModalStore';
 import { useDeleteSale } from '../../../hooks/sales/useSales';
 import { ConfirmationModal } from '../../../components/Modal/ConfirmationModal';
+import { Checkbox } from '../../ui/checkbox';
+import { useSaleStore } from '../../../store/sales/useSaleStore';
 
 export const SalesTable = ({
     sales,
@@ -24,7 +26,8 @@ export const SalesTable = ({
 }: SalesTableProps) => {
     const openModal = useSaleModalStore((state) => state.openModal);
     const { deleteSale } = useDeleteSale();
-
+    const { resetSelectedSales, setSelectedSales, selectedSales } =
+        useSaleStore();
     const handleEdit = (sale: Sale) => {
         openModal('edit', sale);
     };
@@ -35,6 +38,42 @@ export const SalesTable = ({
 
     const columns: ColumnDef<Sale>[] = useMemo(
         () => [
+            {
+                id: 'select',
+                size: 50,
+                header: () => {
+                    const isAllSelected =
+                        selectedSales.length === sales.length &&
+                        sales.length > 0;
+
+                    return (
+                        <Checkbox
+                            className="border-black"
+                            checked={isAllSelected}
+                            onCheckedChange={(checked) => {
+                                setSelectedSales(
+                                    checked ? sales.map((sale) => sale._id) : []
+                                );
+                            }}
+                        />
+                    );
+                },
+                cell: ({ row }) => (
+                    <Checkbox
+                        className="border-black"
+                        checked={selectedSales.includes(row.original._id)}
+                        onCheckedChange={(checked) => {
+                            setSelectedSales((prev: string[]) =>
+                                checked
+                                    ? [...prev, row.original._id]
+                                    : prev.filter(
+                                          (id) => id !== row.original._id
+                                      )
+                            );
+                        }}
+                    />
+                ),
+            },
             {
                 header: 'Sale Date',
                 accessorKey: 'saleDate',
@@ -80,7 +119,7 @@ export const SalesTable = ({
                 ),
             },
         ],
-        []
+        [sales, selectedSales]
     );
 
     const table = useReactTable({
@@ -107,6 +146,7 @@ export const SalesTable = ({
 
             setPage(newPagination.pageIndex + 1);
             setPerPage(newPagination.pageSize);
+            resetSelectedSales();
         },
     });
 
@@ -120,7 +160,13 @@ export const SalesTable = ({
                                 {headerGroup.headers.map((header) => (
                                     <th
                                         key={header.id}
-                                        className="px-4 py-2 text-center h-16"
+                                        className={`px-4 py-2 border-b border-gray-300 ${
+                                            header.id === 'select'
+                                                ? 'w-[70px]'
+                                                : header.id === 'saleDate'
+                                                  ? 'w-[150px] text-center'
+                                                  : 'h-16'
+                                        }`}
                                     >
                                         {flexRender(
                                             header.column.columnDef.header,
@@ -182,6 +228,7 @@ export const SalesTable = ({
                             onChange={(e) => {
                                 setPerPage(Number(e.target.value));
                                 setPage(1);
+                                resetSelectedSales();
                             }}
                         >
                             {[10, 20, 50, 100].map((size) => (

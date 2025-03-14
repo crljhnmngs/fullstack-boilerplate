@@ -75,3 +75,17 @@ export const deleteSaleService = async (id: string) => {
         throw new Error('Failed to update sale');
     }
 };
+
+export const deleteMultipleSalesService = async (ids: string[]) => {
+    const existingSales = await Sale.find({ _id: { $in: ids } });
+
+    if (existingSales.length === 0) {
+        throw new Error('No matching sales found');
+    }
+
+    await Sale.deleteMany({ _id: { $in: ids } });
+
+    return {
+        message: `${existingSales.length} sales deleted successfully!`,
+    };
+};
