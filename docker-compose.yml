@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+    server:
+        build: ./server
+        container_name: server
+        ports:
+            - '8080:8080'
+        env_file:
+            - ./server/.env
+        volumes:
+            - ./server:/app
+            - /app/node_modules
+        depends_on:
+            mongo:
+                condition: service_healthy
+        restart: unless-stopped
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
+        environment:
+            NODE_ENV: production
+
+    client:
+        build: ./client
+        container_name: client
+        ports:
+            - '3000:80'
+        env_file:
+            - ./client/.env
+        depends_on:
+            - server
+        restart: unless-stopped
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
+        environment:
+            NODE_ENV: production
+
+    mongo:
+        image: mongo:latest
+        container_name: mongo
+        ports:
+            - '27017:27017'
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+        volumes:
+            - mongo-data:/data/db
+            - mongo-config:/data/configdb
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'mongosh',
+                    '-u',
+                    '${MONGO_USER}',
+                    '-p',
+                    '${MONGO_PASS}',
+                    '--eval',
+                    "db.adminCommand('ping')",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+        restart: unless-stopped
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
+
+volumes:
+    mongo-data:
+    mongo-config:

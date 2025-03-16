@@ -1,4 +1,4 @@
-import { User, FetchUsersParams, ApiResponse } from '../../store/user/types';
+import { User, FetchUsersParams } from '../../store/user/types';
 import { RANDOM_USER_API_URL } from '../../lib/const';
 import http from '../httpService';
 
@@ -7,7 +7,7 @@ export const getRandomUsers = async ({
     nationality = '',
 }: FetchUsersParams = {}): Promise<User[]> => {
     try {
-        const response = await http.get<ApiResponse>(RANDOM_USER_API_URL, {
+        const response = await http.get(RANDOM_USER_API_URL, {
             params: {
                 results,
                 nat: nationality,
