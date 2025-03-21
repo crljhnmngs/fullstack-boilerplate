@@ -165,7 +165,9 @@ export const SalesTable = ({
                                                 ? 'w-[70px]'
                                                 : header.id === 'saleDate'
                                                   ? 'w-[150px] text-center'
-                                                  : 'h-16'
+                                                  : header.id === 'actions'
+                                                    ? 'w-[90px]'
+                                                    : 'h-16'
                                         }`}
                                     >
                                         {flexRender(
