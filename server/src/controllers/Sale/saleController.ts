@@ -6,6 +6,7 @@ import {
     deleteSaleService,
     deleteMultipleSalesService,
 } from '../../services/Sale/saleService';
+import { saleSchema } from '../../utils/validation/Sale/saleValidation';
 
 export const getSales = async (req: Request, res: Response) => {
     try {
@@ -45,6 +46,14 @@ export const getSales = async (req: Request, res: Response) => {
 export const addSale = async (req: Request, res: Response) => {
     try {
         const saleData = req.body;
+
+        const validationResult = saleSchema.safeParse(saleData);
+
+        if (!validationResult.success) {
+            res.status(400).json({ error: validationResult.error.issues });
+            return;
+        }
+
         const newSale = await createSaleService(saleData);
 
         res.status(201).json({ data: newSale });
@@ -59,6 +68,14 @@ export const addSale = async (req: Request, res: Response) => {
 export const updateSale = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+
+        const validationResult = saleSchema.partial().safeParse(req.body);
+
+        if (!validationResult.success) {
+            res.status(400).json({ error: validationResult.error.issues });
+            return;
+        }
+
         const updatedSale = await updateSaleService(id, req.body);
 
         if (!updatedSale) {

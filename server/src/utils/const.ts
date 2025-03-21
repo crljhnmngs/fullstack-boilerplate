@@ -1,0 +1,1 @@
+export const EMAIL_EXIST_ERROR_CODE = 11000;

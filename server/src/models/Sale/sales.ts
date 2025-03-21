@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { ISale } from '../../utils/interface';
+import { ISale } from '../../utils/interface/sales';
 
 const SalesSchema = new Schema<ISale>({
     saleDate: { type: Date, default: Date.now, immutable: true },
