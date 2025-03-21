@@ -1,12 +1,13 @@
 import { z } from 'zod';
+import { PURCHASE_METHODS, GENDERS } from '../../../../shared/const';
 
 export const saleSchema = z.object({
     _id: z.string().optional(),
     storeLocation: z.string().min(1, 'Store location is required'),
-    purchaseMethod: z.enum(['Online', 'In store', 'Phone']),
+    purchaseMethod: z.enum(PURCHASE_METHODS),
     couponUsed: z.boolean(),
     customer: z.object({
-        gender: z.enum(['M', 'F']),
+        gender: z.enum(GENDERS),
         age: z
             .number({ invalid_type_error: 'Age must be a valid number' })
             .min(1, 'Age is required'),
