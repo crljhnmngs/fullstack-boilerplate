@@ -10,3 +10,6 @@ export const purchaseMethods = [
     { value: 'Phone', label: 'Phone' },
     { value: 'In store', label: 'In store' },
 ];
+
+export const PURCHASE_METHODS = ['Online', 'In store', 'Phone'] as const;
+export const GENDERS = ['M', 'F'] as const;

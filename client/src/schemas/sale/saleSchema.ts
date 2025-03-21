@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PURCHASE_METHODS, GENDERS } from '../../../../shared/const';
+import { PURCHASE_METHODS, GENDERS } from '../../lib/const';
 
 export const saleSchema = z.object({
     _id: z.string().optional(),

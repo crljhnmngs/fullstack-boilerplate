@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PURCHASE_METHODS, GENDERS } from '../../../../../shared/const';
+import { PURCHASE_METHODS, GENDERS } from '../../const';
 
 export const saleSchema = z.object({
     storeLocation: z.string().min(1, 'Store location is required'),
