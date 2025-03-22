@@ -6,7 +6,7 @@ import {
 import { registerUserService } from '../../services/User/userService';
 import { EMAIL_EXIST_ERROR_CODE } from '../../utils/const';
 
-export const registerdUser = async (req: Request, res: Response) => {
+export const registerUser = async (req: Request, res: Response) => {
     try {
         const RegisterUserSchema = UserSchema.merge(UserProfileSchema);
 

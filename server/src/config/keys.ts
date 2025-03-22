@@ -7,6 +7,7 @@ export const keys = {
         name: 'MERN Stack',
         env: process.env.ENVIRONMENT,
         sesSecret: process.env.SESSION_SECRET,
+        JWTSecret: process.env.JWT_SECRET,
         apiSecret: process.env.API_SECRET_KEY,
         clientUrl: process.env.CLIENT_URL,
     },
