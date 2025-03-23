@@ -17,7 +17,12 @@ export const registerUser = async (req: Request, res: Response) => {
             return;
         }
 
-        const newUser = await registerUserService(req.body);
+        const profileImage = req.file ? req.file.buffer : null;
+
+        const newUser = await registerUserService({
+            ...req.body,
+            profileImage,
+        });
 
         res.status(201).json({ data: newUser });
     } catch (error) {

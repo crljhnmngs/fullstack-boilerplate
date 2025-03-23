@@ -20,4 +20,9 @@ export const keys = {
         windowsMS: process.env.RATE_LIMIT_WINDOW_MS,
         maxRequest: process.env.RATE_LIMIT_MAX,
     },
+    cloudinary: {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
+    },
 };

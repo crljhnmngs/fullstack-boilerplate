@@ -3,8 +3,12 @@ import { User } from '../../models/User/users';
 import { Profile } from '../../models/Profile/profiles';
 import argon2 from 'argon2';
 import { EMAIL_EXIST_ERROR_CODE } from '../../utils/const';
+import { uploadSingleFile } from '../../utils/cloudinaryUploader';
+import type { Express } from 'express';
 
-export const registerUserService = async (userData: IUser & IUserProfile) => {
+export const registerUserService = async (
+    userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
+) => {
     try {
         const hashedPassword = await argon2.hash(userData.password, {
             type: argon2.argon2id,
@@ -19,12 +23,25 @@ export const registerUserService = async (userData: IUser & IUserProfile) => {
             password: hashedPassword,
         });
 
+        let profileImageUrl = '';
+        if (userData.profileImage) {
+            try {
+                profileImageUrl = await uploadSingleFile(
+                    userData.profileImage,
+                    'profile_images'
+                );
+            } catch (uploadError) {
+                console.log(uploadError);
+                throw { code: 500, message: 'Profile image upload failed' };
+            }
+        }
+
         const profile = new Profile({
             userId: newUser._id,
             address: userData.address,
             phone: userData.phone,
             birthdate: userData.birthdate,
-            profileImage: userData.profileImage,
+            profileImage: profileImageUrl,
         });
 
         await Promise.all([newUser.save(), profile.save()]);
