@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router';
-import { AppRouter } from './routes/Routes.tsx';
+import { AppRouter } from './infrastructure/routes.tsx';
 import { Toaster } from 'react-hot-toast';
-import { GlobalLoader } from './components/Loader/index.tsx';
+import { GlobalLoader } from '@/presentation/components/Loader';
 
 const queryClient = new QueryClient();
 

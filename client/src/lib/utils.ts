@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import axios from 'axios';
 
 /**
  * Utility function to merge class names using `clsx` and `twMerge`.
@@ -103,4 +104,31 @@ export const formatDate = (date: string, format?: number) => {
  */
 export const capitalizeFirstLetter = (str: string) => {
     return str[0].toUpperCase() + str.slice(1);
+};
+
+export const handleApiError = (error: unknown, defaultMessage: string) => {
+    if (axios.isAxiosError(error)) {
+        if (error.response) {
+            const { status, data } = error.response;
+            const apiError = data as { message?: string };
+
+            switch (status) {
+                case 400:
+                    return apiError.message || 'Invalid request.';
+                case 401:
+                    return 'Unauthorized. Please log in.';
+                case 403:
+                    return 'Forbidden. You do not have access.';
+                case 404:
+                    return 'Resource not found.';
+                case 500:
+                    return 'Server error. Try again later.';
+                default:
+                    return apiError.message || defaultMessage;
+            }
+        } else if (error.request) {
+            return 'Network error. Please check your connection.';
+        }
+    }
+    return defaultMessage;
 };
