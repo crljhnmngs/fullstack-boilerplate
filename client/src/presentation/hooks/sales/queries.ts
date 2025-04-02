@@ -45,13 +45,13 @@ export const useGetSales = () => {
         queryFn: async () => {
             setLoading(true);
             try {
-                return await SaleUseCases.getAllSales(
-                    pagination.currentPage,
-                    pagination.perPage,
+                return await SaleUseCases.getAllSales({
+                    page: pagination.currentPage,
+                    limit: pagination.perPage,
                     search,
-                    couponValue,
-                    purchaseValue
-                );
+                    couponUsed: couponValue,
+                    purchaseMethod: purchaseValue,
+                });
             } finally {
                 setLoading(false);
             }

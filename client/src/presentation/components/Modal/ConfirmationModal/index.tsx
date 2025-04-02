@@ -30,8 +30,13 @@ export const ConfirmationModal = ({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-                    <AlertDialogAction onClick={onConfirm}>
+                    <AlertDialogCancel className="cursor-pointer">
+                        {cancelText}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        onClick={onConfirm}
+                        className="cursor-pointer"
+                    >
                         {confirmText}
                     </AlertDialogAction>
                 </AlertDialogFooter>

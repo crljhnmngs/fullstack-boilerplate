@@ -1,20 +1,30 @@
+import { useState } from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 import { Button } from '../ui/button';
 import { ChevronsUpDown } from 'lucide-react';
-import { Command, CommandList, CommandGroup, CommandItem } from '../ui/command';
+import {
+    Command,
+    CommandList,
+    CommandGroup,
+    CommandItem,
+    CommandInput,
+    CommandEmpty,
+} from '../ui/command';
 import { DropdownProps } from '@/presentation/types';
 
 export const Dropdown = <T,>({
     data,
     value,
     setValue,
-    open,
-    setOpen,
     defaultText,
     contentWith,
     triggerHeight,
+    search,
+    searchPlaceholder,
+    searchEmptyText,
 }: DropdownProps<T>) => {
-    const handleCouponSelect = (value: T) => {
+    const [open, setOpen] = useState<boolean>(false);
+    const handleSelect = (value: T) => {
         setValue((prevValue) => {
             return prevValue === value ? undefined : value;
         });
@@ -46,15 +56,31 @@ export const Dropdown = <T,>({
                 style={{ width: contentWith || '200px' }}
             >
                 <Command>
+                    {search && (
+                        <CommandInput
+                            placeholder={
+                                searchPlaceholder
+                                    ? searchPlaceholder
+                                    : 'Search data'
+                            }
+                            className="h-9"
+                        />
+                    )}
+
                     <CommandList>
+                        {search && (
+                            <CommandEmpty>
+                                {searchEmptyText
+                                    ? searchEmptyText
+                                    : 'No data found.'}
+                            </CommandEmpty>
+                        )}
                         <CommandGroup>
                             {data.map((item) => (
                                 <CommandItem
                                     key={String(item.value)}
                                     value={String(item.label)}
-                                    onSelect={() =>
-                                        handleCouponSelect(item.value)
-                                    }
+                                    onSelect={() => handleSelect(item.value)}
                                     className="p-2"
                                 >
                                     {item.label}

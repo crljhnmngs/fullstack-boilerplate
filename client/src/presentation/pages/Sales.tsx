@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Header } from '@/presentation/components/Header';
 import {
     useGetSales,
@@ -6,7 +5,7 @@ import {
     useUpdateSale,
     useMultipleDeleteSale,
 } from '../hooks/sales';
-import { couponUsed, purchaseMethods } from '../../lib/const';
+import { couponUsed, purchaseMethodOptions } from '../../lib/const';
 import { SaleFormData } from '@/presentation/validation/saleValidation';
 import { useSaleModalStore } from '@/application/store/modalStore';
 import { FaTrash } from 'react-icons/fa';
@@ -34,8 +33,6 @@ export const Sales = () => {
 
     const openModal = useSaleModalStore((state) => state.openModal);
     const mode = useSaleModalStore((state) => state.mode);
-    const [couponOpen, setCouponOpen] = useState<boolean>(false);
-    const [purchaseOpen, setPurchaseOpen] = useState<boolean>(false);
     const { addSale } = useAddSale();
     const { updateSale } = useUpdateSale();
     const { deleteMultipleSale } = useMultipleDeleteSale();
@@ -67,19 +64,15 @@ export const Sales = () => {
                                     setCouponValue(value);
                                     resetSelectedSales();
                                 }}
-                                open={couponOpen}
-                                setOpen={setCouponOpen}
                                 defaultText="Select Coupon Used..."
                             />
                             <Dropdown
-                                data={purchaseMethods}
+                                data={purchaseMethodOptions}
                                 value={purchaseValue}
                                 setValue={(value) => {
                                     setPurchaseValue(value);
                                     resetSelectedSales();
                                 }}
-                                open={purchaseOpen}
-                                setOpen={setPurchaseOpen}
                                 defaultText="Select Purchase Method..."
                                 contentWith="230px"
                             />

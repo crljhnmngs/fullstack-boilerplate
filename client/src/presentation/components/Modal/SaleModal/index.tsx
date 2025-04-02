@@ -15,10 +15,13 @@ import {
     DialogTitle,
 } from '../../ui/dialog';
 import { Button } from '../../ui/button';
-import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Checkbox } from '../../ui/checkbox';
-import { Item } from '@/domain/entities/sale';
+import { Customer, Item, Sale } from '@/domain/entities/sale';
+import { FormInput } from '../../FormInput';
+import { FormDropdown } from '../../FormDropdown';
+import { genderOptions, purchaseMethodOptions } from '@/lib/const';
+import { FaTimes } from 'react-icons/fa';
 
 export const SaleModal = ({
     onSubmit,
@@ -34,6 +37,8 @@ export const SaleModal = ({
         control,
         formState: { errors, isDirty },
         setError,
+        setValue,
+        watch,
     } = useForm<SaleFormData>({
         resolver: zodResolver(saleValidation),
         defaultValues: {
@@ -84,6 +89,9 @@ export const SaleModal = ({
         }
     }, [mode, initialData, reset]);
 
+    const selectedPurchaseMethod = watch('purchaseMethod');
+    const selectedGender = watch('customer.gender');
+
     const handleFormSubmit = (data: SaleFormData) => {
         if (data.items.length === 0) {
             setError('items', {
@@ -98,7 +106,7 @@ export const SaleModal = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
-            <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[660px] max-h-[80vh] overflow-y-auto [&>button]:hidden">
                 <DialogHeader>
                     <DialogTitle>
                         {mode === 'add' ? 'Add Sale' : 'Edit Sale'}
@@ -108,33 +116,44 @@ export const SaleModal = ({
                             ? 'Fill out the details to add a new sale.'
                             : 'Edit the sale details and save changes.'}
                     </DialogDescription>
+                    <button
+                        onClick={() => {
+                            reset();
+                            closeModal();
+                        }}
+                        className="absolute top-4 right-3 text-lg cursor-pointer"
+                    >
+                        <FaTimes className="size-5 text-gray-600" />
+                    </button>
                 </DialogHeader>
                 <form
                     onSubmit={handleSubmit(handleFormSubmit)}
                     className="grid gap-4"
                 >
-                    <Label>Store Location</Label>
-                    <Input {...register('storeLocation')} />
-                    {errors.storeLocation && (
-                        <p className="text-red-500">
-                            {errors.storeLocation.message}
-                        </p>
-                    )}
+                    <FormInput
+                        name="storeLocation"
+                        type="text"
+                        label="Store Location"
+                        register={register}
+                        error={errors.storeLocation?.message}
+                    />
 
-                    <Label>Purchase Method</Label>
-                    <select
-                        {...register('purchaseMethod')}
-                        className="border p-2"
-                    >
-                        <option value="Online">Online</option>
-                        <option value="In store">In store</option>
-                        <option value="Phone">Phone</option>
-                    </select>
-                    {errors.purchaseMethod && (
-                        <p className="text-red-500">
-                            {errors.purchaseMethod.message}
-                        </p>
-                    )}
+                    <FormDropdown
+                        data={purchaseMethodOptions}
+                        value={selectedPurchaseMethod}
+                        label="Purchase Method"
+                        setValue={(value) => {
+                            setValue(
+                                'purchaseMethod',
+                                value as Pick<
+                                    Sale,
+                                    'purchaseMethod'
+                                >['purchaseMethod'],
+                                { shouldDirty: true }
+                            );
+                        }}
+                        error={errors?.purchaseMethod?.message}
+                    />
 
                     <Label>
                         <Controller
@@ -142,6 +161,7 @@ export const SaleModal = ({
                             control={control}
                             render={({ field }) => (
                                 <Checkbox
+                                    className="size-5"
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
                                 />
@@ -153,48 +173,45 @@ export const SaleModal = ({
                     <div className="border p-4 rounded flex flex-col gap-2">
                         <h3 className="font-bold">Customer Details</h3>
 
-                        <Label>Gender</Label>
-                        <select
-                            {...register('customer.gender')}
-                            className="border p-2 w-32"
-                        >
-                            <option value="M">Male</option>
-                            <option value="F">Female</option>
-                        </select>
-
-                        <Label>Age</Label>
-                        <Input
-                            type="number"
-                            {...register('customer.age', {
-                                valueAsNumber: true,
-                            })}
+                        <FormDropdown
+                            data={genderOptions}
+                            value={selectedGender}
+                            label="Gender"
+                            setValue={(value) => {
+                                setValue(
+                                    'customer.gender',
+                                    value as Pick<Customer, 'gender'>['gender'],
+                                    { shouldDirty: true }
+                                );
+                            }}
+                            error={errors?.purchaseMethod?.message}
                         />
-                        {errors.customer?.age && (
-                            <p className="text-red-500">
-                                {errors.customer.age.message}
-                            </p>
-                        )}
 
-                        <Label>Email</Label>
-                        <Input type="email" {...register('customer.email')} />
-                        {errors.customer?.email && (
-                            <p className="text-red-500">
-                                {errors.customer.email.message}
-                            </p>
-                        )}
-
-                        <Label>Satisfaction (1-5)</Label>
-                        <Input
+                        <FormInput
+                            name={`customer.age`}
                             type="number"
-                            {...register('customer.satisfaction', {
-                                valueAsNumber: true,
-                            })}
+                            label="Age"
+                            register={register}
+                            error={errors.customer?.age?.message}
+                            rules={{ valueAsNumber: true }}
                         />
-                        {errors.customer?.satisfaction && (
-                            <p className="text-red-500">
-                                {errors.customer.satisfaction.message}
-                            </p>
-                        )}
+
+                        <FormInput
+                            name={`customer.email`}
+                            type="email"
+                            label="Email"
+                            register={register}
+                            error={errors.customer?.email?.message}
+                        />
+
+                        <FormInput
+                            name={`customer.satisfaction`}
+                            type="number"
+                            label="Satisfaction (1-5)"
+                            register={register}
+                            error={errors.customer?.satisfaction?.message}
+                            rules={{ valueAsNumber: true }}
+                        />
                     </div>
                     <div className="border p-4 rounded">
                         <h3 className="font-bold">Items</h3>
@@ -205,67 +222,52 @@ export const SaleModal = ({
                             </p>
                         )}
 
-                        <div className="flex flex-col gap-2 mb-3">
+                        <div className="flex flex-col gap-2 mb-3 ">
                             {fields.map((item, index) => (
-                                <div key={item.id} className="flex gap-2">
-                                    <div className="flex flex-col">
-                                        <Input
-                                            {...register(`items.${index}.name`)}
-                                            placeholder="Item Name"
-                                        />
-                                        {errors.items?.[index]?.name && (
-                                            <p className="text-red-500">
-                                                {
-                                                    errors.items[index].name
-                                                        ?.message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
+                                <div
+                                    key={item.id}
+                                    className="flex gap-2 items-center"
+                                >
+                                    <FormInput
+                                        name={`items.${index}.name`}
+                                        type="text"
+                                        placeholder="Item Name"
+                                        register={register}
+                                        error={
+                                            errors.items?.[index]?.name?.message
+                                        }
+                                    />
 
-                                    <div className="flex flex-col">
-                                        <Input
-                                            type="number"
-                                            step="0.01"
-                                            {...register(
-                                                `items.${index}.price`,
-                                                { valueAsNumber: true }
-                                            )}
-                                            placeholder="Price"
-                                        />
-                                        {errors.items?.[index]?.price && (
-                                            <p className="text-red-500">
-                                                {
-                                                    errors.items[index].price
-                                                        ?.message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
+                                    <FormInput
+                                        name={`items.${index}.price`}
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="Price"
+                                        register={register}
+                                        error={
+                                            errors.items?.[index]?.price
+                                                ?.message
+                                        }
+                                        rules={{ valueAsNumber: true }}
+                                    />
 
-                                    <div className="flex flex-col">
-                                        <Input
-                                            type="number"
-                                            {...register(
-                                                `items.${index}.quantity`,
-                                                { valueAsNumber: true }
-                                            )}
-                                            placeholder="Quantity"
-                                        />
-                                        {errors.items?.[index]?.quantity && (
-                                            <p className="text-red-500">
-                                                {
-                                                    errors.items[index].quantity
-                                                        ?.message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
+                                    <FormInput
+                                        name={`items.${index}.quantity`}
+                                        type="number"
+                                        placeholder="Quantity"
+                                        register={register}
+                                        error={
+                                            errors.items?.[index]?.quantity
+                                                ?.message
+                                        }
+                                        rules={{ valueAsNumber: true }}
+                                    />
 
                                     <Button
                                         type="button"
                                         onClick={() => remove(index)}
                                         variant="destructive"
+                                        className="cursor-pointer"
                                     >
                                         X
                                     </Button>
@@ -275,7 +277,7 @@ export const SaleModal = ({
 
                         <Button
                             type="button"
-                            className="pt-2"
+                            className="pt-2 cursor-pointer"
                             onClick={() =>
                                 append({
                                     name: '',
@@ -292,12 +294,20 @@ export const SaleModal = ({
                     <DialogFooter>
                         <Button
                             type="button"
-                            onClick={closeModal}
+                            onClick={() => {
+                                reset();
+                                closeModal();
+                            }}
                             variant="outline"
+                            className="cursor-pointer"
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={!isDirty}>
+                        <Button
+                            type="submit"
+                            disabled={!isDirty}
+                            className="cursor-pointer"
+                        >
                             {mode === 'add' ? 'Add Sale' : 'Save Changes'}
                         </Button>
                     </DialogFooter>

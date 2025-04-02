@@ -11,13 +11,13 @@ export const saleValidation = z.object({
         age: z
             .number({ invalid_type_error: 'Age must be a valid number' })
             .min(1, 'Age is required'),
-        email: z.string().email('Invalid email'),
+        email: z.string().min(1, 'Email is required').email('Invalid email'),
         satisfaction: z
             .number({
                 invalid_type_error: 'Satisfaction must be a valid number',
             })
-            .min(1)
-            .max(5, 'Satisfaction must be between 1 and 5'),
+            .min(1, { message: 'Satisfaction must be at least 1' })
+            .max(5, { message: 'Satisfaction must be at most 5' }),
     }),
     items: z.array(
         z.object({

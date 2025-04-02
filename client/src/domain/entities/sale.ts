@@ -6,8 +6,8 @@ export type Item = {
     quantity: number;
 };
 
-type Customer = {
-    gender: 'M' | 'F';
+export type Customer = {
+    gender: 'M' | 'F' | 'Others';
     age: number;
     email: string;
     satisfaction: number;

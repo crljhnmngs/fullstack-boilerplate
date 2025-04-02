@@ -9,8 +9,3 @@ export type PaginatedResponse<T> = {
     data: T[];
     pagination: Pagination;
 };
-
-export type DropdownPropsData<T> = {
-    value: T;
-    label: string;
-};

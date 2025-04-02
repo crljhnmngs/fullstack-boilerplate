@@ -1,5 +1,6 @@
 import { Sale } from '@/domain/entities/sale';
-import { DropdownPropsData, Pagination } from '@/domain/types/global';
+import { Pagination } from '@/domain/types/global';
+import { UseFormRegister, RegisterOptions, Path } from 'react-hook-form';
 
 export type SalesTableProps = {
     sales: Sale[];
@@ -25,15 +26,21 @@ export type SeoProps = {
     url?: string;
 };
 
+type DropdownPropsData<T> = {
+    value: T;
+    label: string;
+};
+
 export type DropdownProps<T> = {
     data: DropdownPropsData<T>[];
     value: T | undefined;
     setValue: React.Dispatch<React.SetStateAction<T | undefined>>;
-    open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     defaultText: string;
     contentWith?: string;
     triggerHeight?: string;
+    search?: boolean;
+    searchPlaceholder?: string;
+    searchEmptyText?: string;
 };
 
 export type ConfirmationModalProps = {
@@ -44,3 +51,32 @@ export type ConfirmationModalProps = {
     onConfirm: () => void;
     triggerText: string | React.ReactNode;
 };
+
+export type FormInputProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = {
+    name: Path<T>;
+    type?: 'text' | 'email' | 'password' | 'number' | 'date';
+    placeholder?: string;
+    label?: string;
+    className?: string;
+    register: UseFormRegister<T>;
+    rules?: RegisterOptions<T, Path<T>>;
+    error?: string;
+} & Record<string, unknown>;
+
+export interface FormDropdownProps<T> {
+    data: DropdownPropsData<T>[];
+    value?: T;
+    setValue: (
+        value: T | undefined | ((prevValue: T | undefined) => T | undefined)
+    ) => void;
+    defaultText?: string;
+    contentWith?: string;
+    triggerHeight?: string;
+    search?: boolean;
+    searchPlaceholder?: string;
+    searchEmptyText?: string;
+    error?: string;
+    label?: string;
+}
