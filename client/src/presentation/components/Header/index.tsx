@@ -36,6 +36,9 @@ export const Header = () => {
                     <NavLink to="/sales" end>
                         Sales
                     </NavLink>
+                    <NavLink to="/login" end>
+                        Login
+                    </NavLink>
                 </nav>
                 <div className="h-full flex items-center gap-5">
                     {isLoading ? (

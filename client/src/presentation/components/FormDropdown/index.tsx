@@ -27,6 +27,7 @@ export const FormDropdown = <T,>({
     searchEmptyText,
     error,
     label,
+    disable,
 }: FormDropdownProps<T>) => {
     const [open, setOpen] = useState<boolean>(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -83,6 +84,7 @@ export const FormDropdown = <T,>({
                         role="combobox"
                         aria-expanded={open}
                         className={cn('justify-between', contentWith)}
+                        disabled={disable}
                     >
                         {value !== undefined
                             ? data.find((item) => item.value === value)?.label

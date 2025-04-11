@@ -26,7 +26,7 @@ export type SeoProps = {
     url?: string;
 };
 
-type DropdownPropsData<T> = {
+export type DropdownPropsData<T> = {
     value: T;
     label: string;
 };
@@ -56,7 +56,7 @@ export type FormInputProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = {
     name: Path<T>;
-    type?: 'text' | 'email' | 'password' | 'number' | 'date';
+    type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'file';
     placeholder?: string;
     label?: string;
     className?: string;
@@ -79,4 +79,5 @@ export interface FormDropdownProps<T> {
     searchEmptyText?: string;
     error?: string;
     label?: string;
+    disable?: boolean;
 }

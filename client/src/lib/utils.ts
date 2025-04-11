@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import axios from 'axios';
+import { RegisterFormData } from '@/presentation/validation/registerValidation';
 
 /**
  * Utility function to merge class names using `clsx` and `twMerge`.
@@ -131,4 +132,18 @@ export const handleApiError = (error: unknown, defaultMessage: string) => {
         }
     }
     return defaultMessage;
+};
+
+export const transformRegisterData = (data: RegisterFormData) => {
+    return {
+        name: `${data.firstname} ${data.middlename ? data.middlename + ' ' : ''}${data.lastname}`.trim(),
+        email: data.email,
+        password: data.password,
+        address: [data.city, data.state, data.country]
+            .filter(Boolean)
+            .join(', '),
+        phone: data.phone.toString(),
+        birthdate: new Date(data.birthdate).toISOString(),
+        profileImage: data.profileImage,
+    };
 };
