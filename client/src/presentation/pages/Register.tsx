@@ -14,6 +14,7 @@ import locationsData from '../../presentation/assets/data/world-cities.json';
 import { FormDropdown } from '../components/FormDropdown';
 import { DropdownPropsData } from '../types';
 import { transformRegisterData } from '@/lib/utils';
+import { useRegisterUser } from '../hooks/user';
 
 export const Register = () => {
     const {
@@ -37,6 +38,7 @@ export const Register = () => {
     });
 
     const locations = useMemo(() => locationsData, []);
+    const { registerUser } = useRegisterUser();
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [statesOrProvinces, setStatesOrProvinces] = useState<
@@ -142,8 +144,7 @@ export const Register = () => {
             return;
         }
 
-        //TODO: Call User register API
-        console.log(transformRegisterData(data));
+        registerUser(transformRegisterData(data));
     };
 
     return (
@@ -170,7 +171,7 @@ export const Register = () => {
                             <FormInput
                                 name="middlename"
                                 type="text"
-                                placeholder="Middle Name"
+                                placeholder="Middle Name(Optional)"
                                 register={register}
                                 error={errors?.middlename?.message}
                                 className="h-15"
@@ -238,12 +239,11 @@ export const Register = () => {
                         <div className="flex gap-2">
                             <FormInput
                                 name="phone"
-                                type="number"
+                                type="text"
                                 placeholder="Phone number"
                                 register={register}
                                 error={errors?.phone?.message}
                                 className="h-15"
-                                rules={{ valueAsNumber: true }}
                             />
                             <Controller
                                 control={control}
@@ -296,7 +296,7 @@ export const Register = () => {
                                 register={register}
                                 className="h-15 pt-4"
                                 accept="image/*"
-                                label="Profile Image"
+                                label="Profile Image(Optional)"
                                 error={errors?.profileImage?.message as string}
                             />
                             <div className="mt-4">

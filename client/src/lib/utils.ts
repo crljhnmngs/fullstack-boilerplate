@@ -2,6 +2,8 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import axios from 'axios';
 import { RegisterFormData } from '@/presentation/validation/registerValidation';
+import { UserWithoutId } from '@/domain/entities/user';
+import { ProfileWithoutUserId } from '@/domain/entities/profile';
 
 /**
  * Utility function to merge class names using `clsx` and `twMerge`.
@@ -134,7 +136,9 @@ export const handleApiError = (error: unknown, defaultMessage: string) => {
     return defaultMessage;
 };
 
-export const transformRegisterData = (data: RegisterFormData) => {
+export const transformRegisterData = (
+    data: RegisterFormData
+): UserWithoutId & ProfileWithoutUserId => {
     return {
         name: `${data.firstname} ${data.middlename ? data.middlename + ' ' : ''}${data.lastname}`.trim(),
         email: data.email,
