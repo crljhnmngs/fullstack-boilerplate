@@ -28,7 +28,7 @@ export const registerUser = async (req: Request, res: Response) => {
     } catch (error) {
         // TODO: Implement a proper logging system (logs/errors.log)
         res.status(error?.code === EMAIL_EXIST_ERROR_CODE ? 400 : 500).json({
-            error: error?.message || 'Failed to register user',
+            message: error?.message || 'Failed to register user',
         });
     }
 };
