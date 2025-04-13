@@ -5,10 +5,13 @@ import argon2 from 'argon2';
 import { EMAIL_EXIST_ERROR_CODE } from '../../utils/const';
 import { uploadSingleFile } from '../../utils/cloudinaryUploader';
 import type { Express } from 'express';
+import mongoose from 'mongoose';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
 ) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         const hashedPassword = await argon2.hash(userData.password, {
             type: argon2.argon2id,
@@ -44,10 +47,17 @@ export const registerUserService = async (
             profileImage: profileImageUrl,
         });
 
-        await Promise.all([newUser.save(), profile.save()]);
+        await newUser.save({ session });
+        await profile.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
 
         return newUser;
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         let tempError;
         if (error?.code === EMAIL_EXIST_ERROR_CODE) {
             tempError = {
