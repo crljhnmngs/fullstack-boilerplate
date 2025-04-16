@@ -15,6 +15,7 @@ import { FormDropdown } from '../components/FormDropdown';
 import { DropdownPropsData } from '../types';
 import { transformRegisterData } from '@/lib/utils';
 import { useRegisterUser } from '../hooks/user';
+import { useRegisterErrorStore } from '@/application/store/errorStore';
 
 export const Register = () => {
     const {
@@ -38,7 +39,8 @@ export const Register = () => {
     });
 
     const locations = useMemo(() => locationsData, []);
-    const { registerUser } = useRegisterUser();
+    const { registerUser, isError } = useRegisterUser();
+    const { apiError } = useRegisterErrorStore();
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [statesOrProvinces, setStatesOrProvinces] = useState<
@@ -146,6 +148,27 @@ export const Register = () => {
 
         registerUser(transformRegisterData(data));
     };
+
+    useEffect(() => {
+        if (isError && apiError) {
+            if (
+                'fieldErrors' in apiError &&
+                Array.isArray(apiError.fieldErrors)
+            ) {
+                apiError.fieldErrors.forEach((err) => {
+                    setError(err.field, {
+                        type: 'manual',
+                        message: err.message,
+                    });
+                });
+            } else if ('field' in apiError && 'message' in apiError) {
+                setError(apiError.field as keyof RegisterFormData, {
+                    type: 'manual',
+                    message: apiError.message,
+                });
+            }
+        }
+    }, [isError, apiError]);
 
     return (
         <div className="h-screen w-screen overflow-x-hidden">
