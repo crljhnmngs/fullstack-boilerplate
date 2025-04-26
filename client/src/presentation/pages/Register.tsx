@@ -40,7 +40,7 @@ export const Register = () => {
 
     const locations = useMemo(() => locationsData, []);
     const { registerUser, isError } = useRegisterUser();
-    const { apiError } = useRegisterErrorStore();
+    const { apiError, clearApiError } = useRegisterErrorStore();
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [statesOrProvinces, setStatesOrProvinces] = useState<
@@ -167,6 +167,7 @@ export const Register = () => {
                     message: apiError.message,
                 });
             }
+            clearApiError();
         }
     }, [isError, apiError]);
 
