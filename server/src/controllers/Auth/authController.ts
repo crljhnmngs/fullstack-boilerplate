@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { loginSchema } from '../../utils/validation/Auth/authValidation';
-import { loginUserService } from '../../services/Auth/authService';
+import {
+    loginUserService,
+    refreshAccessTokenService,
+} from '../../services/Auth/authService';
 import { keys } from '../../config/keys';
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -53,6 +56,34 @@ export const loginUser = async (req: Request, res: Response) => {
 
         res.status(200).json({
             message: result.message,
+            user: result.user,
+            accessToken: result.accessToken,
+        });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.log(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const handleRefreshToken = async (req: Request, res: Response) => {
+    try {
+        const refreshToken = req.cookies?.refreshToken;
+
+        if (!refreshToken) {
+            res.status(401).json({ message: 'Refresh token missing' });
+            return;
+        }
+
+        const result = await refreshAccessTokenService(refreshToken);
+
+        if (result.error) {
+            res.status(result.status!).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({
             user: result.user,
             accessToken: result.accessToken,
         });

@@ -7,6 +7,7 @@ import session from 'express-session';
 import { keys } from './config/keys';
 import apiSecretMiddleware from './middlewares/apiSecretMiddleware';
 import limiter from './middlewares/limiter';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(
         },
     })
 );
+app.use(cookieParser());
 
 connectDB()
     .then(() => console.log('Database connected successfully'))
