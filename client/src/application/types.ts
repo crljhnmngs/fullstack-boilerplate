@@ -45,3 +45,16 @@ export type Counter = {
     decrement: () => void;
     reset: () => void;
 };
+
+export type UserData = {
+    id: string;
+    name: string;
+    email: string;
+};
+
+export type AuthState = {
+    user: UserData;
+    accessToken: string;
+    setAuth: (user: UserData, accessToken: string) => void;
+    clearAuth: () => void;
+};

@@ -8,14 +8,39 @@ export const loginUser = async (req: Request, res: Response) => {
         const validationResult = loginSchema.safeParse(req.body);
 
         if (!validationResult.success) {
-            res.status(400).json({ error: validationResult.error.issues });
+            const formattedErrors = validationResult.error.issues.map(
+                (issue) => ({
+                    field: issue.path[0],
+                    message: issue.message,
+                })
+            );
+
+            res.status(400).json({ fieldErrors: formattedErrors });
             return;
         }
 
         const result = await loginUserService(req.body);
 
         if (result.error) {
-            res.status(result.status).json({ error: result.error });
+            if (result.status === 400) {
+                const formattedErrors = [
+                    {
+                        field: 'email',
+                        message: result.error,
+                    },
+                    {
+                        field: 'password',
+                        message: result.error,
+                    },
+                ];
+
+                res.status(result.status).json({
+                    fieldErrors: formattedErrors,
+                });
+            } else {
+                res.status(result.status).json({ message: result.error });
+            }
+
             return;
         }
 
@@ -35,6 +60,6 @@ export const loginUser = async (req: Request, res: Response) => {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details
         console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

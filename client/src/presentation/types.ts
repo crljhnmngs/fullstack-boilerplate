@@ -81,3 +81,8 @@ export interface FormDropdownProps<T> {
     label?: string;
     disable?: boolean;
 }
+
+export type LoginParams = {
+    email: string;
+    password: string;
+};

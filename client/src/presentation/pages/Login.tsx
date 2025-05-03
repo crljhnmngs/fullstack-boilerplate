@@ -5,12 +5,17 @@ import { LoginFormData, loginValidation } from '../validation/loginValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '../components/ui/button';
 import { NavLink } from 'react-router';
+import { useLoginUser } from '../hooks/auth';
+import { LoginParams } from '../types';
+import { useLoginErrorStore } from '@/application/store/errorStore';
+import { useEffect } from 'react';
 
 export const Login = () => {
     const {
         register,
         handleSubmit,
         formState: { errors },
+        setError,
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginValidation),
         defaultValues: {
@@ -19,9 +24,34 @@ export const Login = () => {
         },
     });
 
-    const handleLogin = () => {
-        //Cal auth API here
+    const { login, isError } = useLoginUser();
+    const { apiError, clearApiError } = useLoginErrorStore();
+
+    const handleLogin = (data: LoginParams) => {
+        login(data);
     };
+
+    useEffect(() => {
+        if (isError && apiError) {
+            if (
+                'fieldErrors' in apiError &&
+                Array.isArray(apiError.fieldErrors)
+            ) {
+                apiError.fieldErrors.forEach((err) => {
+                    setError(err.field, {
+                        type: 'manual',
+                        message: err.message,
+                    });
+                });
+            } else if ('field' in apiError && 'message' in apiError) {
+                setError(apiError.field as keyof LoginFormData, {
+                    type: 'manual',
+                    message: apiError.message,
+                });
+            }
+            clearApiError();
+        }
+    }, [isError, apiError]);
 
     return (
         <div className="h-screen w-screen overflow-hidden">

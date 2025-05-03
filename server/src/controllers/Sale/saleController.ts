@@ -39,7 +39,7 @@ export const getSales = async (req: Request, res: Response) => {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details
         console.log(error);
-        res.status(400).json({ error: 'Failed to fetch sales' });
+        res.status(400).json({ message: 'Failed to fetch sales' });
     }
 };
 
@@ -50,7 +50,7 @@ export const addSale = async (req: Request, res: Response) => {
         const validationResult = saleSchema.safeParse(saleData);
 
         if (!validationResult.success) {
-            res.status(400).json({ error: validationResult.error.issues });
+            res.status(400).json({ message: validationResult.error.issues });
             return;
         }
 
@@ -61,7 +61,7 @@ export const addSale = async (req: Request, res: Response) => {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details
         console.log(error);
-        res.status(400).json({ error: 'Failed to add sale' });
+        res.status(400).json({ message: 'Failed to add sale' });
     }
 };
 
@@ -72,14 +72,14 @@ export const updateSale = async (req: Request, res: Response) => {
         const validationResult = saleSchema.partial().safeParse(req.body);
 
         if (!validationResult.success) {
-            res.status(400).json({ error: validationResult.error.issues });
+            res.status(400).json({ message: validationResult.error.issues });
             return;
         }
 
         const updatedSale = await updateSaleService(id, req.body);
 
         if (!updatedSale) {
-            res.status(404).json({ error: 'Sale not found' });
+            res.status(404).json({ message: 'Sale not found' });
             return;
         }
 
@@ -88,7 +88,7 @@ export const updateSale = async (req: Request, res: Response) => {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details
         console.log(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -98,7 +98,7 @@ export const deleteSale = async (req: Request, res: Response) => {
         const deletedSale = await deleteSaleService(id);
 
         if (!deletedSale) {
-            res.status(404).json({ error: 'Sale not found' });
+            res.status(404).json({ message: 'Sale not found' });
             return;
         }
 
@@ -107,7 +107,7 @@ export const deleteSale = async (req: Request, res: Response) => {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details
         console.log(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -129,10 +129,10 @@ export const deleteMultipleSales = async (req: Request, res: Response) => {
         console.error(error);
 
         if (error.message === 'No matching sales found') {
-            res.status(404).json({ error: error.message });
+            res.status(404).json({ message: error.message });
             return;
         }
 
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
