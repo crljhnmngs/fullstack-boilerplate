@@ -17,10 +17,7 @@ export const AppRouter = () => {
     useEffect(() => {
         const shouldRefresh =
             isAuthenticated() &&
-            (user.id === '' ||
-                user.email === '' ||
-                user.name === '' ||
-                accessToken === '');
+            (user.email === '' || user.name === '' || accessToken === '');
 
         if (shouldRefresh) {
             refresh();

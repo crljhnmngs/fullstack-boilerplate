@@ -3,11 +3,11 @@ import { AuthState } from '../types';
 import { clearAuth } from '@/infrastructure/authStorage';
 
 export const useAuthStore = create<AuthState>((set) => ({
-    user: { id: '', name: '', email: '' },
+    user: { name: '', email: '' },
     accessToken: '',
     setAuth: (user, accessToken) => set({ user, accessToken }),
     clearAuth: () => {
         clearAuth();
-        set({ user: { id: '', name: '', email: '' }, accessToken: '' });
+        set({ user: { name: '', email: '' }, accessToken: '' });
     },
 }));

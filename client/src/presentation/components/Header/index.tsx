@@ -38,7 +38,7 @@ export const Header = () => {
         } else {
             setName(randomUser?.name?.first + ' ' + randomUser?.name?.last);
         }
-    }, []);
+    }, [randomUser, user]);
 
     return (
         <header className="w-full h-[10%] bg-[#2A57A5] flex justify-between items-center px-10">

@@ -28,7 +28,6 @@ export const loginUserService = async (loginData: ILoginData) => {
         return {
             message: 'Login successful',
             user: {
-                id: user._id,
                 name: user.name,
                 email: user.email,
             },
@@ -59,7 +58,6 @@ export const refreshAccessTokenService = async (refreshToken: string) => {
         return {
             accessToken,
             user: {
-                id: user._id,
                 name: user.name,
                 email: user.email,
             },

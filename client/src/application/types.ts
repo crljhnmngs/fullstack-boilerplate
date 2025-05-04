@@ -47,7 +47,6 @@ export type Counter = {
 };
 
 export type UserData = {
-    id: string;
     name: string;
     email: string;
 };
