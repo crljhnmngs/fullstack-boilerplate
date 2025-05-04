@@ -7,6 +7,6 @@ import {
 const authRouter = Router();
 
 authRouter.post('/login', loginUser);
-authRouter.get('/refresh', handleRefreshToken);
+authRouter.post('/refresh', handleRefreshToken);
 
 export default authRouter;
