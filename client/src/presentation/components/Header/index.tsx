@@ -1,18 +1,23 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import logo from '@/presentation/assets/icons/logo.png';
 import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router';
 import { useRandomUserStore } from '@/application/store/randomUserStore';
 import { RandomUserUseCases } from '@/application/useCases/randomUserUseCase';
+import { isAuthenticated } from '@/infrastructure/authStorage';
+import { useAuthStore } from '@/application/store/authStore';
 
 export const Header = () => {
     const setUsers = useRandomUserStore((state) => state.setUsers);
     const users = useRandomUserStore((state) => state.users);
+    const [name, setName] = useState<string>();
+    const { clearAuth, user } = useAuthStore();
 
     const { data, isLoading } = useQuery({
         queryKey: ['randomUser'],
         queryFn: () => RandomUserUseCases.getRandomUser({ results: 1 }),
         refetchOnWindowFocus: false,
+        enabled: !isAuthenticated(),
     });
 
     useEffect(() => {
@@ -21,7 +26,19 @@ export const Header = () => {
         }
     }, [data, setUsers]);
 
-    const user = useMemo(() => users[0], [users]);
+    const randomUser = useMemo(() => users[0], [users]);
+
+    const handleLogout = () => {
+        clearAuth();
+    };
+
+    useEffect(() => {
+        if (isAuthenticated()) {
+            setName(user.name);
+        } else {
+            setName(randomUser?.name?.first + ' ' + randomUser?.name?.last);
+        }
+    }, []);
 
     return (
         <header className="w-full h-[10%] bg-[#2A57A5] flex justify-between items-center px-10">
@@ -36,9 +53,15 @@ export const Header = () => {
                     <NavLink to="/sales" end>
                         Sales
                     </NavLink>
-                    <NavLink to="/login" end>
-                        Login
-                    </NavLink>
+                    {isAuthenticated() ? (
+                        <NavLink to="/login" onClick={handleLogout} end>
+                            Logout
+                        </NavLink>
+                    ) : (
+                        <NavLink to="/login" end>
+                            Login
+                        </NavLink>
+                    )}
                 </nav>
                 <div className="h-full flex items-center gap-5">
                     {isLoading ? (
@@ -48,12 +71,12 @@ export const Header = () => {
                     ) : (
                         <>
                             <p className="text-customColor font-medium text-lg">
-                                {user?.name.first} {user?.name.last}
+                                {name}
                             </p>
                             <img
-                                src={user?.picture.thumbnail}
+                                src={randomUser?.picture.thumbnail}
                                 className="rounded-full w-10 h-10 object-cover"
-                                alt={`${user?.name.first} ${user?.name.last}`}
+                                alt="User Image"
                             />
                         </>
                     )}

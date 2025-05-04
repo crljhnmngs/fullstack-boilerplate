@@ -7,18 +7,26 @@ import { Register } from '@/presentation/pages/Register';
 import { isAuthenticated } from './authStorage';
 import { Dashboard } from '@/presentation/pages/Dashboard';
 import { useAuthStore } from '@/application/store/authStore';
+import { useRefreshToken } from '@/presentation/hooks/auth';
+import { useEffect } from 'react';
 
 export const AppRouter = () => {
     const { user, accessToken } = useAuthStore();
-    if (
-        isAuthenticated() &&
-        (user.id === '' ||
-            user.email === '' ||
-            user.name === '' ||
-            accessToken === '')
-    ) {
-        console.log('CALL REFRESH');
-    }
+    const { refresh } = useRefreshToken();
+
+    useEffect(() => {
+        const shouldRefresh =
+            isAuthenticated() &&
+            (user.id === '' ||
+                user.email === '' ||
+                user.name === '' ||
+                accessToken === '');
+
+        if (shouldRefresh) {
+            refresh();
+        }
+    }, [user, accessToken]);
+
     return (
         <Routes>
             {isAuthenticated() ? (

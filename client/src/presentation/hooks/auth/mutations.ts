@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/application/store/authStore';
 import { useLoadingStore } from '@/application/store/loadingStore';
 import { AuthUseCases } from '@/application/useCases/authUseCases';
-import { LoginResponse } from '@/domain/types/api';
+import { LoginResponse, RefreshResponse } from '@/domain/types/api';
 import { saveAuth } from '@/infrastructure/authStorage';
 import { LoginParams } from '@/presentation/types';
 import { useMutation } from '@tanstack/react-query';
@@ -29,6 +29,33 @@ export const useLoginUser = () => {
 
     return {
         login: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useRefreshToken = () => {
+    const { setAuth, clearAuth } = useAuthStore();
+    const navigate = useNavigate();
+    const setLoading = useLoadingStore((state) => state.setLoading);
+
+    const mutation = useMutation({
+        mutationFn: () => AuthUseCases.refreshToken(),
+        onMutate: () => setLoading(true),
+        onSuccess: (data: RefreshResponse) => {
+            saveAuth();
+            setAuth(data.user, data.accessToken);
+        },
+        onError: () => {
+            clearAuth();
+            navigate('/login');
+        },
+        onSettled: () => setLoading(false),
+    });
+
+    return {
+        refresh: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

@@ -32,4 +32,13 @@ export const AuthUseCases = {
             throw new Error(handleApiError(error, 'Failed to login'));
         }
     },
+    refreshToken: async () => {
+        try {
+            return await authPort.refreshToken();
+        } catch (error) {
+            throw new Error(
+                handleApiError(error, 'Failed to generate new token')
+            );
+        }
+    },
 };
