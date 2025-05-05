@@ -5,7 +5,7 @@ import argon2 from 'argon2';
 import { EMAIL_EXIST_ERROR_CODE } from '../../utils/const';
 import { uploadSingleFile } from '../../utils/cloudinaryUploader';
 import type { Express } from 'express';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -71,5 +71,22 @@ export const registerUserService = async (
             };
         }
         throw tempError;
+    }
+};
+
+export const getUserProfileService = async (userId: string) => {
+    try {
+        const profile = await Profile.findOne({
+            userId: new Types.ObjectId(userId),
+        }).select('-_id -userId');
+
+        if (!profile) {
+            return { error: 'User profile not found', status: 404 };
+        }
+
+        return { message: 'User profile found', profile };
+    } catch (error) {
+        console.log(error);
+        return { error: 'Internal server error', status: 500 };
     }
 };
