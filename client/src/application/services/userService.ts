@@ -1,6 +1,7 @@
 import { ProfileWithoutUserId } from '@/domain/entities/profile';
 import { UserWithoutId } from '@/domain/entities/user';
 import { UserPort } from '@/domain/ports/userPort';
+import { UserProfileResponse } from '@/domain/types/api';
 import http from '@/infrastructure/httpService';
 
 export const UserService: UserPort = {
@@ -27,6 +28,11 @@ export const UserService: UserPort = {
                 },
             }
         );
+        return response.data;
+    },
+    async getUserProfile() {
+        const response =
+            await http.get<UserProfileResponse>('/v1/users/profile');
         return response.data;
     },
 };

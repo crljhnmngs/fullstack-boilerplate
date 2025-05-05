@@ -32,4 +32,13 @@ export const UserUseCases = {
             throw new Error(handleApiError(error, 'Failed to register user'));
         }
     },
+    getUserProfile: async () => {
+        try {
+            return await userPort.getUserProfile();
+        } catch (error) {
+            throw new Error(
+                handleApiError(error, 'Failed to get your profile')
+            );
+        }
+    },
 };

@@ -6,18 +6,22 @@ import { useRandomUserStore } from '@/application/store/randomUserStore';
 import { RandomUserUseCases } from '@/application/useCases/randomUserUseCase';
 import { isAuthenticated } from '@/infrastructure/authStorage';
 import { useAuthStore } from '@/application/store/authStore';
+import { useGetUserProfile } from '@/presentation/hooks/user';
+import defaultImage from '../../assets/images/defaultImage.png';
 
 export const Header = () => {
     const setUsers = useRandomUserStore((state) => state.setUsers);
     const users = useRandomUserStore((state) => state.users);
     const [name, setName] = useState<string>();
     const { clearAuth, user } = useAuthStore();
+    const { userProfile, isProfileLoading } = useGetUserProfile();
 
     const { data, isLoading } = useQuery({
         queryKey: ['randomUser'],
         queryFn: () => RandomUserUseCases.getRandomUser({ results: 1 }),
         refetchOnWindowFocus: false,
         enabled: !isAuthenticated(),
+        staleTime: 1000 * 60 * 5,
     });
 
     useEffect(() => {
@@ -64,7 +68,7 @@ export const Header = () => {
                     )}
                 </nav>
                 <div className="h-full flex items-center gap-5">
-                    {isLoading ? (
+                    {isLoading || isProfileLoading ? (
                         <p className="text-white font-medium text-lg">
                             Loading...
                         </p>
@@ -74,7 +78,13 @@ export const Header = () => {
                                 {name}
                             </p>
                             <img
-                                src={randomUser?.picture.thumbnail}
+                                src={
+                                    isAuthenticated()
+                                        ? userProfile?.profileImage ||
+                                          defaultImage
+                                        : randomUser?.picture?.thumbnail ||
+                                          defaultImage
+                                }
                                 className="rounded-full w-10 h-10 object-cover"
                                 alt="User Image"
                             />
