@@ -4,4 +4,5 @@ import { LoginResponse, RefreshResponse } from '../types/api';
 export interface AuthPort {
     login(data: LoginParams): Promise<LoginResponse>;
     refreshToken(): Promise<RefreshResponse>;
+    logout(): Promise<void>;
 }

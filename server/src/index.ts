@@ -36,7 +36,7 @@ app.use(
         cookie: {
             secure: keys.app.env === 'DEV' ? false : true,
             httpOnly: true,
-            sameSite: 'none',
+            sameSite: keys.app.env === 'DEV' ? 'lax' : 'none',
         },
     })
 );

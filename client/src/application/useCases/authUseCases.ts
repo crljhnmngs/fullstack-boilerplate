@@ -41,4 +41,11 @@ export const AuthUseCases = {
             );
         }
     },
+    logout: async () => {
+        try {
+            return await authPort.logout();
+        } catch (error) {
+            throw new Error(handleApiError(error, 'Logout failed'));
+        }
+    },
 };

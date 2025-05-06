@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 
 export const AppRouter = () => {
     const { user, accessToken } = useAuthStore();
-    const { refresh } = useRefreshToken();
+    const { handleRefresh } = useRefreshToken();
 
     useEffect(() => {
         const shouldRefresh =
@@ -20,7 +20,7 @@ export const AppRouter = () => {
             (user.email === '' || user.name === '' || accessToken === '');
 
         if (shouldRefresh) {
-            refresh();
+            handleRefresh();
         }
     }, [user, accessToken]);
 

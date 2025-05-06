@@ -108,6 +108,7 @@ http.interceptors.response.use(
             } catch (refreshError) {
                 processQueue(refreshError as AxiosError, null);
                 clearAuth();
+                await AuthUseCases.logout();
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
             } finally {

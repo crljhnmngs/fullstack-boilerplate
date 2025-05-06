@@ -24,11 +24,11 @@ export const Login = () => {
         },
     });
 
-    const { login, isError } = useLoginUser();
+    const { handleUserLogin, isError } = useLoginUser();
     const { apiError, clearApiError } = useLoginErrorStore();
 
     const handleLogin = (data: LoginParams) => {
-        login(data);
+        handleUserLogin(data);
     };
 
     useEffect(() => {

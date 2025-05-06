@@ -50,7 +50,7 @@ export const loginUser = async (req: Request, res: Response) => {
         res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
             secure: keys.app.env !== 'DEV',
-            sameSite: 'strict',
+            sameSite: keys.app.env === 'DEV' ? 'lax' : 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
@@ -87,6 +87,24 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
             user: result.user,
             accessToken: result.accessToken,
         });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.log(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const logoutUser = async (req: Request, res: Response) => {
+    try {
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: keys.app.env !== 'DEV',
+            sameSite: keys.app.env === 'DEV' ? 'lax' : 'none',
+            path: '/',
+        });
+
+        res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
         // TODO: Create a file logger function to store errors in logs/errors.log
         // This should include timestamps and error details

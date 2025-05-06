@@ -28,7 +28,7 @@ export const useLoginUser = () => {
     });
 
     return {
-        login: mutation.mutate,
+        handleUserLogin: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -55,7 +55,31 @@ export const useRefreshToken = () => {
     });
 
     return {
-        refresh: mutation.mutate,
+        handleRefresh: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useLogoutUser = () => {
+    const { clearAuth } = useAuthStore();
+    const setLoading = useLoadingStore((state) => state.setLoading);
+
+    const mutation = useMutation({
+        mutationFn: () => AuthUseCases.logout(),
+        onMutate: () => setLoading(true),
+        onError: (error: Error) => {
+            toast.error(error.message, { position: 'top-right' });
+        },
+        onSettled: () => {
+            clearAuth();
+            setLoading(false);
+        },
+    });
+
+    return {
+        handleUserlogout: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

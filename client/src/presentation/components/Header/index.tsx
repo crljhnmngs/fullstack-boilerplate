@@ -8,13 +8,15 @@ import { isAuthenticated } from '@/infrastructure/authStorage';
 import { useAuthStore } from '@/application/store/authStore';
 import { useGetUserProfile } from '@/presentation/hooks/user';
 import defaultImage from '../../assets/images/defaultImage.png';
+import { useLogoutUser } from '@/presentation/hooks/auth';
 
 export const Header = () => {
     const setUsers = useRandomUserStore((state) => state.setUsers);
     const users = useRandomUserStore((state) => state.users);
     const [name, setName] = useState<string>();
-    const { clearAuth, user } = useAuthStore();
+    const { user } = useAuthStore();
     const { userProfile, isProfileLoading } = useGetUserProfile();
+    const { handleUserlogout } = useLogoutUser();
 
     const { data, isLoading } = useQuery({
         queryKey: ['randomUser'],
@@ -33,7 +35,7 @@ export const Header = () => {
     const randomUser = useMemo(() => users[0], [users]);
 
     const handleLogout = () => {
-        clearAuth();
+        handleUserlogout();
     };
 
     useEffect(() => {
