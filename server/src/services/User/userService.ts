@@ -9,7 +9,8 @@ import mongoose, { Types } from 'mongoose';
 import { sendEmailService } from '../Email/emailService';
 import { keys } from '../../config/keys';
 import { generateConfirmationEmail } from '../../utils/emailTemplates';
-import { generateToken } from '../../utils/generateToken';
+import { generateSecureToken } from '../../utils/generateToken';
+import { Token } from '../../models/Token/tokens';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -55,8 +56,18 @@ export const registerUserService = async (
         await newUser.save({ session });
         await profile.save({ session });
 
-        const token = generateToken(newUser._id as string, '1h');
-        let confirmationLink = `${keys.app.clientUrl}/confirm-email?token=${token}`;
+        const securetoken = generateSecureToken();
+
+        const token = new Token({
+            userId: newUser._id,
+            token: securetoken,
+            type: 'email_verification',
+            tokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        });
+
+        await token.save({ session });
+
+        let confirmationLink = `${keys.app.clientUrl}/confirm-email?token=${securetoken}&userId=${newUser._id}`;
 
         const emailHtml = generateConfirmationEmail(
             newUser.name,

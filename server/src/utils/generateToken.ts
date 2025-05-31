@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { keys } from '../config/keys';
 import ms from 'ms';
+import crypto from 'crypto';
 
-export const generateToken = (userId: string, expiresIn: ms.StringValue) => {
+export const generateJWTToken = (userId: string, expiresIn: ms.StringValue) => {
     try {
         return jwt.sign({ userId }, keys.app.JWTSecret, {
             expiresIn: ms(expiresIn),
@@ -10,4 +11,8 @@ export const generateToken = (userId: string, expiresIn: ms.StringValue) => {
     } catch (error) {
         throw new Error(`Error generating token: ${error.message}`);
     }
+};
+
+export const generateSecureToken = () => {
+    return crypto.randomBytes(32).toString('hex');
 };
