@@ -9,6 +9,8 @@ import { Dashboard } from '@/presentation/pages/Dashboard';
 import { useAuthStore } from '@/application/store/authStore';
 import { useRefreshToken } from '@/presentation/hooks/auth';
 import { useEffect } from 'react';
+import { ConfirmEmail } from '@/presentation/pages/ConfirmEmail';
+import { ResendVerification } from '@/presentation/pages/ResendVerification';
 
 export const AppRouter = () => {
     const { user, accessToken } = useAuthStore();
@@ -34,6 +36,11 @@ export const AppRouter = () => {
             <Route path="sales" element={<Sales />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="confirm-email" element={<ConfirmEmail />} />
+            <Route
+                path="resend-verification"
+                element={<ResendVerification />}
+            />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

@@ -19,7 +19,7 @@ export const AuthUseCases = {
                     setApiError(data);
                     if ('fieldErrors' in data) {
                         error.response.data = {
-                            message: 'Failed to login',
+                            message: 'Invalid login credentials',
                         };
                     }
                     if ('field' in data && 'message' in data) {
@@ -46,6 +46,24 @@ export const AuthUseCases = {
             return await authPort.logout();
         } catch (error) {
             throw new Error(handleApiError(error, 'Logout failed'));
+        }
+    },
+    confirmEmail: async (...args: Parameters<AuthPort['confirmEmail']>) => {
+        try {
+            return await authPort.confirmEmail(...args);
+        } catch (error) {
+            throw new Error(handleApiError(error, 'Confirm email failed'));
+        }
+    },
+    resendVerification: async (
+        ...args: Parameters<AuthPort['resendVerification']>
+    ) => {
+        try {
+            return await authPort.resendVerification(...args);
+        } catch (error) {
+            throw new Error(
+                handleApiError(error, 'Resend verification email failed')
+            );
         }
     },
 };

@@ -149,14 +149,17 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
 export const resendEmailVerification = async (req: Request, res: Response) => {
     try {
-        const { userId } = req.query;
+        const { userId, email } = req.query;
 
-        if (!userId) {
-            res.status(400).json({ message: 'Missing user ID' });
+        if (!userId && !email) {
+            res.status(400).json({ message: 'Missing required data' });
             return;
         }
 
-        const result = await resendEmailVerificationService(userId as string);
+        const result = await resendEmailVerificationService(
+            userId as string,
+            email as string
+        );
 
         if (result.error) {
             res.status(result.status!).json({ message: result.error });

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 import { UserProfileResponse } from '@/domain/types/api';
 import { UserUseCases } from '@/application/useCases/userUseCases';
 import { isAuthenticated } from '@/infrastructure/authStorage';
+import { AlertIcon, showAlert } from '@/lib/utils';
 
 export const useGetUserProfile = () => {
     const {
@@ -18,7 +18,15 @@ export const useGetUserProfile = () => {
     });
 
     if (error) {
-        toast.error((error as Error).message, { position: 'top-right' });
+        showAlert({
+            title: 'Get User Profile',
+            text: error.message,
+            icon: AlertIcon.Error,
+            toast: true,
+            position: 'top-right',
+            timer: 3000,
+            timerProgressBar: true,
+        });
     }
 
     return {

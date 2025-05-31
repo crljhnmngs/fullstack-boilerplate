@@ -4,6 +4,8 @@ import axios from 'axios';
 import { RegisterFormData } from '@/presentation/validation/registerValidation';
 import { UserWithoutId } from '@/domain/entities/user';
 import { ProfileWithoutUserId } from '@/domain/entities/profile';
+import Swal, { SweetAlertResult } from 'sweetalert2';
+import { ShowAlertOptions } from '@/presentation/types';
 
 /**
  * Utility function to merge class names using `clsx` and `twMerge`.
@@ -119,13 +121,20 @@ export const handleApiError = (error: unknown, defaultMessage: string) => {
                 case 400:
                     return apiError.message || 'Invalid request.';
                 case 401:
-                    return 'Unauthorized. Please log in.';
+                    return apiError.message || 'Unauthorized. Please log in.';
                 case 403:
-                    return 'Forbidden. You do not have access.';
+                    return (
+                        apiError.message || 'Forbidden. You do not have access.'
+                    );
                 case 404:
-                    return 'Resource not found.';
+                    return apiError.message || 'Resource not found.';
+                case 429:
+                    return (
+                        apiError.message ||
+                        'Too many attempts, please try again later.'
+                    );
                 case 500:
-                    return 'Server error. Try again later.';
+                    return apiError.message || 'Server error. Try again later.';
                 default:
                     return apiError.message || defaultMessage;
             }
@@ -150,4 +159,36 @@ export const transformRegisterData = (
         birthdate: new Date(data.birthdate).toISOString(),
         profileImage: data.profileImage,
     };
+};
+
+export enum AlertIcon {
+    Success = 'success',
+    Error = 'error',
+    Warning = 'warning',
+    Info = 'info',
+    Question = 'question',
+}
+
+export const showAlert = ({
+    title,
+    text,
+    icon = AlertIcon.Info,
+    timer = undefined,
+    position = 'center',
+    toast = false,
+    html,
+    showConfirmButton = false,
+    timerProgressBar = false,
+}: ShowAlertOptions): Promise<SweetAlertResult> => {
+    return Swal.fire({
+        title,
+        text,
+        icon,
+        timer,
+        position,
+        toast,
+        showConfirmButton,
+        timerProgressBar,
+        html,
+    });
 };

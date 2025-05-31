@@ -3,9 +3,9 @@ import { useSaleStore } from '@/application/store/salesStore';
 import { useQuery } from '@tanstack/react-query';
 import { SaleUseCases } from '@/application/useCases/saleUseCases';
 import { useDebounce } from 'use-debounce';
-import toast from 'react-hot-toast';
 import { useLoadingStore } from '@/application/store/loadingStore';
 import { Pagination } from '@/domain/types/global';
+import { AlertIcon, showAlert } from '@/lib/utils';
 
 export const useGetSales = () => {
     const setSales = useSaleStore((state) => state.setSales);
@@ -68,7 +68,15 @@ export const useGetSales = () => {
 
     useEffect(() => {
         if (error) {
-            toast.error(error.message, { position: 'top-right' });
+            showAlert({
+                title: 'Get Sales',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         }
     }, [error]);
 

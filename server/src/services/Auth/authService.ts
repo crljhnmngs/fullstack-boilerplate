@@ -101,11 +101,13 @@ export const confirmEmailService = async (
         if (
             !token ||
             token.token !== tokenData ||
-            token.type !== 'email_verification' ||
-            token.tokenExpires < new Date()
+            token.type !== 'email_verification'
         ) {
             await session.abortTransaction();
-            return { error: 'Invalid or expired token', status: 400 };
+            return { error: 'Verification link is Invalid', status: 400 };
+        } else if (token.tokenExpires < new Date()) {
+            await session.abortTransaction();
+            return { error: 'Verification link is Expired', status: 400 };
         }
 
         user.isEmailVerified = true;
@@ -124,11 +126,21 @@ export const confirmEmailService = async (
     }
 };
 
-export const resendEmailVerificationService = async (userId: string) => {
+export const resendEmailVerificationService = async (
+    userId: string,
+    email: string
+) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        const user = await User.findById(userId).session(session);
+        let user;
+
+        if (!userId) {
+            user = await User.findOne({ email }).session(session);
+            userId = user?._id?.toString();
+        } else {
+            user = await User.findById(userId).session(session);
+        }
 
         if (!user) {
             await session.abortTransaction();

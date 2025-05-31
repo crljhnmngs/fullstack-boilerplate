@@ -4,8 +4,8 @@ import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router';
 import { AppRouter } from './infrastructure/routes.tsx';
-import { Toaster } from 'react-hot-toast';
 import { GlobalLoader } from '@/presentation/components/Loader';
+import 'sweetalert2/src/sweetalert2.scss';
 
 const queryClient = new QueryClient();
 
@@ -14,7 +14,6 @@ createRoot(document.getElementById('root')!).render(
         <StrictMode>
             <BrowserRouter>
                 <AppRouter />
-                <Toaster />
                 <GlobalLoader />
             </BrowserRouter>
         </StrictMode>

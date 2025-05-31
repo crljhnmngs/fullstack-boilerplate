@@ -1,5 +1,6 @@
 import { Sale } from '@/domain/entities/sale';
 import { Pagination } from '@/domain/types/global';
+import { AlertIcon } from '@/lib/utils';
 import { UseFormRegister, RegisterOptions, Path } from 'react-hook-form';
 
 export type SalesTableProps = {
@@ -85,4 +86,26 @@ export interface FormDropdownProps<T> {
 export type LoginParams = {
     email: string;
     password: string;
+};
+
+export type ShowAlertOptions = {
+    title: string;
+    text?: string;
+    icon?: AlertIcon;
+    timer?: number;
+    position?:
+        | 'top-end'
+        | 'top'
+        | 'top-left'
+        | 'top-right'
+        | 'center'
+        | 'center-left'
+        | 'center-right'
+        | 'bottom'
+        | 'bottom-left'
+        | 'bottom-right';
+    toast?: boolean;
+    html?: string;
+    showConfirmButton?: boolean;
+    timerProgressBar?: boolean;
 };
