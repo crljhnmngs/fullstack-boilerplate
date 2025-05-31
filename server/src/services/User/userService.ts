@@ -6,6 +6,11 @@ import { EMAIL_EXIST_ERROR_CODE } from '../../utils/const';
 import { uploadSingleFile } from '../../utils/cloudinaryUploader';
 import type { Express } from 'express';
 import mongoose, { Types } from 'mongoose';
+import { sendEmailService } from '../Email/emailService';
+import { keys } from '../../config/keys';
+import { generateConfirmationEmail } from '../../utils/emailTemplates';
+import { generateSecureToken } from '../../utils/generateToken';
+import { Token } from '../../models/Token/tokens';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -24,6 +29,7 @@ export const registerUserService = async (
             name: userData.name,
             email: userData.email,
             password: hashedPassword,
+            isEmailVerified: false,
         });
 
         let profileImageUrl = '';
@@ -49,6 +55,33 @@ export const registerUserService = async (
 
         await newUser.save({ session });
         await profile.save({ session });
+
+        const securetoken = generateSecureToken();
+
+        const token = new Token({
+            userId: newUser._id,
+            token: securetoken,
+            type: 'email_verification',
+            tokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        });
+
+        await token.save({ session });
+
+        let confirmationLink = `${keys.app.clientUrl}/confirm-email?token=${securetoken}&userId=${newUser._id}`;
+
+        const emailHtml = generateConfirmationEmail(
+            newUser.name,
+            confirmationLink
+        );
+
+        const emailData = {
+            to: newUser.email,
+            subject: 'Confirm Your Email Address',
+            html: emailHtml,
+            text: `Hi ${newUser.name},\n\nPlease confirm your email by clicking the link: ${confirmationLink}`,
+        };
+
+        await sendEmailService(emailData);
 
         await session.commitTransaction();
         session.endSession();

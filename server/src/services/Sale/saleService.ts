@@ -1,4 +1,4 @@
-import Sale from '../../models/Sale/sales';
+import { Sale } from '../../models/Sale/sales';
 import { ISale } from '../../utils/interface/sales';
 
 export const getAllSalesService = async (

@@ -8,6 +8,8 @@ import { keys } from './config/keys';
 import apiSecretMiddleware from './middlewares/apiSecretMiddleware';
 import limiter from './middlewares/limiter';
 import cookieParser from 'cookie-parser';
+import { notFoundHandler } from './middlewares/notFoundHandler';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 
@@ -51,6 +53,12 @@ connectDB()
 
 // Routes
 app.use('/api/v1', routes);
+
+// 404 Fallback Middleware
+app.use(notFoundHandler);
+
+// Error Handling Middleware
+app.use(errorHandler);
 
 // Start server
 app.listen(keys.port, () => {

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SaleUseCases } from '@/application/useCases/saleUseCases';
 import { SaleFormData } from '@/presentation/validation/saleValidation';
-import toast from 'react-hot-toast';
 import { useLoadingStore } from '@/application/store/loadingStore';
+import { AlertIcon, showAlert } from '@/lib/utils';
 
 export const useAddSale = () => {
     const queryClient = useQueryClient();
@@ -12,13 +12,27 @@ export const useAddSale = () => {
         mutationFn: (saleData: SaleFormData) => SaleUseCases.addSale(saleData),
         onMutate: () => setLoading(true),
         onSuccess: () => {
-            toast.success('Sale added successfully!', {
+            showAlert({
+                title: 'Add Sale',
+                text: 'Sale added successfully!',
+                icon: AlertIcon.Success,
+                toast: true,
                 position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
             });
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
         onError: (error: Error) => {
-            toast.error(error.message, { position: 'top-right' });
+            showAlert({
+                title: 'Add Sale',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         },
         onSettled: () => setLoading(false),
     });
@@ -45,13 +59,27 @@ export const useUpdateSale = () => {
         }) => SaleUseCases.updateSale(id, saleData),
         onMutate: () => setLoading(true),
         onSuccess: () => {
-            toast.success('Sale updated successfully!', {
+            showAlert({
+                title: 'Update Sale',
+                text: 'Sale updated successfully!',
+                icon: AlertIcon.Success,
+                toast: true,
                 position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
             });
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
         onError: (error: Error) => {
-            toast.error(error.message, { position: 'top-right' });
+            showAlert({
+                title: 'Update Sale',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         },
         onSettled: () => setLoading(false),
     });
@@ -72,13 +100,27 @@ export const useDeleteSale = () => {
         mutationFn: (id: string) => SaleUseCases.deleteSale(id),
         onMutate: () => setLoading(true),
         onSuccess: () => {
-            toast.success('Sale deleted successfully!', {
+            showAlert({
+                title: 'Delete Sale',
+                text: 'Sale deleted successfully!',
+                icon: AlertIcon.Success,
+                toast: true,
                 position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
             });
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
         onError: (error: Error) => {
-            toast.error(error.message, { position: 'top-right' });
+            showAlert({
+                title: 'Delete Sale',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         },
         onSettled: () => setLoading(false),
     });
@@ -99,13 +141,27 @@ export const useMultipleDeleteSale = () => {
         mutationFn: (ids: string[]) => SaleUseCases.deleteMultipleSale(ids),
         onMutate: () => setLoading(true),
         onSuccess: (data) => {
-            toast.success(data?.message || 'Sales deleted successfully!', {
+            showAlert({
+                title: 'Delete Multiple Sales',
+                text: data?.message || 'Sales deleted successfully!',
+                icon: AlertIcon.Success,
+                toast: true,
                 position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
             });
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
         onError: (error: Error) => {
-            toast.error(error.message, { position: 'top-right' });
+            showAlert({
+                title: 'Delete Multiple Sales',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         },
         onSettled: () => setLoading(false),
     });

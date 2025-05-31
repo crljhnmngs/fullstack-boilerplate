@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { loginSchema } from '../../utils/validation/Auth/authValidation';
 import {
+    confirmEmailService,
     loginUserService,
     refreshAccessTokenService,
+    resendEmailVerificationService,
 } from '../../services/Auth/authService';
 import { keys } from '../../config/keys';
 
@@ -40,10 +42,14 @@ export const loginUser = async (req: Request, res: Response) => {
                 res.status(result.status).json({
                     fieldErrors: formattedErrors,
                 });
+            } else if (result.status === 403) {
+                res.status(result.status).json({
+                    message: result.error,
+                    userId: result.userId,
+                });
             } else {
                 res.status(result.status).json({ message: result.error });
             }
-
             return;
         }
 
@@ -110,5 +116,62 @@ export const logoutUser = async (req: Request, res: Response) => {
         // This should include timestamps and error details
         console.log(error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const confirmEmail = async (req: Request, res: Response) => {
+    try {
+        const { token, userId } = req.query;
+
+        if (!token || !userId) {
+            res.status(400).json({ message: 'Invalid request parameters' });
+            return;
+        }
+
+        const result = await confirmEmailService(
+            token as string,
+            userId as string
+        );
+
+        if (result.error) {
+            res.status(result.status!).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error('Error in confirmEmail:', error);
+        res.status(500).json({ message: 'Internal Server error' });
+    }
+};
+
+export const resendEmailVerification = async (req: Request, res: Response) => {
+    try {
+        const { userId, email } = req.query;
+
+        if (!userId && !email) {
+            res.status(400).json({ message: 'Missing required data' });
+            return;
+        }
+
+        const result = await resendEmailVerificationService(
+            userId as string,
+            email as string
+        );
+
+        if (result.error) {
+            res.status(result.status!).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
     }
 };

@@ -11,7 +11,7 @@ const limiter = rateLimit({
         console.warn(`Rate limit exceeded: ${req.ip} - ${req.originalUrl}`);
 
         return res.status(429).json({
-            error: 'Too many requests, please try again later.',
+            message: 'Too many requests, please try again later.',
             status: 429,
             retryAfter: `${Math.ceil(Number(res.getHeader('Retry-After')) || 60)} seconds`,
             timestamp: new Date().toISOString(),
@@ -20,3 +20,35 @@ const limiter = rateLimit({
 });
 
 export default limiter;
+
+export const loginLimiter = rateLimit({
+    windowMs: 60_000,
+    max: 5,
+    message: (req: Request, res: Response) => {
+        console.warn(`Rate limit exceeded: ${req.ip} - ${req.originalUrl}`);
+
+        res.status(429).json({
+            message: 'Too many login attempts, please try again later.',
+            status: 429,
+            retryAfter: `${Math.ceil(Number(res.getHeader('Retry-After')) || 60)} seconds`,
+            timestamp: new Date().toISOString(),
+        });
+        return;
+    },
+});
+
+export const confirmEmailLimiter = rateLimit({
+    windowMs: 60_000,
+    max: 5,
+    message: (req: Request, res: Response) => {
+        console.warn(`Rate limit exceeded: ${req.ip} - ${req.originalUrl}`);
+
+        res.status(429).json({
+            message: 'Too many confirmation attempts, please try later.',
+            status: 429,
+            retryAfter: `${Math.ceil(Number(res.getHeader('Retry-After')) || 60)} seconds`,
+            timestamp: new Date().toISOString(),
+        });
+        return;
+    },
+});

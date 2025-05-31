@@ -31,4 +31,19 @@ export const AuthService: AuthPort = {
         );
         return response.data;
     },
+    async confirmEmail(userId, token) {
+        const response = await http.get<void>('/v1/auth/confirm-email', {
+            params: { userId, token },
+        });
+        return response.data;
+    },
+    async resendVerification(userId, email) {
+        const response = await http.get<void>(
+            '/v1/auth//resend-email-verification',
+            {
+                params: { userId, email },
+            }
+        );
+        return response.data;
+    },
 };
