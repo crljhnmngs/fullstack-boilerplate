@@ -5,8 +5,13 @@ import {
     logoutUser,
     confirmEmail,
     resendEmailVerification,
+    forgotPassword,
 } from '../controllers/Auth/authController';
-import { confirmEmailLimiter, loginLimiter } from '../middlewares/limiter';
+import {
+    confirmEmailLimiter,
+    loginLimiter,
+    forgotPasswordLimiter,
+} from '../middlewares/limiter';
 
 const authRouter = Router();
 
@@ -19,5 +24,6 @@ authRouter.get(
     confirmEmailLimiter,
     resendEmailVerification
 );
+authRouter.post('/forgot-password', forgotPasswordLimiter, forgotPassword);
 
 export default authRouter;

@@ -52,3 +52,20 @@ export const confirmEmailLimiter = rateLimit({
         return;
     },
 });
+
+export const forgotPasswordLimiter = rateLimit({
+    windowMs: 60_000,
+    max: 5,
+    message: (req: Request, res: Response) => {
+        console.warn(`Rate limit exceeded: ${req.ip} - ${req.originalUrl}`);
+
+        res.status(429).json({
+            message:
+                'Too many password reset attempts, please try again later.',
+            status: 429,
+            retryAfter: `${Math.ceil(Number(res.getHeader('Retry-After')) || 60)} seconds`,
+            timestamp: new Date().toISOString(),
+        });
+        return;
+    },
+});

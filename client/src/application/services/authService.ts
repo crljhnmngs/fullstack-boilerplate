@@ -39,7 +39,7 @@ export const AuthService: AuthPort = {
     },
     async resendVerification(userId, email) {
         const response = await http.get<void>(
-            '/v1/auth//resend-email-verification',
+            '/v1/auth/resend-email-verification',
             {
                 params: { userId, email },
             }

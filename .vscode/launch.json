@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Server (nodemon + ts-node)",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/server/node_modules/.bin/nodemon.cmd",
+            "cwd": "${workspaceFolder}/server",
+            "args": [
+                "--watch",
+                "src",
+                "--exec",
+                "ts-node --files src/index.ts"
+            ],
+            "autoAttachChildProcesses": true,
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ]
+}

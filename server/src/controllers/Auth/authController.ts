@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
-import { loginSchema } from '../../utils/validation/Auth/authValidation';
+import {
+    forgotPasswordSchema,
+    loginSchema,
+} from '../../utils/validation/Auth/authValidation';
 import {
     confirmEmailService,
     loginUserService,
     refreshAccessTokenService,
     resendEmailVerificationService,
+    forgotPasswordService,
 } from '../../services/Auth/authService';
 import { keys } from '../../config/keys';
 
@@ -172,6 +176,31 @@ export const resendEmailVerification = async (req: Request, res: Response) => {
         // This should include timestamps and error details
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
-        return;
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+    try {
+        const validationResult = forgotPasswordSchema.safeParse(req.body);
+
+        if (!validationResult.success) {
+            const message = validationResult.error.issues[0].message;
+            res.status(400).json({ message });
+            return;
+        }
+
+        const result = await forgotPasswordService(req.body.email);
+
+        if ('error' in result) {
+            res.status(result.status ?? 500).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
