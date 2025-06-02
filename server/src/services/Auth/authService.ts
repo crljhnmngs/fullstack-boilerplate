@@ -14,6 +14,7 @@ import {
     generateForgotPasswordEmail,
 } from '../../utils/emailTemplates';
 import { sendEmailService } from '../Email/emailService';
+import { hashPassword } from '../../utils/hashPassword';
 
 export const loginUserService = async (loginData: ILoginData) => {
     try {
@@ -259,6 +260,49 @@ export const forgotPasswordService = async (email: string) => {
     } catch (error) {
         await session.abortTransaction();
         console.log(error);
+        return { error: 'Internal server error', status: 500 };
+    } finally {
+        session.endSession();
+    }
+};
+
+export const resetPasswordService = async (
+    userId: string,
+    token: string,
+    newPassword: string
+) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const user = await User.findById(userId).session(session);
+
+        if (!user) {
+            await session.abortTransaction();
+            return { error: 'User not found', status: 404 };
+        }
+
+        const tokenDoc = await Token.findOne({
+            userId,
+            token,
+            type: 'password_reset',
+        }).session(session);
+
+        if (!tokenDoc || tokenDoc.tokenExpires < new Date()) {
+            await session.abortTransaction();
+            return { error: 'Invalid or expired reset token', status: 400 };
+        }
+
+        user.password = await hashPassword(newPassword);
+
+        await user.save({ session });
+
+        await Token.findByIdAndDelete(tokenDoc._id, { session });
+
+        await session.commitTransaction();
+        return { message: 'Password successfully reset' };
+    } catch (error) {
+        await session.abortTransaction();
+        console.error(error);
         return { error: 'Internal server error', status: 500 };
     } finally {
         session.endSession();

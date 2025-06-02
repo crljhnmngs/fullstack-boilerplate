@@ -9,8 +9,10 @@ import {
     refreshAccessTokenService,
     resendEmailVerificationService,
     forgotPasswordService,
+    resetPasswordService,
 } from '../../services/Auth/authService';
 import { keys } from '../../config/keys';
+import { PasswordSchema } from '../../utils/validation/User/userValidation';
 
 export const loginUser = async (req: Request, res: Response) => {
     try {
@@ -190,6 +192,38 @@ export const forgotPassword = async (req: Request, res: Response) => {
         }
 
         const result = await forgotPasswordService(req.body.email);
+
+        if ('error' in result) {
+            res.status(result.status ?? 500).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { token, userId, newPassword } = req.body;
+
+        if (!token || !userId || !newPassword) {
+            res.status(400).json({ message: 'Missing required data' });
+            return;
+        }
+
+        const validationResult = PasswordSchema.safeParse(newPassword);
+
+        if (!validationResult.success) {
+            const message = validationResult.error.issues[0].message;
+            res.status(400).json({ message });
+            return;
+        }
+        const result = await resetPasswordService(userId, token, newPassword);
 
         if ('error' in result) {
             res.status(result.status ?? 500).json({ message: result.error });

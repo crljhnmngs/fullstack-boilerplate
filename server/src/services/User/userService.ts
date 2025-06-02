@@ -1,7 +1,6 @@
 import { IUser, IUserProfile } from '../../utils/interface/users';
 import { User } from '../../models/User/users';
 import { Profile } from '../../models/Profile/profiles';
-import argon2 from 'argon2';
 import { EMAIL_EXIST_ERROR_CODE } from '../../utils/const';
 import { uploadSingleFile } from '../../utils/cloudinaryUploader';
 import type { Express } from 'express';
@@ -11,6 +10,7 @@ import { keys } from '../../config/keys';
 import { generateConfirmationEmail } from '../../utils/emailTemplates';
 import { generateSecureToken } from '../../utils/generateToken';
 import { Token } from '../../models/Token/tokens';
+import { hashPassword } from '../../utils/hashPassword';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -18,17 +18,12 @@ export const registerUserService = async (
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        const hashedPassword = await argon2.hash(userData.password, {
-            type: argon2.argon2id,
-            memoryCost: 2 ** 16,
-            timeCost: 3,
-            parallelism: 1,
-        });
+        const password = await hashPassword(userData.password);
 
         const newUser = new User({
             name: userData.name,
             email: userData.email,
-            password: hashedPassword,
+            password: password,
             isEmailVerified: false,
         });
 

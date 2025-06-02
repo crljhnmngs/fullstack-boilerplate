@@ -6,6 +6,7 @@ import {
     confirmEmail,
     resendEmailVerification,
     forgotPassword,
+    resetPassword,
 } from '../controllers/Auth/authController';
 import {
     confirmEmailLimiter,
@@ -25,5 +26,6 @@ authRouter.get(
     resendEmailVerification
 );
 authRouter.post('/forgot-password', forgotPasswordLimiter, forgotPassword);
+authRouter.patch('/reset-password', resetPassword);
 
 export default authRouter;
