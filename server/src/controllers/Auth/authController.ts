@@ -186,8 +186,14 @@ export const forgotPassword = async (req: Request, res: Response) => {
         const validationResult = forgotPasswordSchema.safeParse(req.body);
 
         if (!validationResult.success) {
-            const message = validationResult.error.issues[0].message;
-            res.status(400).json({ message });
+            const formattedErrors = validationResult.error.issues.map(
+                (issue) => ({
+                    field: issue.path[0],
+                    message: issue.message,
+                })
+            );
+
+            res.status(400).json({ fieldErrors: formattedErrors });
             return;
         }
 
@@ -219,10 +225,17 @@ export const resetPassword = async (req: Request, res: Response) => {
         const validationResult = PasswordSchema.safeParse(newPassword);
 
         if (!validationResult.success) {
-            const message = validationResult.error.issues[0].message;
-            res.status(400).json({ message });
+            const formattedErrors = validationResult.error.issues.map(
+                (issue) => ({
+                    field: issue.path[0],
+                    message: issue.message,
+                })
+            );
+
+            res.status(400).json({ fieldErrors: formattedErrors });
             return;
         }
+
         const result = await resetPasswordService(userId, token, newPassword);
 
         if ('error' in result) {

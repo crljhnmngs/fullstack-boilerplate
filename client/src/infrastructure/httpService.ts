@@ -7,6 +7,7 @@ import axios, {
     InternalAxiosRequestConfig,
 } from 'axios';
 import { saveAuth } from './authStorage';
+import { ROUTES } from '@/lib/routes';
 
 const authExcludedRoutes = ['/v1/auth/login', '/v1/auth/refresh'];
 
@@ -109,7 +110,7 @@ http.interceptors.response.use(
                 processQueue(refreshError as AxiosError, null);
                 clearAuth();
                 await AuthUseCases.logout();
-                window.location.href = '/login';
+                window.location.href = ROUTES.LOGIN;
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;

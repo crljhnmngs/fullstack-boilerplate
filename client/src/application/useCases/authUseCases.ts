@@ -2,7 +2,10 @@ import { AuthPort } from '@/domain/ports/authPort';
 import { handleApiError } from '@/lib/utils';
 import { AuthService } from '../services/authService';
 import axios from 'axios';
-import { useLoginErrorStore } from '../store/errorStore';
+import {
+    useForgotPasswordErrorStore,
+    useLoginErrorStore,
+} from '../store/errorStore';
 
 const authPort: AuthPort = AuthService;
 
@@ -63,6 +66,33 @@ export const AuthUseCases = {
         } catch (error) {
             throw new Error(
                 handleApiError(error, 'Resend verification email failed')
+            );
+        }
+    },
+    forgotPassword: async (...args: Parameters<AuthPort['forgotPassword']>) => {
+        try {
+            return await authPort.forgotPassword(...args);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    const { setApiError } =
+                        useForgotPasswordErrorStore.getState();
+                    const { data } = error.response;
+
+                    if (
+                        'fieldErrors' in data &&
+                        Array.isArray(data.fieldErrors) &&
+                        data.fieldErrors.length > 0
+                    ) {
+                        setApiError(data);
+                        error.response.data = {
+                            message: data.fieldErrors[0].message,
+                        };
+                    }
+                }
+            }
+            throw new Error(
+                handleApiError(error, 'Failed to send forgot password email')
             );
         }
     },

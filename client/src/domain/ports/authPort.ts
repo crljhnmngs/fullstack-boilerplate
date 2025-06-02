@@ -7,4 +7,5 @@ export interface AuthPort {
     logout(): Promise<void>;
     confirmEmail(userId: string, token: string): Promise<void>;
     resendVerification(userId?: string, email?: string): Promise<void>;
+    forgotPassword(email: string): Promise<{ message: string }>;
 }

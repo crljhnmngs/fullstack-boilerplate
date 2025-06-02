@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { RegisterFormData } from '@/presentation/validation/registerValidation';
 import { LoginFormData } from '@/presentation/validation/loginValidation';
+import { ForgotPasswordFormData } from '@/presentation/validation/forgotPasswordValidation';
 
 type FieldError<T> = {
     field: keyof T;
@@ -27,3 +28,5 @@ export const createErrorStore = <T>() =>
 
 export const useRegisterErrorStore = createErrorStore<RegisterFormData>();
 export const useLoginErrorStore = createErrorStore<LoginFormData>();
+export const useForgotPasswordErrorStore =
+    createErrorStore<ForgotPasswordFormData>();

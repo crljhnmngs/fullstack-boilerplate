@@ -9,6 +9,7 @@ import { useLoginUser } from '../hooks/auth';
 import { LoginParams } from '../types';
 import { useLoginErrorStore } from '@/application/store/errorStore';
 import { useEffect } from 'react';
+import { ROUTES } from '@/lib/routes';
 
 export const Login = () => {
     const {
@@ -81,6 +82,14 @@ export const Login = () => {
                             error={errors?.password?.message}
                             className="h-15"
                         />
+                        <div className="w-full text-right mb-4">
+                            <NavLink
+                                to={ROUTES.FORGOT_PASSWORD}
+                                className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
+                            >
+                                Forgot Password?
+                            </NavLink>
+                        </div>
                         <Button
                             type="submit"
                             className="cursor-pointer w-full h-15 text-xl"
@@ -91,7 +100,7 @@ export const Login = () => {
                             <p className="text-lg">Not registered?</p>
                             <NavLink
                                 className="text-lg cursor-pointer text-blue-600 hover:text-blue-800"
-                                to="/register"
+                                to={ROUTES.REGISTER}
                                 end
                             >
                                 Create an account

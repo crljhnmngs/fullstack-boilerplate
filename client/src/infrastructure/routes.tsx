@@ -11,6 +11,9 @@ import { useRefreshToken } from '@/presentation/hooks/auth';
 import { useEffect } from 'react';
 import { ConfirmEmail } from '@/presentation/pages/ConfirmEmail';
 import { ResendVerification } from '@/presentation/pages/ResendVerification';
+import { ForgotPassword } from '@/presentation/pages/ForgotPassword';
+import { ROUTES } from '@/lib/routes';
+import { ResetPassword } from '@/presentation/pages/ResetPassword';
 
 export const AppRouter = () => {
     const { user, accessToken } = useAuthStore();
@@ -33,15 +36,17 @@ export const AppRouter = () => {
             ) : (
                 <Route index element={<Home />} />
             )}
-            <Route path="sales" element={<Sales />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="confirm-email" element={<ConfirmEmail />} />
+            <Route path={ROUTES.SALES} element={<Sales />} />
+            <Route path={ROUTES.LOGIN} element={<Login />} />
+            <Route path={ROUTES.REGISTER} element={<Register />} />
+            <Route path={ROUTES.CONFIRM_EMAIL} element={<ConfirmEmail />} />
             <Route
-                path="resend-verification"
+                path={ROUTES.RESEND_VERIFICATION}
                 element={<ResendVerification />}
             />
-            <Route path="*" element={<NotFound />} />
+            <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+            <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
+            <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
         </Routes>
     );
 };

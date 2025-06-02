@@ -46,4 +46,13 @@ export const AuthService: AuthPort = {
         );
         return response.data;
     },
+    async forgotPassword(email: string) {
+        const response = await http.post<{ message: string }>(
+            '/v1/auth/forgot-password',
+            {
+                email,
+            }
+        );
+        return response.data;
+    },
 };

@@ -5,6 +5,7 @@ import { UserWithoutId } from '@/domain/entities/user';
 import { ProfileWithoutUserId } from '@/domain/entities/profile';
 import { useNavigate } from 'react-router';
 import { AlertIcon, showAlert } from '@/lib/utils';
+import { ROUTES } from '@/lib/routes';
 
 export const useRegisterUser = () => {
     const setLoading = useLoadingStore((state) => state.setLoading);
@@ -35,7 +36,7 @@ export const useRegisterUser = () => {
                 timer: undefined,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate('/login');
+                    navigate(ROUTES.LOGIN);
                 }
             });
         },
