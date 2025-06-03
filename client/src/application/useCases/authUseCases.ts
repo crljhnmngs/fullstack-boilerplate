@@ -5,6 +5,7 @@ import axios from 'axios';
 import {
     useForgotPasswordErrorStore,
     useLoginErrorStore,
+    useResetPasswordErrorStore,
 } from '../store/errorStore';
 
 const authPort: AuthPort = AuthService;
@@ -94,6 +95,31 @@ export const AuthUseCases = {
             throw new Error(
                 handleApiError(error, 'Failed to send forgot password email')
             );
+        }
+    },
+    resetPassword: async (...args: Parameters<AuthPort['resetPassword']>) => {
+        try {
+            return await authPort.resetPassword(...args);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    const { setApiError } =
+                        useResetPasswordErrorStore.getState();
+                    const { data } = error.response;
+
+                    if (
+                        'fieldErrors' in data &&
+                        Array.isArray(data.fieldErrors) &&
+                        data.fieldErrors.length > 0
+                    ) {
+                        setApiError(data);
+                        error.response.data = {
+                            message: data.fieldErrors[0].message,
+                        };
+                    }
+                }
+            }
+            throw new Error(handleApiError(error, 'Failed to reset password'));
         }
     },
 };

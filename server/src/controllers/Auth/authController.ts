@@ -127,7 +127,7 @@ export const logoutUser = async (req: Request, res: Response) => {
 
 export const confirmEmail = async (req: Request, res: Response) => {
     try {
-        const { token, userId } = req.query;
+        const { token, userId } = req.body;
 
         if (!token || !userId) {
             res.status(400).json({ message: 'Invalid request parameters' });
@@ -155,7 +155,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
 export const resendEmailVerification = async (req: Request, res: Response) => {
     try {
-        const { userId, email } = req.query;
+        const { userId, email } = req.body;
 
         if (!userId && !email) {
             res.status(400).json({ message: 'Missing required data' });
@@ -227,7 +227,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         if (!validationResult.success) {
             const formattedErrors = validationResult.error.issues.map(
                 (issue) => ({
-                    field: issue.path[0],
+                    field: 'password',
                     message: issue.message,
                 })
             );

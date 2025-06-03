@@ -19,8 +19,8 @@ const authRouter = Router();
 authRouter.post('/login', loginLimiter, loginUser);
 authRouter.post('/refresh', handleRefreshToken);
 authRouter.post('/logout', logoutUser);
-authRouter.get('/confirm-email', confirmEmailLimiter, confirmEmail);
-authRouter.get(
+authRouter.post('/confirm-email', confirmEmailLimiter, confirmEmail);
+authRouter.post(
     '/resend-email-verification',
     confirmEmailLimiter,
     resendEmailVerification

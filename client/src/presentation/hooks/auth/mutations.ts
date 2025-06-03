@@ -5,7 +5,7 @@ import { LoginResponse, RefreshResponse } from '@/domain/types/api';
 import { saveAuth } from '@/infrastructure/authStorage';
 import { ROUTES } from '@/lib/routes';
 import { AlertIcon, showAlert } from '@/lib/utils';
-import { LoginParams } from '@/presentation/types';
+import { LoginParams, ResetPasswordParams } from '@/presentation/types';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 
@@ -60,7 +60,7 @@ export const useLoginUser = () => {
     });
 
     return {
-        handleUserLogin: mutation.mutate,
+        userLogin: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -87,7 +87,7 @@ export const useRefreshToken = () => {
     });
 
     return {
-        handleRefresh: mutation.mutate,
+        refreshToken: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -119,7 +119,7 @@ export const useLogoutUser = () => {
     });
 
     return {
-        handleUserlogout: mutation.mutate,
+        userlogout: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -183,7 +183,7 @@ export const useConfirmEmail = () => {
     });
 
     return {
-        handleConfirmEmail: mutation.mutate,
+        confirmEmail: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -235,7 +235,7 @@ export const useResendVerification = () => {
     });
 
     return {
-        handleResendVerification: mutation.mutate,
+        resendVerification: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -270,7 +270,7 @@ export const useForgotPassword = () => {
         },
         onError: (error: Error) => {
             showAlert({
-                title: 'Password Reset Failed',
+                title: 'Failed to Send Password Reset Email',
                 text: error.message,
                 icon: AlertIcon.Error,
                 toast: true,
@@ -283,7 +283,59 @@ export const useForgotPassword = () => {
     });
 
     return {
-        handleForgotPassword: mutation.mutate,
+        forgotPassword: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useResetPassword = () => {
+    const setLoading = useLoadingStore((state) => state.setLoading);
+    const navigate = useNavigate();
+
+    const mutation = useMutation({
+        mutationFn: (data: ResetPasswordParams) =>
+            AuthUseCases.resetPassword(data),
+
+        onMutate: () => setLoading(true),
+
+        onSuccess: ({ message }) => {
+            showAlert({
+                title: 'Password Successfully Reset',
+                icon: AlertIcon.Success,
+                html: `
+                    <p class="mb-2">${message}</p>
+                    <p class="text-sm text-gray-700">
+                        You can now log in using your new password.
+                    </p>
+                `,
+                showConfirmButton: true,
+                timer: undefined,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate(ROUTES.LOGIN);
+                }
+            });
+        },
+
+        onError: (error: Error) => {
+            showAlert({
+                title: 'Password Reset Failed',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        },
+
+        onSettled: () => setLoading(false),
+    });
+
+    return {
+        resetPassword: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

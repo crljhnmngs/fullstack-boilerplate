@@ -25,11 +25,11 @@ export const Login = () => {
         },
     });
 
-    const { handleUserLogin, isError } = useLoginUser();
+    const { userLogin, isError } = useLoginUser();
     const { apiError, clearApiError } = useLoginErrorStore();
 
     const handleLogin = (data: LoginParams) => {
-        handleUserLogin(data);
+        userLogin(data);
     };
 
     useEffect(() => {
@@ -58,7 +58,7 @@ export const Login = () => {
         <div className="h-screen w-screen overflow-hidden">
             <Header />
             <div className="h-[90%] flex justify-center items-center">
-                <div className="w-[35rem] h-[30rem] bg-white shadow-lg rounded-2xl p-14 border border-gray-200">
+                <div className="w-[35rem] h-auto bg-white shadow-lg rounded-2xl p-14 border border-gray-200">
                     <div className="pt-7 h-[10%]">
                         <h1 className="font-bold text-3xl">Login</h1>
                     </div>

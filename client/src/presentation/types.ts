@@ -109,3 +109,9 @@ export type ShowAlertOptions = {
     showConfirmButton?: boolean;
     timerProgressBar?: boolean;
 };
+
+export type ResetPasswordParams = {
+    userId?: string;
+    token?: string;
+    newPassword: string;
+};

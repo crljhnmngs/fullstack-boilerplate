@@ -17,7 +17,7 @@ import { ResetPassword } from '@/presentation/pages/ResetPassword';
 
 export const AppRouter = () => {
     const { user, accessToken } = useAuthStore();
-    const { handleRefresh } = useRefreshToken();
+    const { refreshToken } = useRefreshToken();
 
     useEffect(() => {
         const shouldRefresh =
@@ -25,7 +25,7 @@ export const AppRouter = () => {
             (user.email === '' || user.name === '' || accessToken === '');
 
         if (shouldRefresh) {
-            handleRefresh();
+            refreshToken();
         }
     }, [user, accessToken]);
 

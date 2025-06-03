@@ -17,7 +17,7 @@ export const Header = () => {
     const [name, setName] = useState<string>();
     const { user } = useAuthStore();
     const { userProfile, isProfileLoading } = useGetUserProfile();
-    const { handleUserlogout } = useLogoutUser();
+    const { userlogout } = useLogoutUser();
 
     const { data, isLoading } = useQuery({
         queryKey: ['randomUser'],
@@ -36,7 +36,7 @@ export const Header = () => {
     const randomUser = useMemo(() => users[0], [users]);
 
     const handleLogout = () => {
-        handleUserlogout();
+        userlogout();
     };
 
     useEffect(() => {

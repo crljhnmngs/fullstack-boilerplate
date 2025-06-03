@@ -23,11 +23,11 @@ export const ForgotPassword = () => {
         defaultValues: { email: '' },
     });
 
-    const { handleForgotPassword, isError } = useForgotPassword();
+    const { forgotPassword, isError } = useForgotPassword();
     const { apiError, clearApiError } = useForgotPasswordErrorStore();
 
     const handleSendResetLink = (data: ForgotPasswordFormData) => {
-        handleForgotPassword({ email: data.email });
+        forgotPassword({ email: data.email });
     };
 
     useEffect(() => {

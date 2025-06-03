@@ -16,7 +16,7 @@ export const ConfirmEmail = () => {
         hasRun.current = true;
 
         if (userId && token) {
-            confirmEmail.handleConfirmEmail({ userId, token });
+            confirmEmail.confirmEmail({ userId, token });
         }
     }, [userId, token]);
 
