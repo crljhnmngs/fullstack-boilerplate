@@ -134,7 +134,7 @@ export const handleApiError = (error: unknown, defaultMessage: string) => {
                         'Too many attempts, please try again later.'
                     );
                 case 500:
-                    return apiError.message || 'Server error. Try again later.';
+                    return 'Something went wrong on our end. Please try again later.';
                 default:
                     return apiError.message || defaultMessage;
             }

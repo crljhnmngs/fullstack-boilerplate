@@ -16,7 +16,7 @@ export const ResendVerification = () => {
         hasRun.current = true;
 
         if (userId || email) {
-            resendVerification.handleResendVerification({ userId, email });
+            resendVerification.resendVerification({ userId, email });
         }
     }, [userId, email]);
 

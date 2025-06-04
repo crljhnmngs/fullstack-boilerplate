@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Debug Fullstack App",
+            "configurations": ["Debug Express Server", "Debug React App"]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Debug Express Server",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/server/node_modules/.bin/nodemon.cmd",
+            "cwd": "${workspaceFolder}/server",
+            "args": [
+                "--watch",
+                "src",
+                "--exec",
+                "ts-node --files src/index.ts"
+            ],
+            "autoAttachChildProcesses": true,
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug React App",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/client/",
+            "sourceMaps": true
+        }
+    ]
+}

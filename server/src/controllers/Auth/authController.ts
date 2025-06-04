@@ -1,12 +1,18 @@
 import { Request, Response } from 'express';
-import { loginSchema } from '../../utils/validation/Auth/authValidation';
+import {
+    forgotPasswordSchema,
+    loginSchema,
+} from '../../utils/validation/Auth/authValidation';
 import {
     confirmEmailService,
     loginUserService,
     refreshAccessTokenService,
     resendEmailVerificationService,
+    forgotPasswordService,
+    resetPasswordService,
 } from '../../services/Auth/authService';
 import { keys } from '../../config/keys';
+import { PasswordSchema } from '../../utils/validation/User/userValidation';
 
 export const loginUser = async (req: Request, res: Response) => {
     try {
@@ -121,7 +127,7 @@ export const logoutUser = async (req: Request, res: Response) => {
 
 export const confirmEmail = async (req: Request, res: Response) => {
     try {
-        const { token, userId } = req.query;
+        const { token, userId } = req.body;
 
         if (!token || !userId) {
             res.status(400).json({ message: 'Invalid request parameters' });
@@ -149,7 +155,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
 export const resendEmailVerification = async (req: Request, res: Response) => {
     try {
-        const { userId, email } = req.query;
+        const { userId, email } = req.body;
 
         if (!userId && !email) {
             res.status(400).json({ message: 'Missing required data' });
@@ -172,6 +178,76 @@ export const resendEmailVerification = async (req: Request, res: Response) => {
         // This should include timestamps and error details
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
-        return;
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+    try {
+        const validationResult = forgotPasswordSchema.safeParse(req.body);
+
+        if (!validationResult.success) {
+            const formattedErrors = validationResult.error.issues.map(
+                (issue) => ({
+                    field: issue.path[0],
+                    message: issue.message,
+                })
+            );
+
+            res.status(400).json({ fieldErrors: formattedErrors });
+            return;
+        }
+
+        const result = await forgotPasswordService(req.body.email);
+
+        if ('error' in result) {
+            res.status(result.status ?? 500).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { token, userId, newPassword } = req.body;
+
+        if (!token || !userId || !newPassword) {
+            res.status(400).json({ message: 'Missing required data' });
+            return;
+        }
+
+        const validationResult = PasswordSchema.safeParse(newPassword);
+
+        if (!validationResult.success) {
+            const formattedErrors = validationResult.error.issues.map(
+                (issue) => ({
+                    field: 'password',
+                    message: issue.message,
+                })
+            );
+
+            res.status(400).json({ fieldErrors: formattedErrors });
+            return;
+        }
+
+        const result = await resetPasswordService(userId, token, newPassword);
+
+        if ('error' in result) {
+            res.status(result.status ?? 500).json({ message: result.error });
+            return;
+        }
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        // TODO: Create a file logger function to store errors in logs/errors.log
+        // This should include timestamps and error details
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

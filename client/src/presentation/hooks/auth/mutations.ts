@@ -3,8 +3,9 @@ import { useLoadingStore } from '@/application/store/loadingStore';
 import { AuthUseCases } from '@/application/useCases/authUseCases';
 import { LoginResponse, RefreshResponse } from '@/domain/types/api';
 import { saveAuth } from '@/infrastructure/authStorage';
+import { ROUTES } from '@/lib/routes';
 import { AlertIcon, showAlert } from '@/lib/utils';
-import { LoginParams } from '@/presentation/types';
+import { LoginParams, ResetPasswordParams } from '@/presentation/types';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 
@@ -18,7 +19,7 @@ export const useLoginUser = () => {
         onMutate: () => setLoading(true),
         onSuccess: (data: LoginResponse) => {
             saveAuth();
-            navigate('/');
+            navigate(ROUTES.HOME);
             setAuth(data.user, data.accessToken);
         },
         onError: (error: Error, variables) => {
@@ -59,7 +60,7 @@ export const useLoginUser = () => {
     });
 
     return {
-        handleUserLogin: mutation.mutate,
+        userLogin: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -80,13 +81,13 @@ export const useRefreshToken = () => {
         },
         onError: () => {
             clearAuth();
-            navigate('/login');
+            navigate(ROUTES.LOGIN);
         },
         onSettled: () => setLoading(false),
     });
 
     return {
-        handleRefresh: mutation.mutate,
+        refreshToken: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -118,7 +119,7 @@ export const useLogoutUser = () => {
     });
 
     return {
-        handleUserlogout: mutation.mutate,
+        userlogout: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -147,7 +148,7 @@ export const useConfirmEmail = () => {
                 timer: undefined,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate('/login');
+                    navigate(ROUTES.LOGIN);
                 }
             });
         },
@@ -174,7 +175,7 @@ export const useConfirmEmail = () => {
                 showConfirmButton: true,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate('/login');
+                    navigate(ROUTES.LOGIN);
                 }
             });
         },
@@ -182,7 +183,7 @@ export const useConfirmEmail = () => {
     });
 
     return {
-        handleConfirmEmail: mutation.mutate,
+        confirmEmail: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,
@@ -211,7 +212,7 @@ export const useResendVerification = () => {
                 timer: undefined,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate('/login');
+                    navigate(ROUTES.LOGIN);
                 }
             });
         },
@@ -226,7 +227,7 @@ export const useResendVerification = () => {
                 showConfirmButton: true,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate('/login');
+                    navigate(ROUTES.LOGIN);
                 }
             });
         },
@@ -234,7 +235,107 @@ export const useResendVerification = () => {
     });
 
     return {
-        handleResendVerification: mutation.mutate,
+        resendVerification: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useForgotPassword = () => {
+    const setLoading = useLoadingStore((state) => state.setLoading);
+    const navigate = useNavigate();
+
+    const mutation = useMutation({
+        mutationFn: ({ email }: { email: string }) =>
+            AuthUseCases.forgotPassword(email),
+        onMutate: () => setLoading(true),
+        onSuccess: (res: { message: string }) => {
+            showAlert({
+                title: 'Password Reset Email Sent',
+                icon: AlertIcon.Info,
+                html: `
+                    <p class="mb-2">${res.message}</p>
+                    <p class="text-sm text-gray-700">
+                        Please check your inbox and your <strong>spam or junk folder</strong>.
+                    </p>
+                `,
+                showConfirmButton: true,
+                timer: undefined,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate(ROUTES.LOGIN);
+                }
+            });
+        },
+        onError: (error: Error) => {
+            showAlert({
+                title: 'Failed to Send Password Reset Email',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        },
+        onSettled: () => setLoading(false),
+    });
+
+    return {
+        forgotPassword: mutation.mutate,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+    };
+};
+
+export const useResetPassword = () => {
+    const setLoading = useLoadingStore((state) => state.setLoading);
+    const navigate = useNavigate();
+
+    const mutation = useMutation({
+        mutationFn: (data: ResetPasswordParams) =>
+            AuthUseCases.resetPassword(data),
+
+        onMutate: () => setLoading(true),
+
+        onSuccess: ({ message }) => {
+            showAlert({
+                title: 'Password Successfully Reset',
+                icon: AlertIcon.Success,
+                html: `
+                    <p class="mb-2">${message}</p>
+                    <p class="text-sm text-gray-700">
+                        You can now log in using your new password.
+                    </p>
+                `,
+                showConfirmButton: true,
+                timer: undefined,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate(ROUTES.LOGIN);
+                }
+            });
+        },
+
+        onError: (error: Error) => {
+            showAlert({
+                title: 'Password Reset Failed',
+                text: error.message,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        },
+
+        onSettled: () => setLoading(false),
+    });
+
+    return {
+        resetPassword: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

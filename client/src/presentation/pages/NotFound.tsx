@@ -1,3 +1,4 @@
+import { ROUTES } from '@/lib/routes';
 import { useNavigate } from 'react-router';
 
 export const NotFound = () => {
@@ -7,7 +8,7 @@ export const NotFound = () => {
         if (window.history.length > 1) {
             navigate(-1);
         } else {
-            navigate('/');
+            navigate(ROUTES.HOME);
         }
     };
 

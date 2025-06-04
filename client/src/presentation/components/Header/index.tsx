@@ -9,6 +9,7 @@ import { useAuthStore } from '@/application/store/authStore';
 import { useGetUserProfile } from '@/presentation/hooks/user';
 import defaultImage from '../../assets/images/defaultImage.png';
 import { useLogoutUser } from '@/presentation/hooks/auth';
+import { ROUTES } from '@/lib/routes';
 
 export const Header = () => {
     const setUsers = useRandomUserStore((state) => state.setUsers);
@@ -16,7 +17,7 @@ export const Header = () => {
     const [name, setName] = useState<string>();
     const { user } = useAuthStore();
     const { userProfile, isProfileLoading } = useGetUserProfile();
-    const { handleUserlogout } = useLogoutUser();
+    const { userlogout } = useLogoutUser();
 
     const { data, isLoading } = useQuery({
         queryKey: ['randomUser'],
@@ -35,7 +36,7 @@ export const Header = () => {
     const randomUser = useMemo(() => users[0], [users]);
 
     const handleLogout = () => {
-        handleUserlogout();
+        userlogout();
     };
 
     useEffect(() => {
@@ -53,18 +54,18 @@ export const Header = () => {
             </div>
             <div className="flex items-center gap-10">
                 <nav className="flex gap-7 text-xl text-white underline">
-                    <NavLink to="/" end>
+                    <NavLink to={ROUTES.HOME} end>
                         Home
                     </NavLink>
-                    <NavLink to="/sales" end>
+                    <NavLink to={ROUTES.SALES} end>
                         Sales
                     </NavLink>
                     {isAuthenticated() ? (
-                        <NavLink to="/login" onClick={handleLogout} end>
+                        <NavLink to={ROUTES.LOGIN} onClick={handleLogout} end>
                             Logout
                         </NavLink>
                     ) : (
-                        <NavLink to="/login" end>
+                        <NavLink to={ROUTES.LOGIN} end>
                             Login
                         </NavLink>
                     )}

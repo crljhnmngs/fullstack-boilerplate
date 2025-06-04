@@ -9,8 +9,12 @@ import jwt from 'jsonwebtoken';
 import { keys } from '../../config/keys';
 import { Token } from '../../models/Token/tokens';
 import mongoose from 'mongoose';
-import { generateConfirmationEmail } from '../../utils/emailTemplates';
+import {
+    generateConfirmationEmail,
+    generateForgotPasswordEmail,
+} from '../../utils/emailTemplates';
 import { sendEmailService } from '../Email/emailService';
+import { hashPassword } from '../../utils/hashPassword';
 
 export const loginUserService = async (loginData: ILoginData) => {
     try {
@@ -197,6 +201,108 @@ export const resendEmailVerificationService = async (
     } catch (error) {
         await session.abortTransaction();
         console.log(error);
+        return { error: 'Internal server error', status: 500 };
+    } finally {
+        session.endSession();
+    }
+};
+
+export const forgotPasswordService = async (email: string) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const user = await User.findOne({ email }).session(session);
+
+        const genericResponse = {
+            message:
+                'If an account with that email exists and is verified, you’ll receive a password reset link shortly.',
+        };
+
+        if (!user || !user.isEmailVerified) {
+            await session.abortTransaction();
+            return genericResponse;
+        }
+
+        await Token.deleteMany({
+            userId: user._id,
+            type: 'password_reset',
+        }).session(session);
+
+        const newSecuretoken = generateSecureToken();
+        const newExpiry = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes expiry
+
+        const token = new Token({
+            userId: user._id,
+            token: newSecuretoken,
+            type: 'password_reset',
+            tokenExpires: newExpiry,
+        });
+        await token.save({ session });
+
+        const resetPasswordLink = `${keys.app.clientUrl}/reset-password?token=${newSecuretoken}&userId=${user._id}`;
+
+        const emailHtml = generateForgotPasswordEmail(
+            user.name,
+            resetPasswordLink
+        );
+
+        const emailData = {
+            to: email,
+            subject: 'Reset Your Password',
+            html: emailHtml,
+            text: `Hi ${user.name},\n\nWe received a request to reset your password. You can reset it by clicking the link: ${resetPasswordLink}\n\nIf you did not request this, please ignore this email.`,
+        };
+
+        await sendEmailService(emailData);
+
+        await session.commitTransaction();
+        return genericResponse;
+    } catch (error) {
+        await session.abortTransaction();
+        console.log(error);
+        return { error: 'Internal server error', status: 500 };
+    } finally {
+        session.endSession();
+    }
+};
+
+export const resetPasswordService = async (
+    userId: string,
+    token: string,
+    newPassword: string
+) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const user = await User.findById(userId).session(session);
+
+        if (!user) {
+            await session.abortTransaction();
+            return { error: 'User not found', status: 404 };
+        }
+
+        const tokenDoc = await Token.findOne({
+            userId,
+            token,
+            type: 'password_reset',
+        }).session(session);
+
+        if (!tokenDoc || tokenDoc.tokenExpires < new Date()) {
+            await session.abortTransaction();
+            return { error: 'Invalid or expired reset token', status: 400 };
+        }
+
+        user.password = await hashPassword(newPassword);
+
+        await user.save({ session });
+
+        await Token.findByIdAndDelete(tokenDoc._id, { session });
+
+        await session.commitTransaction();
+        return { message: 'Password successfully reset' };
+    } catch (error) {
+        await session.abortTransaction();
+        console.error(error);
         return { error: 'Internal server error', status: 500 };
     } finally {
         session.endSession();

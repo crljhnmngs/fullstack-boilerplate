@@ -31,18 +31,37 @@ export const AuthService: AuthPort = {
         );
         return response.data;
     },
-    async confirmEmail(userId, token) {
-        const response = await http.get<void>('/v1/auth/confirm-email', {
-            params: { userId, token },
+    async confirmEmail(userId: string, token: string) {
+        const response = await http.post<void>('/v1/auth/confirm-email', {
+            userId,
+            token,
         });
         return response.data;
     },
-    async resendVerification(userId, email) {
-        const response = await http.get<void>(
-            '/v1/auth//resend-email-verification',
+
+    async resendVerification(userId: string, email: string) {
+        const response = await http.post<void>(
+            '/v1/auth/resend-email-verification',
             {
-                params: { userId, email },
+                userId,
+                email,
             }
+        );
+        return response.data;
+    },
+    async forgotPassword(email: string) {
+        const response = await http.post<{ message: string }>(
+            '/v1/auth/forgot-password',
+            {
+                email,
+            }
+        );
+        return response.data;
+    },
+    async resetPassword(data) {
+        const response = await http.patch<{ message: string }>(
+            '/v1/auth/reset-password',
+            data
         );
         return response.data;
     },
