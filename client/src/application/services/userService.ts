@@ -1,8 +1,12 @@
-import { ProfileWithoutUserId } from '@/domain/entities/profile';
-import { UserWithoutId } from '@/domain/entities/user';
 import { UserPort } from '@/domain/ports/userPort';
-import { UserProfileResponse } from '@/domain/types/api';
+import {
+    ApiResponse,
+    FormError,
+    RegistrationResData,
+    UserProfileResponse,
+} from '@/domain/types/api';
 import http from '@/infrastructure/httpService';
+import { RegisterFormData } from '@/presentation/validation/registerValidation';
 
 export const UserService: UserPort = {
     async registerUser(userData) {
@@ -19,20 +23,20 @@ export const UserService: UserPort = {
             formData.append('profileImage', userData.profileImage);
         }
 
-        const response = await http.post<UserWithoutId & ProfileWithoutUserId>(
-            '/v1/users',
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
+        const response = await http.post<
+            ApiResponse<RegistrationResData, FormError<RegisterFormData>>
+        >('/v1/users', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     },
     async getUserProfile() {
         const response =
-            await http.get<UserProfileResponse>('/v1/users/profile');
+            await http.get<ApiResponse<UserProfileResponse>>(
+                '/v1/users/profile'
+            );
         return response.data;
     },
 };

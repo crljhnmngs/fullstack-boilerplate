@@ -54,9 +54,15 @@ export const Header = () => {
             </div>
             <div className="flex items-center gap-10">
                 <nav className="flex gap-7 text-xl text-white underline">
-                    <NavLink to={ROUTES.HOME} end>
-                        Home
-                    </NavLink>
+                    {isAuthenticated() ? (
+                        <NavLink to={ROUTES.DASHBOARD} end>
+                            Home
+                        </NavLink>
+                    ) : (
+                        <NavLink to={ROUTES.HOME} end>
+                            Home
+                        </NavLink>
+                    )}
                     <NavLink to={ROUTES.SALES} end>
                         Sales
                     </NavLink>
@@ -83,7 +89,7 @@ export const Header = () => {
                             <img
                                 src={
                                     isAuthenticated()
-                                        ? userProfile?.profileImage ||
+                                        ? userProfile?.data?.profileImage ||
                                           defaultImage
                                         : randomUser?.picture?.thumbnail ||
                                           defaultImage

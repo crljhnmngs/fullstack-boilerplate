@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { UserProfileResponse } from '@/domain/types/api';
+import { ApiResponse, UserProfileResponse } from '@/domain/types/api';
 import { UserUseCases } from '@/application/useCases/userUseCases';
 import { isAuthenticated } from '@/infrastructure/authStorage';
-import { AlertIcon, showAlert } from '@/lib/utils';
+import { handleApiErrorToast } from '@/lib/utils';
 
 export const useGetUserProfile = () => {
     const {
         data: userProfile,
         isLoading: isProfileLoading,
         error,
-    } = useQuery<UserProfileResponse>({
+    } = useQuery<ApiResponse<UserProfileResponse>>({
         queryKey: ['userProfile'],
         queryFn: () => UserUseCases.getUserProfile(),
         refetchOnWindowFocus: false,
@@ -18,15 +18,11 @@ export const useGetUserProfile = () => {
     });
 
     if (error) {
-        showAlert({
-            title: 'Get User Profile',
-            text: error.message,
-            icon: AlertIcon.Error,
-            toast: true,
-            position: 'top-right',
-            timer: 3000,
-            timerProgressBar: true,
-        });
+        handleApiErrorToast<UserProfileResponse>(
+            error,
+            'Get User Profile',
+            'Unable to get user profile.'
+        );
     }
 
     return {

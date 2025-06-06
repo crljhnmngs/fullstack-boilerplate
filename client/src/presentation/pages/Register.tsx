@@ -151,15 +151,24 @@ export const Register = () => {
 
     useEffect(() => {
         if (isError && apiError) {
-            if (
-                'fieldErrors' in apiError &&
-                Array.isArray(apiError.fieldErrors)
-            ) {
-                apiError.fieldErrors.forEach((err) => {
-                    setError(err.field, {
-                        type: 'manual',
-                        message: err.message,
-                    });
+            if (Array.isArray(apiError)) {
+                apiError.forEach((err) => {
+                    console.log(err.field);
+                    if (err.field === 'name') {
+                        setError('firstname', {
+                            type: 'manual',
+                            message: err.message,
+                        });
+                        setError('lastname', {
+                            type: 'manual',
+                            message: err.message,
+                        });
+                    } else {
+                        setError(err.field, {
+                            type: 'manual',
+                            message: err.message,
+                        });
+                    }
                 });
             } else if ('field' in apiError && 'message' in apiError) {
                 setError(apiError.field as keyof RegisterFormData, {

@@ -4,12 +4,12 @@ import { LoginFormData } from '@/presentation/validation/loginValidation';
 import { ForgotPasswordFormData } from '@/presentation/validation/forgotPasswordValidation';
 import { ResetPasswordFormData } from '@/presentation/validation/resetPasswordValidation';
 
-type FieldError<T> = {
+export type FieldError<T> = {
     field: keyof T;
     message: string;
 };
 
-type FieldErrorsResponse<T> =
+export type FieldErrorsResponse<T> =
     | { fieldErrors: FieldError<T>[] }
     | { field?: keyof T; message?: string }
     | null;

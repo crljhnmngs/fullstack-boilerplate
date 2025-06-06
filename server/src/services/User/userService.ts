@@ -81,7 +81,11 @@ export const registerUserService = async (
         await session.commitTransaction();
         session.endSession();
 
-        return newUser;
+        return {
+            name: newUser.name,
+            email: newUser.email,
+            isEmailVerified: newUser.isEmailVerified,
+        };
     } catch (error) {
         await session.abortTransaction();
         session.endSession();

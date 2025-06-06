@@ -77,15 +77,17 @@ export const deleteSaleService = async (id: string) => {
 };
 
 export const deleteMultipleSalesService = async (ids: string[]) => {
-    const existingSales = await Sale.find({ _id: { $in: ids } });
+    const existingCount = await Sale.countDocuments({ _id: { $in: ids } });
 
-    if (existingSales.length === 0) {
+    if (existingCount === 0) {
         throw new Error('No matching sales found');
     }
 
-    await Sale.deleteMany({ _id: { $in: ids } });
+    // Delete the matching sales and get the result
+    const deleteResult = await Sale.deleteMany({ _id: { $in: ids } });
 
     return {
-        message: `${existingSales.length} sales deleted successfully!`,
+        deletedCount: deleteResult.deletedCount,
+        message: `${deleteResult.deletedCount} sales deleted successfully!`,
     };
 };

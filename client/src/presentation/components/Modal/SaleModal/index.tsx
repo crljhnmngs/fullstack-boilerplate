@@ -101,7 +101,6 @@ export const SaleModal = ({
             return;
         }
         onSubmit(data);
-        closeModal();
     };
 
     return (

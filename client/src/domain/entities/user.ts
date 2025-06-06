@@ -3,6 +3,7 @@ export type User = {
     name: string;
     email: string;
     password: string;
+    isEmailVerified: boolean;
 };
 
-export type UserWithoutId = Omit<User, '_id'>;
+export type UserWithoutId = Omit<User, '_id' | 'isEmailVerified'>;

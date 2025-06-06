@@ -1,11 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import { RegisterFormData } from '@/presentation/validation/registerValidation';
 import { UserWithoutId } from '@/domain/entities/user';
 import { ProfileWithoutUserId } from '@/domain/entities/profile';
 import Swal, { SweetAlertResult } from 'sweetalert2';
 import { ShowAlertOptions } from '@/presentation/types';
+import { ApiResponse, PaginatedApiResponse } from '@/domain/types/api';
 
 /**
  * Utility function to merge class names using `clsx` and `twMerge`.
@@ -111,38 +112,74 @@ export const capitalizeFirstLetter = (str: string) => {
     return str[0].toUpperCase() + str.slice(1);
 };
 
-export const handleApiError = (error: unknown, defaultMessage: string) => {
-    if (axios.isAxiosError(error)) {
-        if (error.response) {
-            const { status, data } = error.response;
-            const apiError = data as { message?: string };
+type PossibleApiResponse<T> = ApiResponse<T> | PaginatedApiResponse<T>;
 
-            switch (status) {
-                case 400:
-                    return apiError.message || 'Invalid request.';
-                case 401:
-                    return apiError.message || 'Unauthorized. Please log in.';
-                case 403:
-                    return (
-                        apiError.message || 'Forbidden. You do not have access.'
-                    );
-                case 404:
-                    return apiError.message || 'Resource not found.';
-                case 429:
-                    return (
-                        apiError.message ||
-                        'Too many attempts, please try again later.'
-                    );
-                case 500:
-                    return 'Something went wrong on our end. Please try again later.';
-                default:
-                    return apiError.message || defaultMessage;
-            }
+export const handleApiErrorToast = <T = unknown>(
+    error: unknown,
+    fallbackTitle = 'Request Failed',
+    fallbackMessage = 'Something went wrong.'
+) => {
+    if (isAxiosError(error)) {
+        if (error.response) {
+            const data = error.response.data as PossibleApiResponse<T>;
+
+            showAlert({
+                title: data?.message || fallbackTitle,
+                text: data?.error?.message || fallbackMessage,
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         } else if (error.request) {
-            return 'Network error. Please check your connection.';
+            showAlert({
+                title: fallbackTitle,
+                text: 'Network error. Please check your connection.',
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
         }
+    } else {
+        showAlert({
+            title: fallbackTitle,
+            text: fallbackMessage,
+            icon: AlertIcon.Error,
+            toast: true,
+            position: 'top-right',
+            timer: 3000,
+            timerProgressBar: true,
+        });
     }
-    return defaultMessage;
+};
+
+type ShowErrorAlertParams = {
+    title: string;
+    icon: AlertIcon;
+    html?: string;
+    onConfirm?: () => void;
+};
+
+export const showApiErrorAlert = ({
+    title,
+    icon,
+    html = '',
+    onConfirm,
+}: ShowErrorAlertParams) => {
+    showAlert({
+        title,
+        icon,
+        html: html,
+        timer: undefined,
+        showConfirmButton: true,
+    }).then((result) => {
+        if (result.isConfirmed && onConfirm) {
+            onConfirm();
+        }
+    });
 };
 
 export const transformRegisterData = (

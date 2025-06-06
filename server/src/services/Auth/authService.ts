@@ -289,7 +289,7 @@ export const resetPasswordService = async (
 
         if (!tokenDoc || tokenDoc.tokenExpires < new Date()) {
             await session.abortTransaction();
-            return { error: 'Invalid or expired reset token', status: 400 };
+            return { error: 'Invalid or expired reset link', status: 400 };
         }
 
         user.password = await hashPassword(newPassword);

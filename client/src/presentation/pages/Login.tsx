@@ -4,12 +4,13 @@ import { Header } from '../components/Header';
 import { LoginFormData, loginValidation } from '../validation/loginValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '../components/ui/button';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation, useNavigate } from 'react-router';
 import { useLoginUser } from '../hooks/auth';
 import { LoginParams } from '../types';
 import { useLoginErrorStore } from '@/application/store/errorStore';
 import { useEffect } from 'react';
 import { ROUTES } from '@/lib/routes';
+import { AlertIcon, showAlert } from '@/lib/utils';
 
 export const Login = () => {
     const {
@@ -27,18 +28,33 @@ export const Login = () => {
 
     const { userLogin, isError } = useLoginUser();
     const { apiError, clearApiError } = useLoginErrorStore();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleLogin = (data: LoginParams) => {
         userLogin(data);
     };
 
     useEffect(() => {
+        if (location.state?.showError) {
+            showAlert({
+                title: 'Something Went Wrong',
+                text: 'Please login again.',
+                icon: AlertIcon.Error,
+                toast: true,
+                position: 'top-right',
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            setTimeout(() => {
+                navigate(location.pathname, { replace: true });
+            }, 3100);
+        }
+    }, []);
+    useEffect(() => {
         if (isError && apiError) {
-            if (
-                'fieldErrors' in apiError &&
-                Array.isArray(apiError.fieldErrors)
-            ) {
-                apiError.fieldErrors.forEach((err) => {
+            if (Array.isArray(apiError)) {
+                apiError.forEach((err) => {
                     setError(err.field, {
                         type: 'manual',
                         message: err.message,

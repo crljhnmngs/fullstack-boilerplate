@@ -1,18 +1,24 @@
 import { AuthPort } from '@/domain/ports/authPort';
-import { LoginResponse, RefreshResponse } from '@/domain/types/api';
+import {
+    ApiResponse,
+    FormError,
+    LoginResponse,
+    RefreshResponse,
+} from '@/domain/types/api';
 import http from '@/infrastructure/httpService';
+import { ForgotPasswordFormData } from '@/presentation/validation/forgotPasswordValidation';
+import { LoginFormData } from '@/presentation/validation/loginValidation';
+import { ResetPasswordFormData } from '@/presentation/validation/resetPasswordValidation';
 
 export const AuthService: AuthPort = {
     async login(data) {
-        const response = await http.post<LoginResponse>(
-            '/v1/auth/login',
-            data,
-            { withCredentials: true }
-        );
+        const response = await http.post<
+            ApiResponse<LoginResponse, FormError<LoginFormData>>
+        >('/v1/auth/login', data, { withCredentials: true });
         return response.data;
     },
     async refreshToken() {
-        const response = await http.post<RefreshResponse>(
+        const response = await http.post<ApiResponse<RefreshResponse>>(
             '/v1/auth/refresh',
             {},
             {
@@ -22,7 +28,7 @@ export const AuthService: AuthPort = {
         return response.data;
     },
     async logout() {
-        const response = await http.post<void>(
+        const response = await http.post<ApiResponse>(
             '/v1/auth/logout',
             {},
             {
@@ -32,15 +38,18 @@ export const AuthService: AuthPort = {
         return response.data;
     },
     async confirmEmail(userId: string, token: string) {
-        const response = await http.post<void>('/v1/auth/confirm-email', {
-            userId,
-            token,
-        });
+        const response = await http.post<ApiResponse>(
+            '/v1/auth/confirm-email',
+            {
+                userId,
+                token,
+            }
+        );
         return response.data;
     },
 
     async resendVerification(userId: string, email: string) {
-        const response = await http.post<void>(
+        const response = await http.post<ApiResponse>(
             '/v1/auth/resend-email-verification',
             {
                 userId,
@@ -50,19 +59,17 @@ export const AuthService: AuthPort = {
         return response.data;
     },
     async forgotPassword(email: string) {
-        const response = await http.post<{ message: string }>(
-            '/v1/auth/forgot-password',
-            {
-                email,
-            }
-        );
+        const response = await http.post<
+            ApiResponse<null, FormError<ForgotPasswordFormData>>
+        >('/v1/auth/forgot-password', {
+            email,
+        });
         return response.data;
     },
     async resetPassword(data) {
-        const response = await http.patch<{ message: string }>(
-            '/v1/auth/reset-password',
-            data
-        );
+        const response = await http.patch<
+            ApiResponse<null, FormError<ResetPasswordFormData>>
+        >('/v1/auth/reset-password', data);
         return response.data;
     },
 };
