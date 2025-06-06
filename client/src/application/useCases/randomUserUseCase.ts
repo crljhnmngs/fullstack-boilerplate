@@ -12,8 +12,8 @@ export const RandomUserUseCases = {
                 nationality,
             });
         } catch (error) {
-            throw new Error();
             console.log(error);
+            throw error;
         }
     },
 };
