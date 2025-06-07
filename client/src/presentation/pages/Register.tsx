@@ -26,6 +26,7 @@ export const Register = () => {
         watch,
         setValue,
         setError,
+        clearErrors,
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerValidation),
         defaultValues: {
@@ -228,6 +229,7 @@ export const Register = () => {
                                 searchEmptyText="No country found"
                                 setValue={(value) => {
                                     setValue('country', value as string);
+                                    clearErrors('country');
                                 }}
                                 triggerHeight="h-15"
                                 error={errors?.country?.message}
@@ -245,6 +247,7 @@ export const Register = () => {
                                 searchEmptyText="No state/province found"
                                 setValue={(value) => {
                                     setValue('state', value as string);
+                                    clearErrors('state');
                                 }}
                                 triggerHeight="h-15"
                                 error={errors?.state?.message}
@@ -263,6 +266,7 @@ export const Register = () => {
                                 searchEmptyText="No city found"
                                 setValue={(value) => {
                                     setValue('city', value as string);
+                                    clearErrors('city');
                                 }}
                                 triggerHeight="h-15"
                                 error={errors?.city?.message}
