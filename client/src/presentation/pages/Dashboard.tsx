@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 
 export const Dashboard = () => {
     const { user, accessToken } = useAuthStore();
+
     return (
         <div className="flex flex-col h-screen w-screen overflow-hidden">
             <Header />

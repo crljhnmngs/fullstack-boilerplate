@@ -14,6 +14,7 @@ import { ResendVerification } from '@/presentation/pages/ResendVerification';
 import { ForgotPassword } from '@/presentation/pages/ForgotPassword';
 import { ROUTES } from '@/lib/routes';
 import { ResetPassword } from '@/presentation/pages/ResetPassword';
+import { ProtectedRoute } from '@/presentation/components/ProtectedRoute/ProtectedRoute';
 
 export const AppRouter = () => {
     const { user, accessToken } = useAuthStore();
@@ -27,15 +28,20 @@ export const AppRouter = () => {
         if (shouldRefresh) {
             refreshToken();
         }
-    }, [user, accessToken]);
+    }, [user, accessToken, refreshToken]);
 
     return (
         <Routes>
-            {isAuthenticated() ? (
-                <Route index element={<Dashboard />} />
-            ) : (
-                <Route index element={<Home />} />
-            )}
+            <Route index path={ROUTES.HOME} element={<Home />} />
+            <Route
+                path={ROUTES.DASHBOARD}
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                }
+            />
+
             <Route path={ROUTES.SALES} element={<Sales />} />
             <Route path={ROUTES.LOGIN} element={<Login />} />
             <Route path={ROUTES.REGISTER} element={<Register />} />

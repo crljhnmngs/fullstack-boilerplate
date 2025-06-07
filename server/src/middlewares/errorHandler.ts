@@ -9,9 +9,32 @@ export const errorHandler = (
 ) => {
     console.error('Unhandled error:', err);
 
-    res.status(err.status || 500).json({
-        error: err.message || 'Internal Server Error',
-        status: err.status || 500,
-        timestamp: new Date().toISOString(),
+    const statusCode = err.status || 500;
+    const message =
+        err.message ||
+        'Something went wrong on our end. Please try again later.';
+
+    const summary =
+        statusCode === 400
+            ? 'Bad Request'
+            : statusCode === 401
+              ? 'Unauthorized'
+              : statusCode === 403
+                ? 'Forbidden'
+                : statusCode === 404
+                  ? 'Not Found'
+                  : statusCode === 500
+                    ? 'Server Error'
+                    : 'Error';
+
+    res.status(statusCode).json({
+        success: false,
+        data: null,
+        message: summary,
+        error: {
+            code: statusCode,
+            message,
+            timestamp: new Date().toISOString(),
+        },
     });
 };

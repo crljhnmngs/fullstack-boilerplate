@@ -6,10 +6,15 @@ export const notFoundHandler = (
     res: Response,
     next: NextFunction
 ) => {
+    console.log(`Cannot ${req.method} ${req.originalUrl}`);
     res.status(404).json({
-        error: 'Not Found',
-        message: `Cannot ${req.method} ${req.originalUrl}`,
-        status: 404,
-        timestamp: new Date().toISOString(),
+        success: false,
+        data: null,
+        message: 'Not Found',
+        error: {
+            code: 404,
+            message: 'The requested resource was not found.',
+            timestamp: new Date().toISOString(),
+        },
     });
 };

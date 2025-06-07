@@ -41,11 +41,8 @@ export const ResetPassword = () => {
 
     useEffect(() => {
         if (isError && apiError) {
-            if (
-                'fieldErrors' in apiError &&
-                Array.isArray(apiError.fieldErrors)
-            ) {
-                apiError.fieldErrors.forEach((err) => {
+            if (Array.isArray(apiError)) {
+                apiError.forEach((err) => {
                     setError(err.field, {
                         type: 'manual',
                         message: err.message,

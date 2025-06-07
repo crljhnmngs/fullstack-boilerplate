@@ -1,5 +1,4 @@
 import { UserPort } from '@/domain/ports/userPort';
-import { handleApiError } from '@/lib/utils';
 import { UserService } from '../services/userService';
 import axios from 'axios';
 import { useRegisterErrorStore } from '../store/errorStore';
@@ -15,30 +14,20 @@ export const UserUseCases = {
                 if (error.response) {
                     const { setApiError } = useRegisterErrorStore.getState();
                     const { data } = error.response;
-
-                    setApiError(data);
-                    if ('fieldErrors' in data) {
-                        error.response.data = {
-                            message: 'Data validation error',
-                        };
-                    }
-                    if ('field' in data && 'message' in data) {
-                        error.response.data = {
-                            message: data.message,
-                        };
+                    if (data.error?.fieldErrors) {
+                        setApiError(data.error?.fieldErrors);
+                    } else if (data.error.field) {
+                        setApiError({
+                            field: data.error.field,
+                            message: data.error.message,
+                        });
                     }
                 }
             }
-            throw new Error(handleApiError(error, 'Failed to register user'));
+            throw error;
         }
     },
     getUserProfile: async () => {
-        try {
-            return await userPort.getUserProfile();
-        } catch (error) {
-            throw new Error(
-                handleApiError(error, 'Failed to get your profile')
-            );
-        }
+        return await userPort.getUserProfile();
     },
 };

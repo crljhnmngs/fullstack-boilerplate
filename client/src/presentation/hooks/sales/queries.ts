@@ -5,7 +5,8 @@ import { SaleUseCases } from '@/application/useCases/saleUseCases';
 import { useDebounce } from 'use-debounce';
 import { useLoadingStore } from '@/application/store/loadingStore';
 import { Pagination } from '@/domain/types/global';
-import { AlertIcon, showAlert } from '@/lib/utils';
+import { handleApiErrorToast } from '@/lib/utils';
+import { Sale } from '@/domain/entities/sale';
 
 export const useGetSales = () => {
     const setSales = useSaleStore((state) => state.setSales);
@@ -61,22 +62,18 @@ export const useGetSales = () => {
 
     useEffect(() => {
         if (res) {
-            setSales(res.data);
+            setSales(res.data!);
             setPagination(res.pagination);
         }
     }, [res, setSales]);
 
     useEffect(() => {
         if (error) {
-            showAlert({
-                title: 'Get Sales',
-                text: error.message,
-                icon: AlertIcon.Error,
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true,
-            });
+            handleApiErrorToast<Sale[]>(
+                error,
+                'Fetch Sales',
+                'Unable to load sales data.'
+            );
         }
     }, [error]);
 

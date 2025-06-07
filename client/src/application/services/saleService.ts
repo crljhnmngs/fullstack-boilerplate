@@ -1,23 +1,32 @@
 import { SalePort } from '@/domain/ports/salePort';
-import { SaleFormData } from '@/presentation/validation/saleValidation';
-import { GetSalesApiResponse } from '@/domain/types/api';
+import {
+    ApiResponse,
+    GenericError,
+    PaginatedApiResponse,
+} from '@/domain/types/api';
 import http from '@/infrastructure/httpService';
+import { Sale } from '@/domain/entities/sale';
 
 export const SaleService: SalePort = {
     async getAllSales(params) {
-        const response = await http.get<GetSalesApiResponse>('/v1/sales', {
+        const response = await http.get<
+            PaginatedApiResponse<Sale[], GenericError>
+        >('/v1/sales', {
             params,
         });
-        return response.data || [];
+        return response.data;
     },
 
     async addSale(saleData) {
-        const response = await http.post<SaleFormData>('/v1/sales', saleData);
+        const response = await http.post<ApiResponse<Sale>>(
+            '/v1/sales',
+            saleData
+        );
         return response.data;
     },
 
     async updateSale(id, saleData) {
-        const response = await http.patch<SaleFormData>(
+        const response = await http.patch<ApiResponse<Sale>>(
             `/v1/sales/${id}`,
             saleData
         );
@@ -25,11 +34,14 @@ export const SaleService: SalePort = {
     },
 
     async deleteSale(id) {
-        await http.delete(`/v1/sales/${id}`);
+        const response = await http.delete<ApiResponse>(`/v1/sales/${id}`);
+        return response.data;
     },
 
     async deleteMultipleSale(ids) {
-        const response = await http.delete('/v1/sales', { data: { ids } });
+        const response = await http.delete<ApiResponse>('/v1/sales', {
+            data: { ids },
+        });
         return response.data;
     },
 };

@@ -2,37 +2,38 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SaleUseCases } from '@/application/useCases/saleUseCases';
 import { SaleFormData } from '@/presentation/validation/saleValidation';
 import { useLoadingStore } from '@/application/store/loadingStore';
-import { AlertIcon, showAlert } from '@/lib/utils';
+import { AlertIcon, handleApiErrorToast, showAlert } from '@/lib/utils';
+import { ApiResponse } from '@/domain/types/api';
+import { Sale } from '@/domain/entities/sale';
+import { useSaleModalStore } from '@/application/store/modalStore';
 
 export const useAddSale = () => {
     const queryClient = useQueryClient();
     const setLoading = useLoadingStore((state) => state.setLoading);
+    const { closeModal } = useSaleModalStore();
 
     const mutation = useMutation({
         mutationFn: (saleData: SaleFormData) => SaleUseCases.addSale(saleData),
         onMutate: () => setLoading(true),
-        onSuccess: () => {
+        onSuccess: (data: ApiResponse<Sale>) => {
             showAlert({
                 title: 'Add Sale',
-                text: 'Sale added successfully!',
+                text: data.message,
                 icon: AlertIcon.Success,
                 toast: true,
                 position: 'top-right',
                 timer: 3000,
                 timerProgressBar: true,
             });
+            closeModal();
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
-        onError: (error: Error) => {
-            showAlert({
-                title: 'Add Sale',
-                text: error.message,
-                icon: AlertIcon.Error,
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true,
-            });
+        onError: (error) => {
+            handleApiErrorToast<Sale[]>(
+                error,
+                'Add Sale',
+                'Unable to add sale.'
+            );
         },
         onSettled: () => setLoading(false),
     });
@@ -48,6 +49,7 @@ export const useAddSale = () => {
 export const useUpdateSale = () => {
     const queryClient = useQueryClient();
     const setLoading = useLoadingStore((state) => state.setLoading);
+    const { closeModal } = useSaleModalStore();
 
     const mutation = useMutation({
         mutationFn: ({
@@ -58,28 +60,25 @@ export const useUpdateSale = () => {
             saleData: Partial<SaleFormData>;
         }) => SaleUseCases.updateSale(id, saleData),
         onMutate: () => setLoading(true),
-        onSuccess: () => {
+        onSuccess: (data: ApiResponse<Sale>) => {
             showAlert({
                 title: 'Update Sale',
-                text: 'Sale updated successfully!',
+                text: data.message,
                 icon: AlertIcon.Success,
                 toast: true,
                 position: 'top-right',
                 timer: 3000,
                 timerProgressBar: true,
             });
+            closeModal();
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
-        onError: (error: Error) => {
-            showAlert({
-                title: 'Update Sale',
-                text: error.message,
-                icon: AlertIcon.Error,
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true,
-            });
+        onError: (error) => {
+            handleApiErrorToast<Sale[]>(
+                error,
+                'Update Sale',
+                'Unable to update sale.'
+            );
         },
         onSettled: () => setLoading(false),
     });
@@ -99,10 +98,10 @@ export const useDeleteSale = () => {
     const mutation = useMutation({
         mutationFn: (id: string) => SaleUseCases.deleteSale(id),
         onMutate: () => setLoading(true),
-        onSuccess: () => {
+        onSuccess: (data: ApiResponse) => {
             showAlert({
                 title: 'Delete Sale',
-                text: 'Sale deleted successfully!',
+                text: data.message,
                 icon: AlertIcon.Success,
                 toast: true,
                 position: 'top-right',
@@ -111,16 +110,8 @@ export const useDeleteSale = () => {
             });
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
-        onError: (error: Error) => {
-            showAlert({
-                title: 'Delete Sale',
-                text: error.message,
-                icon: AlertIcon.Error,
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true,
-            });
+        onError: (error) => {
+            handleApiErrorToast(error, 'Delete Sale', 'Unable to delete sale.');
         },
         onSettled: () => setLoading(false),
     });
@@ -140,7 +131,7 @@ export const useMultipleDeleteSale = () => {
     const mutation = useMutation({
         mutationFn: (ids: string[]) => SaleUseCases.deleteMultipleSale(ids),
         onMutate: () => setLoading(true),
-        onSuccess: (data) => {
+        onSuccess: (data: ApiResponse) => {
             showAlert({
                 title: 'Delete Multiple Sales',
                 text: data?.message || 'Sales deleted successfully!',
@@ -153,15 +144,11 @@ export const useMultipleDeleteSale = () => {
             queryClient.invalidateQueries({ queryKey: ['sales'] });
         },
         onError: (error: Error) => {
-            showAlert({
-                title: 'Delete Multiple Sales',
-                text: error.message,
-                icon: AlertIcon.Error,
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true,
-            });
+            handleApiErrorToast(
+                error,
+                'Delete Multiple Sales',
+                'Unable to delete multiple sales.'
+            );
         },
         onSettled: () => setLoading(false),
     });

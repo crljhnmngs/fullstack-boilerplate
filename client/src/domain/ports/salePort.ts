@@ -1,5 +1,6 @@
 import { SaleFormData } from '@/presentation/validation/saleValidation';
-import { GetSalesApiResponse } from '@/domain/types/api';
+import { PaginatedApiResponse, ApiResponse } from '@/domain/types/api';
+import { Sale } from '../entities/sale';
 
 export interface SalePort {
     getAllSales(params: {
@@ -8,16 +9,16 @@ export interface SalePort {
         search?: string;
         couponUsed?: boolean;
         purchaseMethod?: string;
-    }): Promise<GetSalesApiResponse>;
+    }): Promise<PaginatedApiResponse<Sale[]>>;
 
-    addSale(saleData: SaleFormData): Promise<SaleFormData>;
+    addSale(saleData: SaleFormData): Promise<ApiResponse<Sale>>;
 
     updateSale(
         id: string,
         saleData: Partial<SaleFormData>
-    ): Promise<SaleFormData>;
+    ): Promise<ApiResponse<Sale>>;
 
-    deleteSale(id: string): Promise<void>;
+    deleteSale(id: string): Promise<ApiResponse>;
 
-    deleteMultipleSale(ids: string[]): Promise<{ message: string }>;
+    deleteMultipleSale(ids: string[]): Promise<ApiResponse>;
 }

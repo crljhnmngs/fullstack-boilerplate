@@ -1,7 +1,6 @@
 import { AuthPort } from '@/domain/ports/authPort';
-import { handleApiError } from '@/lib/utils';
 import { AuthService } from '../services/authService';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import {
     useForgotPasswordErrorStore,
     useLoginErrorStore,
@@ -15,111 +14,78 @@ export const AuthUseCases = {
         try {
             return await authPort.login(...args);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 if (error.response) {
                     const { setApiError } = useLoginErrorStore.getState();
                     const { data } = error.response;
-
-                    setApiError(data);
-                    if ('fieldErrors' in data) {
-                        error.response.data = {
-                            message: 'Invalid login credentials',
-                        };
-                    }
-                    if ('field' in data && 'message' in data) {
-                        error.response.data = {
-                            message: data.message,
-                        };
+                    if (data.error?.fieldErrors) {
+                        setApiError(data.error?.fieldErrors);
+                    } else if (data.error.field) {
+                        setApiError({
+                            field: data.error.field,
+                            message: data.error.message,
+                        });
                     }
                 }
             }
-            throw new Error(handleApiError(error, 'Failed to login'));
+            throw error;
         }
     },
     refreshToken: async () => {
-        try {
-            return await authPort.refreshToken();
-        } catch (error) {
-            throw new Error(
-                handleApiError(error, 'Failed to generate new token')
-            );
-        }
+        return await authPort.refreshToken();
     },
     logout: async () => {
-        try {
-            return await authPort.logout();
-        } catch (error) {
-            throw new Error(handleApiError(error, 'Logout failed'));
-        }
+        return await authPort.logout();
     },
     confirmEmail: async (...args: Parameters<AuthPort['confirmEmail']>) => {
-        try {
-            return await authPort.confirmEmail(...args);
-        } catch (error) {
-            throw new Error(handleApiError(error, 'Confirm email failed'));
-        }
+        return await authPort.confirmEmail(...args);
     },
     resendVerification: async (
         ...args: Parameters<AuthPort['resendVerification']>
     ) => {
-        try {
-            return await authPort.resendVerification(...args);
-        } catch (error) {
-            throw new Error(
-                handleApiError(error, 'Resend verification email failed')
-            );
-        }
+        return await authPort.resendVerification(...args);
     },
     forgotPassword: async (...args: Parameters<AuthPort['forgotPassword']>) => {
         try {
             return await authPort.forgotPassword(...args);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 if (error.response) {
                     const { setApiError } =
                         useForgotPasswordErrorStore.getState();
                     const { data } = error.response;
-
                     if (
-                        'fieldErrors' in data &&
-                        Array.isArray(data.fieldErrors) &&
-                        data.fieldErrors.length > 0
+                        'fieldErrors' in data.error &&
+                        Array.isArray(data.error.fieldErrors) &&
+                        data.error.fieldErrors.length > 0
                     ) {
-                        setApiError(data);
-                        error.response.data = {
-                            message: data.fieldErrors[0].message,
-                        };
+                        setApiError(data.error.fieldErrors);
                     }
                 }
             }
-            throw new Error(
-                handleApiError(error, 'Failed to send forgot password email')
-            );
+            throw error;
         }
     },
     resetPassword: async (...args: Parameters<AuthPort['resetPassword']>) => {
         try {
             return await authPort.resetPassword(...args);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 if (error.response) {
                     const { setApiError } =
                         useResetPasswordErrorStore.getState();
                     const { data } = error.response;
 
                     if (
-                        'fieldErrors' in data &&
-                        Array.isArray(data.fieldErrors) &&
-                        data.fieldErrors.length > 0
+                        'fieldErrors' in data.error &&
+                        Array.isArray(data.error.fieldErrors) &&
+                        data.error.fieldErrors.length > 0
                     ) {
-                        setApiError(data);
-                        error.response.data = {
-                            message: data.fieldErrors[0].message,
-                        };
+                        setApiError(data.error.fieldErrors);
                     }
                 }
             }
-            throw new Error(handleApiError(error, 'Failed to reset password'));
+            throw error;
         }
     },
 };

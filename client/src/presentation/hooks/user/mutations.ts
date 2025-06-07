@@ -4,8 +4,9 @@ import { UserUseCases } from '@/application/useCases/userUseCases';
 import { UserWithoutId } from '@/domain/entities/user';
 import { ProfileWithoutUserId } from '@/domain/entities/profile';
 import { useNavigate } from 'react-router';
-import { AlertIcon, showAlert } from '@/lib/utils';
+import { AlertIcon, handleApiErrorToast, showAlert } from '@/lib/utils';
 import { ROUTES } from '@/lib/routes';
+import { ApiResponse, RegistrationResData } from '@/domain/types/api';
 
 export const useRegisterUser = () => {
     const setLoading = useLoadingStore((state) => state.setLoading);
@@ -15,7 +16,7 @@ export const useRegisterUser = () => {
         mutationFn: (userData: UserWithoutId & ProfileWithoutUserId) =>
             UserUseCases.registerUser(userData),
         onMutate: () => setLoading(true),
-        onSuccess: (_, variables) => {
+        onSuccess: (res: ApiResponse<RegistrationResData>, variables) => {
             const email = variables.email;
             showAlert({
                 title: 'Registration Successful',
@@ -27,7 +28,7 @@ export const useRegisterUser = () => {
                     </p>
                     <p class="mt-4 text-sm text-gray-800">
                         Didn’t receive the email?
-                        <a href="/resend-verification?email=${encodeURIComponent(email)}" class="text-blue-500 underline">
+                        <a href="/resend-verification?email=${encodeURIComponent(res.data?.email ? res.data.email : email)}" class="text-blue-500 underline">
                         Click here to resend
                         </a>
                     </p>
@@ -40,16 +41,8 @@ export const useRegisterUser = () => {
                 }
             });
         },
-        onError: (error: Error) => {
-            showAlert({
-                title: 'Registration',
-                text: error.message,
-                icon: AlertIcon.Error,
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true,
-            });
+        onError: (error) => {
+            handleApiErrorToast(error, 'Registration', 'Unable to register.');
         },
         onSettled: () => setLoading(false),
     });

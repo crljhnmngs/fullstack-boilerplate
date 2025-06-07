@@ -1,12 +1,9 @@
 import { UserData } from '@/application/types';
-import { Sale } from '../entities/sale';
-import { PaginatedResponse } from './global';
+import { Pagination } from './global';
 import { Profile } from '../entities/profile';
-
-export type GetSalesApiResponse = PaginatedResponse<Sale>;
+import { FieldErrorsResponse } from '@/application/store/errorStore';
 
 export type LoginResponse = {
-    message: string;
     user: UserData;
     accessToken: string;
 };
@@ -17,3 +14,29 @@ export type RefreshResponse = {
 };
 
 export type UserProfileResponse = Omit<Profile, 'userId'>;
+
+export type ApiResponse<TData = unknown, TError = GenericError> = {
+    success: boolean;
+    data: TData | null;
+    message: string;
+    error: TError | null;
+};
+
+export type PaginatedApiResponse<
+    TData = unknown,
+    TError = GenericError,
+> = ApiResponse<TData, TError> & {
+    pagination: Pagination;
+};
+
+export type GenericError = {
+    code: number;
+    message: string;
+};
+
+export type FormError<T> = GenericError & {
+    field?: string;
+    fieldErrors?: FieldErrorsResponse<T>;
+};
+
+export type RegistrationResData = Omit<UserData, '_id' | 'password'>;

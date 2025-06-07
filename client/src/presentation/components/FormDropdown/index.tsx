@@ -47,7 +47,7 @@ export const FormDropdown = <T,>({
                     {label}
                 </label>
                 <AnimatePresence mode="wait" initial={false}>
-                    {error && (
+                    {error ? (
                         <motion.div
                             className="relative flex items-center gap-1 text-red-500  mr-2 group"
                             initial={{ opacity: 0, y: 10 }}
@@ -67,6 +67,10 @@ export const FormDropdown = <T,>({
                                 </div>
                             )}
                         </motion.div>
+                    ) : (
+                        <div className="h-full opacity-0 pointer-events-none">
+                            <MdError className="text-2xl" />
+                        </div>
                     )}
                 </AnimatePresence>
             </div>

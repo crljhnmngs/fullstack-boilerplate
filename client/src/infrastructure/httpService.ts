@@ -99,17 +99,21 @@ http.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const data = await AuthUseCases.refreshToken();
-                setAuth(data.user, data.accessToken);
-                saveAuth();
-                processQueue(null, data.accessToken);
+                const res = await AuthUseCases.refreshToken();
+                if (res.data) {
+                    setAuth(res.data.user, res.data.accessToken);
+                    saveAuth();
+                    processQueue(null, res.data.accessToken);
 
-                originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-                return http(originalRequest);
+                    originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+                    return http(originalRequest);
+                } else {
+                    throw Error();
+                }
             } catch (refreshError) {
                 processQueue(refreshError as AxiosError, null);
-                clearAuth();
                 await AuthUseCases.logout();
+                clearAuth();
                 window.location.href = ROUTES.LOGIN;
                 return Promise.reject(refreshError);
             } finally {
