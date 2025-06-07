@@ -103,6 +103,15 @@ export const SaleModal = ({
         onSubmit(data);
     };
 
+    const handleNumberOnlyKeyDown = (
+        e: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+        const invalidKeys = ['e', 'E', '+', '-', '.'];
+        if (invalidKeys.includes(e.key)) {
+            e.preventDefault();
+        }
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
             <DialogContent className="sm:max-w-[660px] max-h-[80vh] overflow-y-auto [&>button]:hidden">
@@ -189,7 +198,12 @@ export const SaleModal = ({
                         <FormInput
                             name={`customer.age`}
                             type="number"
+                            min="0"
+                            step="1"
                             label="Age"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            onKeyDown={handleNumberOnlyKeyDown}
                             register={register}
                             error={errors.customer?.age?.message}
                             rules={{ valueAsNumber: true }}
@@ -206,7 +220,13 @@ export const SaleModal = ({
                         <FormInput
                             name={`customer.satisfaction`}
                             type="number"
+                            min="0"
+                            max="5"
+                            step="1"
                             label="Satisfaction (1-5)"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            onKeyDown={handleNumberOnlyKeyDown}
                             register={register}
                             error={errors.customer?.satisfaction?.message}
                             rules={{ valueAsNumber: true }}
@@ -240,8 +260,12 @@ export const SaleModal = ({
                                     <FormInput
                                         name={`items.${index}.price`}
                                         type="number"
+                                        min="0"
                                         step="0.01"
                                         placeholder="Price"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        onKeyDown={handleNumberOnlyKeyDown}
                                         register={register}
                                         error={
                                             errors.items?.[index]?.price
@@ -253,7 +277,12 @@ export const SaleModal = ({
                                     <FormInput
                                         name={`items.${index}.quantity`}
                                         type="number"
+                                        min="0"
+                                        step="1"
                                         placeholder="Quantity"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        onKeyDown={handleNumberOnlyKeyDown}
                                         register={register}
                                         error={
                                             errors.items?.[index]?.quantity
@@ -266,7 +295,7 @@ export const SaleModal = ({
                                         type="button"
                                         onClick={() => remove(index)}
                                         variant="destructive"
-                                        className="cursor-pointer"
+                                        className="cursor-pointer mt-5"
                                     >
                                         X
                                     </Button>
