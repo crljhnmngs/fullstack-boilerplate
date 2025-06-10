@@ -11,8 +11,9 @@ import { useLoginErrorStore } from '@/application/store/errorStore';
 import { useEffect } from 'react';
 import { ROUTES } from '@/lib/routes';
 import { AlertIcon, showAlert } from '@/lib/utils';
+import { PageMeta } from '../components/PageMeta';
 
-export const Login = () => {
+const Login = () => {
     const {
         register,
         handleSubmit,
@@ -71,60 +72,68 @@ export const Login = () => {
     }, [isError, apiError]);
 
     return (
-        <div className="h-screen w-screen overflow-hidden">
-            <Header />
-            <div className="h-[90%] flex justify-center items-center">
-                <div className="w-[35rem] h-auto bg-white shadow-lg rounded-2xl p-14 border border-gray-200">
-                    <div className="pt-7 h-[10%]">
-                        <h1 className="font-bold text-3xl">Login</h1>
-                    </div>
-                    <form
-                        onSubmit={handleSubmit(handleLogin)}
-                        className="h-[90%] pt-10 flex flex-col gap-2"
-                    >
-                        <FormInput
-                            name="email"
-                            type="email"
-                            placeholder="Email"
-                            register={register}
-                            error={errors?.email?.message}
-                            className="h-15"
-                        />
-                        <FormInput
-                            name="password"
-                            type="password"
-                            placeholder="Password"
-                            register={register}
-                            error={errors?.password?.message}
-                            className="h-15"
-                        />
-                        <div className="w-full text-right mb-4">
-                            <NavLink
-                                to={ROUTES.FORGOT_PASSWORD}
-                                className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
-                            >
-                                Forgot Password?
-                            </NavLink>
+        <>
+            <PageMeta
+                title="Login Page"
+                description="Securely access your account"
+            />
+            <div className="h-screen w-screen overflow-hidden">
+                <Header />
+                <div className="h-[90%] flex justify-center items-center">
+                    <div className="w-[35rem] h-auto bg-white shadow-lg rounded-2xl p-14 border border-gray-200">
+                        <div className="pt-7 h-[10%]">
+                            <h1 className="font-bold text-3xl">Login</h1>
                         </div>
-                        <Button
-                            type="submit"
-                            className="cursor-pointer w-full h-15 text-xl"
+                        <form
+                            onSubmit={handleSubmit(handleLogin)}
+                            className="h-[90%] pt-10 flex flex-col gap-2"
                         >
-                            Login
-                        </Button>
-                        <div className="flex pt-3 w-full justify-center gap-1">
-                            <p className="text-lg">Not registered?</p>
-                            <NavLink
-                                className="text-lg cursor-pointer text-blue-600 hover:text-blue-800"
-                                to={ROUTES.REGISTER}
-                                end
+                            <FormInput
+                                name="email"
+                                type="email"
+                                placeholder="Email"
+                                register={register}
+                                error={errors?.email?.message}
+                                className="h-15"
+                            />
+                            <FormInput
+                                name="password"
+                                type="password"
+                                placeholder="Password"
+                                register={register}
+                                error={errors?.password?.message}
+                                className="h-15"
+                            />
+                            <div className="w-full text-right mb-4">
+                                <NavLink
+                                    to={ROUTES.FORGOT_PASSWORD}
+                                    className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
+                                >
+                                    Forgot Password?
+                                </NavLink>
+                            </div>
+                            <Button
+                                type="submit"
+                                className="cursor-pointer w-full h-15 text-xl"
                             >
-                                Create an account
-                            </NavLink>
-                        </div>
-                    </form>
+                                Login
+                            </Button>
+                            <div className="flex pt-3 w-full justify-center gap-1">
+                                <p className="text-lg">Not registered?</p>
+                                <NavLink
+                                    className="text-lg cursor-pointer text-blue-600 hover:text-blue-800"
+                                    to={ROUTES.REGISTER}
+                                    end
+                                >
+                                    Create an account
+                                </NavLink>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
+
+export default Login;

@@ -1,58 +1,77 @@
-import { Routes, Route } from 'react-router';
-import Home from '../presentation/pages/Home';
-import { Sales } from '../presentation/pages/Sales';
-import { NotFound } from '../presentation/pages/NotFound';
-import { Login } from '@/presentation/pages/Login';
-import { Register } from '@/presentation/pages/Register';
-import { isAuthenticated } from './authStorage';
-import { Dashboard } from '@/presentation/pages/Dashboard';
-import { useAuthStore } from '@/application/store/authStore';
-import { useRefreshToken } from '@/presentation/hooks/auth';
-import { useEffect } from 'react';
+// router/AppRouter.tsx
+import { createBrowserRouter } from 'react-router';
+import { lazy } from 'react';
+
+import { ROUTES } from '@/lib/routes';
+
+const Sales = lazy(() => import('@/presentation/pages/Sales'));
+const NotFound = lazy(() => import('@/presentation/pages/NotFound'));
+const Login = lazy(() => import('@/presentation/pages/Login'));
+const Register = lazy(() => import('@/presentation/pages/Register'));
+const Dashboard = lazy(() => import('@/presentation/pages/Dashboard'));
+const ForgotPassword = lazy(
+    () => import('@/presentation/pages/ForgotPassword')
+);
+const Calendar = lazy(() => import('@/presentation/pages/Calendar'));
+const Home = lazy(() => import('@/presentation/pages/Home'));
+const UserProfiles = lazy(() => import('@/presentation/pages/UserProfiles'));
+const Blank = lazy(() => import('@/presentation/pages/Blank'));
+const ResetPassword = lazy(() => import('@/presentation/pages/ResetPassword'));
+const FormElements = lazy(() => import('@/presentation/pages/FormElements'));
+const FormLayout = lazy(() => import('@/presentation/pages/FormLayout'));
+const BasicTables = lazy(() => import('@/presentation/pages/BasicTables'));
+const DataTables = lazy(() => import('@/presentation/pages/DataTables'));
+
+import { ProtectedRoute } from '@/presentation/components/ProtectedRoute/ProtectedRoute';
+import { AdminLayout } from '@/presentation/layout/AdminLayout';
 import { ConfirmEmail } from '@/presentation/pages/ConfirmEmail';
 import { ResendVerification } from '@/presentation/pages/ResendVerification';
-import { ForgotPassword } from '@/presentation/pages/ForgotPassword';
-import { ROUTES } from '@/lib/routes';
-import { ResetPassword } from '@/presentation/pages/ResetPassword';
-import { ProtectedRoute } from '@/presentation/components/ProtectedRoute/ProtectedRoute';
+import { InternalServerError } from '@/presentation/pages/InternalServerError';
+import { ServiceUnavailable } from '@/presentation/pages/ServiceUnavailable';
+import { Maintenance } from '@/presentation/pages/Maintenance';
+import { Success } from '@/presentation/pages/Success';
 
-export const AppRouter = () => {
-    const { user, accessToken } = useAuthStore();
-    const { refreshToken } = useRefreshToken();
-
-    useEffect(() => {
-        const shouldRefresh =
-            isAuthenticated() &&
-            (user.email === '' || user.name === '' || accessToken === '');
-
-        if (shouldRefresh) {
-            refreshToken();
-        }
-    }, [user, accessToken, refreshToken]);
-
-    return (
-        <Routes>
-            <Route index path={ROUTES.HOME} element={<Home />} />
-            <Route
-                path={ROUTES.DASHBOARD}
-                element={
-                    <ProtectedRoute>
-                        <Dashboard />
-                    </ProtectedRoute>
-                }
-            />
-
-            <Route path={ROUTES.SALES} element={<Sales />} />
-            <Route path={ROUTES.LOGIN} element={<Login />} />
-            <Route path={ROUTES.REGISTER} element={<Register />} />
-            <Route path={ROUTES.CONFIRM_EMAIL} element={<ConfirmEmail />} />
-            <Route
-                path={ROUTES.RESEND_VERIFICATION}
-                element={<ResendVerification />}
-            />
-            <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
-            <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
-            <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
-        </Routes>
-    );
-};
+export const AppRouter = createBrowserRouter([
+    {
+        element: <ProtectedRoute />,
+        errorElement: <NotFound />,
+        children: [
+            {
+                element: <AdminLayout />,
+                children: [
+                    {
+                        path: ROUTES.DASHBOARD,
+                        index: true,
+                        element: <Dashboard />,
+                    },
+                    { path: ROUTES.CALENDAR, element: <Calendar /> },
+                    { path: ROUTES.PROFILE, element: <UserProfiles /> },
+                    { path: ROUTES.FORM_ELEMENTS, element: <FormElements /> },
+                    { path: ROUTES.FORM_LAYOUT, element: <FormLayout /> },
+                    { path: ROUTES.BLANK, element: <Blank /> },
+                    { path: ROUTES.BASIC_TABLES, element: <BasicTables /> },
+                    { path: ROUTES.DATA_TABLES, element: <DataTables /> },
+                ],
+            },
+            {
+                path: ROUTES.INTERNALSERVERERROR,
+                element: <InternalServerError />,
+            },
+            {
+                path: ROUTES.SERVICEUNAVAILABLE,
+                element: <ServiceUnavailable />,
+            },
+            { path: ROUTES.MAINTENANCE, element: <Maintenance /> },
+            { path: ROUTES.SUCCESS, element: <Success /> },
+        ],
+    },
+    { path: ROUTES.HOME, element: <Home /> },
+    { path: ROUTES.LOGIN, element: <Login /> },
+    { path: ROUTES.REGISTER, element: <Register /> },
+    { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPassword /> },
+    { path: ROUTES.RESET_PASSWORD, element: <ResetPassword /> },
+    { path: ROUTES.CONFIRM_EMAIL, element: <ConfirmEmail /> },
+    { path: ROUTES.RESEND_VERIFICATION, element: <ResendVerification /> },
+    { path: ROUTES.SALES, element: <Sales /> },
+    { path: '*', element: <NotFound /> },
+]);

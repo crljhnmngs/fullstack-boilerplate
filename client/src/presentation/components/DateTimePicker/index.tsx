@@ -111,6 +111,8 @@ export type DateTimePickerProps = {
          * Custom class names for the trigger (the button that opens the picker).
          */
         trigger?: string;
+        label?: string;
+        icon?: string;
     };
     timePicker?: {
         hour?: boolean;
@@ -243,7 +245,12 @@ export const DateTimePicker = ({
     return (
         <div className="flex flex-col w-full">
             <div className="flex justify-between items-center">
-                <label className="text-[#231D15] text-base font-medium">
+                <label
+                    className={cn(
+                        'text-[#231D15] text-base font-medium',
+                        classNames?.label
+                    )}
+                >
                     {label}
                 </label>
                 <AnimatePresence mode="wait" initial={false}>
@@ -298,7 +305,12 @@ export const DateTimePicker = ({
                             tabIndex={0}
                         >
                             <div className="flex-grow flex items-center">
-                                <CalendarIcon className="mr-3 size-6" />
+                                <CalendarIcon
+                                    className={cn(
+                                        'mr-3 size-6',
+                                        classNames?.icon
+                                    )}
+                                />
                                 {dislayFormat}
                             </div>
                             {clearable && value && (

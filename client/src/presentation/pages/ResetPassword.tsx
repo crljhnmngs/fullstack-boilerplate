@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { useResetPasswordErrorStore } from '@/application/store/errorStore';
 import { useResetPassword } from '../hooks/auth';
 
-export const ResetPassword = () => {
+const ResetPassword = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const userId = params.get('userId') ?? '';
@@ -105,3 +105,5 @@ export const ResetPassword = () => {
         </div>
     );
 };
+
+export default ResetPassword;

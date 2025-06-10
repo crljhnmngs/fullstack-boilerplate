@@ -1,10 +1,10 @@
 import { isAuthenticated } from '@/infrastructure/authStorage';
 import { ROUTES } from '@/lib/routes';
-import { Navigate } from 'react-router';
+import { Navigate, Outlet } from 'react-router';
 
-export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+export const ProtectedRoute = () => {
     return isAuthenticated() ? (
-        children
+        <Outlet />
     ) : (
         <Navigate to={ROUTES.LOGIN} replace />
     );

@@ -16,7 +16,7 @@ import { Dropdown } from '../components/Dropdown';
 import { Button } from '../components/ui/button';
 import { ConfirmationModal } from '../components/Modal/ConfirmationModal';
 
-export const Sales = () => {
+const Sales = () => {
     const {
         sales,
         isLoading,
@@ -119,3 +119,5 @@ export const Sales = () => {
         </div>
     );
 };
+
+export default Sales;

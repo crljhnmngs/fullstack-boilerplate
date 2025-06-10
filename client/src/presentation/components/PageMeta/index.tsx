@@ -1,13 +1,13 @@
 import { SeoProps } from '@/presentation/types';
 import { Helmet } from 'react-helmet-async';
 
-export default function Seo({
-    title = 'Add your default title',
-    description = 'Add your default description',
-    keywords = 'Add your default keywords',
-    image = 'Add your default image', //default-image.jpg
+export const PageMeta = ({
+    title = 'App',
+    description = 'Description',
+    keywords = 'Keywords',
+    image = '/vite.svg',
     url = window.location.href,
-}: SeoProps) {
+}: SeoProps) => {
     return (
         <Helmet>
             <title>{title}</title>
@@ -23,4 +23,4 @@ export default function Seo({
             <meta name="twitter:image" content={image} />
         </Helmet>
     );
-}
+};
