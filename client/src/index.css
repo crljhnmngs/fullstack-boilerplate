@@ -540,6 +540,7 @@
 }
 
 .apexcharts-legend-text {
+    font-family: 'Poppins', sans-serif !important;
     @apply text-gray-700! dark:text-gray-400!;
 }
 

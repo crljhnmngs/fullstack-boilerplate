@@ -21,6 +21,9 @@ const FormElements = lazy(() => import('@/presentation/pages/FormElements'));
 const FormLayout = lazy(() => import('@/presentation/pages/FormLayout'));
 const BasicTables = lazy(() => import('@/presentation/pages/BasicTables'));
 const DataTables = lazy(() => import('@/presentation/pages/DataTables'));
+const LineChart = lazy(() => import('@/presentation/pages/LineChart'));
+const BarChart = lazy(() => import('@/presentation/pages/BarChart'));
+const PieChart = lazy(() => import('@/presentation/pages/PieChart'));
 
 import { ProtectedRoute } from '@/presentation/components/ProtectedRoute/ProtectedRoute';
 import { AdminLayout } from '@/presentation/layout/AdminLayout';
@@ -51,6 +54,9 @@ export const AppRouter = createBrowserRouter([
                     { path: ROUTES.BLANK, element: <Blank /> },
                     { path: ROUTES.BASIC_TABLES, element: <BasicTables /> },
                     { path: ROUTES.DATA_TABLES, element: <DataTables /> },
+                    { path: ROUTES.LINE_CHART, element: <LineChart /> },
+                    { path: ROUTES.BAR_CHART, element: <BarChart /> },
+                    { path: ROUTES.PIE_CHART, element: <PieChart /> },
                 ],
             },
             {
