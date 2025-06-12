@@ -17,7 +17,7 @@ import { transformRegisterData } from '@/lib/utils';
 import { useRegisterUser } from '../hooks/user';
 import { useRegisterErrorStore } from '@/application/store/errorStore';
 
-export const Register = () => {
+const Register = () => {
     const {
         register,
         handleSubmit,
@@ -356,3 +356,5 @@ export const Register = () => {
         </div>
     );
 };
+
+export default Register;

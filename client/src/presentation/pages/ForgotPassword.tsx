@@ -12,7 +12,7 @@ import { useForgotPassword } from '../hooks/auth';
 import { useForgotPasswordErrorStore } from '@/application/store/errorStore';
 import { useEffect } from 'react';
 
-export const ForgotPassword = () => {
+const ForgotPassword = () => {
     const {
         register,
         handleSubmit,
@@ -89,3 +89,5 @@ export const ForgotPassword = () => {
         </div>
     );
 };
+
+export default ForgotPassword;

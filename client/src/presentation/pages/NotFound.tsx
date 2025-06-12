@@ -1,7 +1,7 @@
 import { ROUTES } from '@/lib/routes';
 import { useNavigate } from 'react-router';
 
-export const NotFound = () => {
+const NotFound = () => {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
@@ -40,3 +40,5 @@ export const NotFound = () => {
         </div>
     );
 };
+
+export default NotFound;

@@ -1,6 +1,7 @@
 import { Sale } from '@/domain/entities/sale';
 import { Pagination } from '@/domain/types/global';
 import { AlertIcon } from '@/lib/utils';
+import { FormEvent, ReactNode } from 'react';
 import { UseFormRegister, RegisterOptions, Path } from 'react-hook-form';
 
 export type SalesTableProps = {
@@ -114,4 +115,149 @@ export type ResetPasswordParams = {
     userId?: string;
     token?: string;
     newPassword: string;
+};
+export type ComponentCardProps = {
+    title: string;
+    children: React.ReactNode;
+    className?: string;
+    desc?: string;
+};
+
+export type BreadcrumbProps = {
+    pageTitle: string;
+};
+
+export type CountryMapProps = {
+    mapColor?: string;
+};
+
+type CountryCode = {
+    code: string;
+    label: string;
+};
+
+export type PhoneInputProps = {
+    countries: CountryCode[];
+    placeholder?: string;
+    onChange?: (phoneNumber: string) => void;
+    selectPosition?: 'start' | 'end';
+};
+
+export type FormProps = {
+    onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    children: ReactNode;
+    className?: string;
+};
+
+export type CheckboxProps = {
+    label?: string;
+    checked: boolean;
+    className?: string;
+    id?: string;
+    onChange: (checked: boolean) => void;
+    disabled?: boolean;
+};
+
+export type FileInputProps = {
+    className?: string;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export type InputProps = {
+    type?: 'text' | 'number' | 'email' | 'password' | 'date' | 'time' | string;
+    id?: string;
+    name?: string;
+    placeholder?: string;
+    value?: string | number;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onClick?: (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
+    className?: string;
+    min?: string;
+    max?: string;
+    step?: number;
+    disabled?: boolean;
+    success?: boolean;
+    error?: boolean;
+    hint?: string;
+};
+
+export type RadioProps = {
+    id: string;
+    name: string;
+    value: string;
+    checked: boolean;
+    label: string;
+    onChange: (value: string) => void;
+    className?: string;
+    disabled?: boolean;
+};
+
+export type TextareaProps = {
+    placeholder?: string;
+    rows?: number;
+    value?: string;
+    onChange?: (value: string) => void;
+    className?: string;
+    disabled?: boolean;
+    error?: boolean;
+    hint?: string;
+};
+
+export type LabelProps = {
+    htmlFor?: string;
+    children: ReactNode;
+    className?: string;
+};
+
+type Option = {
+    value: string;
+    text: string;
+};
+
+export type MultiSelectProps = {
+    label: string;
+    options: Option[];
+    defaultSelected?: string[];
+    onChange?: (selected: string[]) => void;
+    disabled?: boolean;
+};
+
+type SelectOption = {
+    value: string;
+    label: string;
+};
+
+export type SelectProps = {
+    options: SelectOption[];
+    placeholder?: string;
+    onChange: (value: string) => void;
+    className?: string;
+    defaultValue?: string;
+};
+
+export type SwitchProps = {
+    label: string;
+    defaultChecked?: boolean;
+    disabled?: boolean;
+    onChange?: (checked: boolean) => void;
+    color?: 'blue' | 'gray';
+};
+
+export type NavItem = {
+    name: string;
+    icon: React.ReactNode;
+    path?: string;
+    subItems?: { name: string; path: string; new?: boolean }[];
+};
+
+export type AvatarProps = {
+    src: string;
+    alt?: string;
+    size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge';
+    status?: 'online' | 'offline' | 'busy' | 'none';
+};
+
+export type AvatarTextProps = {
+    name: string;
+    className?: string;
 };
