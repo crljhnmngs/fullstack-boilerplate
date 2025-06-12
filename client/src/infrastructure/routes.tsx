@@ -8,7 +8,9 @@ const Sales = lazy(() => import('@/presentation/pages/Sales'));
 const NotFound = lazy(() => import('@/presentation/pages/NotFound'));
 const Login = lazy(() => import('@/presentation/pages/Login'));
 const Register = lazy(() => import('@/presentation/pages/Register'));
-const Dashboard = lazy(() => import('@/presentation/pages/Dashboard'));
+const AdminDashboard = lazy(
+    () => import('@/presentation/pages/AdminDashboard')
+);
 const ForgotPassword = lazy(
     () => import('@/presentation/pages/ForgotPassword')
 );
@@ -33,22 +35,26 @@ import { InternalServerError } from '@/presentation/pages/InternalServerError';
 import { ServiceUnavailable } from '@/presentation/pages/ServiceUnavailable';
 import { Maintenance } from '@/presentation/pages/Maintenance';
 import { Success } from '@/presentation/pages/Success';
+import { ROLES } from '@/lib/const';
+import { Forbidden } from '@/presentation/pages/Forbidden';
+import { UserLayout } from '@/presentation/layout/UserLayout';
+import UserLanding from '@/presentation/pages/UserLanding';
+import { RoleBasedLayout } from '@/presentation/layout/RoleBasedLayout';
 
 export const AppRouter = createBrowserRouter([
     {
-        element: <ProtectedRoute />,
+        element: <ProtectedRoute allowedRoles={[ROLES.ADMIN]} />,
         errorElement: <NotFound />,
         children: [
             {
                 element: <AdminLayout />,
                 children: [
                     {
-                        path: ROUTES.DASHBOARD,
+                        path: ROUTES.ADMIN,
                         index: true,
-                        element: <Dashboard />,
+                        element: <AdminDashboard />,
                     },
                     { path: ROUTES.CALENDAR, element: <Calendar /> },
-                    { path: ROUTES.PROFILE, element: <UserProfiles /> },
                     { path: ROUTES.FORM_ELEMENTS, element: <FormElements /> },
                     { path: ROUTES.FORM_LAYOUT, element: <FormLayout /> },
                     { path: ROUTES.BLANK, element: <Blank /> },
@@ -59,16 +65,31 @@ export const AppRouter = createBrowserRouter([
                     { path: ROUTES.PIE_CHART, element: <PieChart /> },
                 ],
             },
+        ],
+    },
+    {
+        element: <ProtectedRoute allowedRoles={[ROLES.USER]} />,
+        errorElement: <NotFound />,
+        children: [
             {
-                path: ROUTES.INTERNALSERVERERROR,
-                element: <InternalServerError />,
+                element: <UserLayout />,
+                children: [
+                    {
+                        path: ROUTES.USER,
+                        index: true,
+                        element: <UserLanding />,
+                    },
+                ],
             },
+        ],
+    },
+    {
+        element: <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.USER]} />,
+        children: [
             {
-                path: ROUTES.SERVICEUNAVAILABLE,
-                element: <ServiceUnavailable />,
+                element: <RoleBasedLayout />,
+                children: [{ path: ROUTES.PROFILE, element: <UserProfiles /> }],
             },
-            { path: ROUTES.MAINTENANCE, element: <Maintenance /> },
-            { path: ROUTES.SUCCESS, element: <Success /> },
         ],
     },
     { path: ROUTES.HOME, element: <Home /> },
@@ -79,5 +100,16 @@ export const AppRouter = createBrowserRouter([
     { path: ROUTES.CONFIRM_EMAIL, element: <ConfirmEmail /> },
     { path: ROUTES.RESEND_VERIFICATION, element: <ResendVerification /> },
     { path: ROUTES.SALES, element: <Sales /> },
+    {
+        path: ROUTES.INTERNALSERVERERROR,
+        element: <InternalServerError />,
+    },
+    {
+        path: ROUTES.SERVICEUNAVAILABLE,
+        element: <ServiceUnavailable />,
+    },
+    { path: ROUTES.MAINTENANCE, element: <Maintenance /> },
+    { path: ROUTES.SUCCESS, element: <Success /> },
+    { path: ROUTES.FORBIDDEN, element: <Forbidden /> },
     { path: '*', element: <NotFound /> },
 ]);

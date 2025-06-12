@@ -47,8 +47,10 @@ export const loginUserService = async (loginData: ILoginData) => {
         return {
             message: 'Login successful',
             user: {
-                name: user.name,
+                firstname: user.firstname,
+                lastname: user.lastname,
                 email: user.email,
+                role: user.role,
             },
             accessToken,
             refreshToken,
@@ -77,8 +79,10 @@ export const refreshAccessTokenService = async (refreshToken: string) => {
         return {
             accessToken,
             user: {
-                name: user.name,
+                firstname: user.firstname,
+                lastname: user.lastname,
                 email: user.email,
+                role: user.role,
             },
         };
     } catch (error) {
@@ -180,18 +184,16 @@ export const resendEmailVerificationService = async (
             await token.save({ session });
         }
 
+        const fullname = user.firstname + ' ' + user.lastname;
         const confirmationLink = `${keys.app.clientUrl}/confirm-email?token=${newSecuretoken}&userId=${userId}`;
 
-        const emailHtml = generateConfirmationEmail(
-            user.name,
-            confirmationLink
-        );
+        const emailHtml = generateConfirmationEmail(fullname, confirmationLink);
 
         const emailData = {
             to: user.email,
             subject: 'Confirm Your Email Address',
             html: emailHtml,
-            text: `Hi ${user.name},\n\nPlease confirm your email by clicking the link: ${confirmationLink}`,
+            text: `Hi ${fullname},\n\nPlease confirm your email by clicking the link: ${confirmationLink}`,
         };
 
         await sendEmailService(emailData);
@@ -239,10 +241,11 @@ export const forgotPasswordService = async (email: string) => {
         });
         await token.save({ session });
 
+        const fullname = user.firstname + ' ' + user.lastname;
         const resetPasswordLink = `${keys.app.clientUrl}/reset-password?token=${newSecuretoken}&userId=${user._id}`;
 
         const emailHtml = generateForgotPasswordEmail(
-            user.name,
+            fullname,
             resetPasswordLink
         );
 
@@ -250,7 +253,7 @@ export const forgotPasswordService = async (email: string) => {
             to: email,
             subject: 'Reset Your Password',
             html: emailHtml,
-            text: `Hi ${user.name},\n\nWe received a request to reset your password. You can reset it by clicking the link: ${resetPasswordLink}\n\nIf you did not request this, please ignore this email.`,
+            text: `Hi ${fullname},\n\nWe received a request to reset your password. You can reset it by clicking the link: ${resetPasswordLink}\n\nIf you did not request this, please ignore this email.`,
         };
 
         await sendEmailService(emailData);

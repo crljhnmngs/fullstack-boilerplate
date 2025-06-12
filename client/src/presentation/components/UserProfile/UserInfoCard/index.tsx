@@ -29,7 +29,7 @@ export const UserInfoCard = () => {
                                 First Name
                             </p>
                             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                Carl John
+                                {user.firstname}
                             </p>
                         </div>
 
@@ -38,7 +38,7 @@ export const UserInfoCard = () => {
                                 Last Name
                             </p>
                             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                Manigos
+                                {user.lastname}
                             </p>
                         </div>
 
@@ -157,12 +157,18 @@ export const UserInfoCard = () => {
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                                     <div className="col-span-2 lg:col-span-1">
                                         <Label>First Name</Label>
-                                        <Input type="text" value="Carl John" />
+                                        <Input
+                                            type="text"
+                                            value={user.firstname}
+                                        />
                                     </div>
 
                                     <div className="col-span-2 lg:col-span-1">
                                         <Label>Last Name</Label>
-                                        <Input type="text" value="Manigos" />
+                                        <Input
+                                            type="text"
+                                            value={user.lastname}
+                                        />
                                     </div>
 
                                     <div className="col-span-2 lg:col-span-1">

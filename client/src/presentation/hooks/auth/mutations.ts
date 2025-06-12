@@ -8,6 +8,7 @@ import {
     RefreshResponse,
 } from '@/domain/types/api';
 import { saveAuth } from '@/infrastructure/authStorage';
+import { ROLES } from '@/lib/const';
 import { ROUTES } from '@/lib/routes';
 import {
     AlertIcon,
@@ -32,7 +33,11 @@ export const useLoginUser = () => {
         onSuccess: (res: ApiResponse<LoginResponse>) => {
             if (res.data) {
                 saveAuth();
-                navigate(ROUTES.DASHBOARD);
+                if (res.data.user.role === ROLES.ADMIN) {
+                    navigate(ROUTES.ADMIN);
+                } else if (res.data.user.role === ROLES.USER) {
+                    navigate(ROUTES.USER);
+                }
                 setAuth(res.data.user, res.data.accessToken);
             } else {
                 throw Error();
@@ -117,7 +122,7 @@ export const useRefreshToken = () => {
     });
 
     return {
-        refreshToken: mutation.mutate,
+        refreshToken: mutation.mutateAsync,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

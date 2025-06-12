@@ -47,8 +47,10 @@ export type Counter = {
 };
 
 export type UserData = {
-    name: string;
+    firstname: string;
+    lastname: string;
     email: string;
+    role: string;
 };
 
 export type AuthState = {

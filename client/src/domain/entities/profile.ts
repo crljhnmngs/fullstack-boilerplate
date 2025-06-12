@@ -1,8 +1,10 @@
 export type Profile = {
     userId: string;
-    address: string;
+    country: string;
+    state: string;
+    city: string;
     phone: string;
-    birthdate: string;
+    birthdate: Date;
     profileImage?: string;
 };
 

@@ -1,8 +1,14 @@
 import { ROUTES } from '@/lib/routes';
 import { BreadcrumbProps } from '@/presentation/types';
 import { Link } from 'react-router';
+import { useAuthStore } from '@/application/store/authStore';
+import { ROLES } from '@/lib/const';
 
 export const PageBreadcrumb = ({ pageTitle }: BreadcrumbProps) => {
+    const { user } = useAuthStore();
+
+    const homeRoute = user.role === ROLES.ADMIN ? ROUTES.ADMIN : ROUTES.USER;
+
     return (
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
@@ -13,7 +19,7 @@ export const PageBreadcrumb = ({ pageTitle }: BreadcrumbProps) => {
                     <li>
                         <Link
                             className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-                            to={ROUTES.DASHBOARD}
+                            to={homeRoute}
                         >
                             Home
                             <svg

@@ -1,5 +1,8 @@
 import { ROUTES } from '@/lib/routes';
 import { useNavigate } from 'react-router';
+import { PageMeta } from '../components/PageMeta';
+import { GridShape } from '../components/Common/GridShape';
+import { Error404 } from '../assets/icons';
 
 const NotFound = () => {
     const navigate = useNavigate();
@@ -13,31 +16,41 @@ const NotFound = () => {
     };
 
     return (
-        <div className="w-screen h-screen flex items-center justify-center">
-            <div className="w-full max-w-lg flex items-center flex-col text-notFound -ml-9 -mt-7">
-                <div className="text-[19px] xs:text-[17px] tracking-widest text-gray-900 font-medium pl-16 uppercase">
-                    <h3>oops! page not found</h3>
-                </div>
-                <div className="-mt-6 xs:-mt-7">
-                    <h1 className="font-montserrat font-black text-[270px] xs:text-[250px] leading-none tracking-small xs:tracking-tightest notFound">
-                        <span>4</span>
-                        <span>0</span>
-                        <span>4</span>
+        <>
+            <PageMeta
+                title="Error 404"
+                description="This is React.js 404 Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+            />
+            <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
+                <GridShape />
+                <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
+                    <h1 className="mb-8 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-2xl">
+                        ERROR
                     </h1>
-                </div>
-                <div className="-mt-4 text-xl xs:text-[19px] font-medium uppercase text-center pl-8">
-                    <h3>
-                        we are sorry, but the page you requested was not found
-                    </h3>
+
+                    <img src={Error404} alt="404" className="dark:hidden" />
+                    <img
+                        src={Error404}
+                        alt="404"
+                        className="hidden dark:block"
+                    />
+
+                    <p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
+                        We can’t seem to find the page you are looking for!
+                    </p>
+
                     <h3
-                        className="text-lg underline text-blue-600 cursor-pointer"
                         onClick={handleGoBack}
+                        className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
                     >
                         Back
                     </h3>
                 </div>
+                <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
+                    &copy; {new Date().getFullYear()} - Fullstack Boilerplate
+                </p>
             </div>
-        </div>
+        </>
     );
 };
 

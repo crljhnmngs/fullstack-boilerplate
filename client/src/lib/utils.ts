@@ -1,9 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { isAxiosError } from 'axios';
-import { RegisterFormData } from '@/presentation/validation/registerValidation';
-import { UserWithoutId } from '@/domain/entities/user';
-import { ProfileWithoutUserId } from '@/domain/entities/profile';
 import Swal, { SweetAlertResult } from 'sweetalert2';
 import { ShowAlertOptions } from '@/presentation/types';
 import { ApiResponse, PaginatedApiResponse } from '@/domain/types/api';
@@ -180,22 +177,6 @@ export const showApiErrorAlert = ({
             onConfirm();
         }
     });
-};
-
-export const transformRegisterData = (
-    data: RegisterFormData
-): UserWithoutId & ProfileWithoutUserId => {
-    return {
-        name: `${data.firstname} ${data.middlename ? data.middlename + ' ' : ''}${data.lastname}`.trim(),
-        email: data.email,
-        password: data.password,
-        address: [data.city, data.state, data.country]
-            .filter(Boolean)
-            .join(', '),
-        phone: data.phone.toString(),
-        birthdate: new Date(data.birthdate).toISOString(),
-        profileImage: data.profileImage,
-    };
 };
 
 export enum AlertIcon {

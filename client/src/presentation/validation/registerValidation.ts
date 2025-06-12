@@ -5,7 +5,7 @@ export const registerValidation = z
         firstname: z.string().min(1, 'FirstName is required'),
         middlename: z.string().optional(),
         lastname: z.string().min(1, 'FirstName required'),
-        country: z.string().min(1, 'Countty is required'),
+        country: z.string().min(1, 'Country is required'),
         state: z.string().optional(),
         city: z.string().optional(),
         phone: z
