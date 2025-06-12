@@ -12,12 +12,19 @@ export const UserService: UserPort = {
     async registerUser(userData) {
         const formData = new FormData();
 
-        formData.append('name', userData.name);
+        formData.append('firstname', userData.firstname);
+        if (userData.middlename) {
+            formData.append('middlename', userData.middlename);
+        }
+        formData.append('lastname', userData.lastname);
         formData.append('email', userData.email);
         formData.append('password', userData.password);
-        formData.append('address', userData.address);
+        formData.append('role', userData.role);
+        formData.append('country', userData.country);
+        formData.append('state', userData.state);
+        formData.append('city', userData.city);
         formData.append('phone', userData.phone);
-        formData.append('birthdate', userData.birthdate);
+        formData.append('birthdate', userData.birthdate.toISOString());
 
         if (userData.profileImage) {
             formData.append('profileImage', userData.profileImage);

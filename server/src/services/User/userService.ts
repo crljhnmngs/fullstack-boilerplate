@@ -21,9 +21,12 @@ export const registerUserService = async (
         const password = await hashPassword(userData.password);
 
         const newUser = new User({
-            name: userData.name,
+            firstname: userData.firstname,
+            middlename: userData.middlename,
+            lastname: userData.lastname,
             email: userData.email,
             password: password,
+            role: userData.role,
             isEmailVerified: false,
         });
 
@@ -42,7 +45,9 @@ export const registerUserService = async (
 
         const profile = new Profile({
             userId: newUser._id,
-            address: userData.address,
+            country: userData.country,
+            state: userData.state,
+            city: userData.city,
             phone: userData.phone,
             birthdate: userData.birthdate,
             profileImage: profileImageUrl,
@@ -64,16 +69,14 @@ export const registerUserService = async (
 
         let confirmationLink = `${keys.app.clientUrl}/confirm-email?token=${securetoken}&userId=${newUser._id}`;
 
-        const emailHtml = generateConfirmationEmail(
-            newUser.name,
-            confirmationLink
-        );
+        const fullname = newUser.firstname + ' ' + newUser.lastname;
+        const emailHtml = generateConfirmationEmail(fullname, confirmationLink);
 
         const emailData = {
             to: newUser.email,
             subject: 'Confirm Your Email Address',
             html: emailHtml,
-            text: `Hi ${newUser.name},\n\nPlease confirm your email by clicking the link: ${confirmationLink}`,
+            text: `Hi ${fullname},\n\nPlease confirm your email by clicking the link: ${confirmationLink}`,
         };
 
         await sendEmailService(emailData);
@@ -82,7 +85,8 @@ export const registerUserService = async (
         session.endSession();
 
         return {
-            name: newUser.name,
+            firstname: newUser.firstname,
+            lastname: newUser.lastname,
             email: newUser.email,
             isEmailVerified: newUser.isEmailVerified,
         };

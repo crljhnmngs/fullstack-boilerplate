@@ -13,6 +13,7 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
+        "@faker-js/faker": "^9.8.0",
         "argon2": "^0.41.1",
         "bcryptjs": "^3.0.2",
         "cloudinary": "^2.6.0",

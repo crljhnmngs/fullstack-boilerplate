@@ -1,8 +1,11 @@
 export type User = {
     _id: string;
-    name: string;
+    firstname: string;
+    middlename?: string;
+    lastname: string;
     email: string;
     password: string;
+    role: string;
     isEmailVerified: boolean;
 };
 

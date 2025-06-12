@@ -39,4 +39,9 @@ export type FormError<T> = GenericError & {
     fieldErrors?: FieldErrorsResponse<T>;
 };
 
-export type RegistrationResData = Omit<UserData, '_id' | 'password'>;
+export type RegistrationResData = {
+    firstname: string;
+    lastname: string;
+    email: string;
+    isEmailVerified: string;
+};

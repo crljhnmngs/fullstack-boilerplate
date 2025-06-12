@@ -1,6 +1,7 @@
 export const ROUTES = {
     HOME: '/',
-    DASHBOARD: '/dashboard',
+    ADMIN: '/admin',
+    USER: '/user',
     CALENDAR: '/calendar',
     PROFILE: '/profile',
     FORM_ELEMENTS: '/form-elements',
@@ -22,5 +23,6 @@ export const ROUTES = {
     RESEND_VERIFICATION: '/resend-verification',
     FORGOT_PASSWORD: '/forgot-password',
     RESET_PASSWORD: '/reset-password',
+    FORBIDDEN: '/forbidden',
     NOT_FOUND: '*',
 };

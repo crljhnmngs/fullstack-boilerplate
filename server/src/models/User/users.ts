@@ -2,9 +2,12 @@ import mongoose, { Schema } from 'mongoose';
 import { IUser } from '../../utils/interface/users';
 
 const UserSchema = new Schema<IUser>({
-    name: { type: String, required: true },
+    firstname: { type: String, required: true },
+    middlename: { type: String },
+    lastname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    role: { type: String, required: true },
     isEmailVerified: { type: Boolean, required: true },
 });
 

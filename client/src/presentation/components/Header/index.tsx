@@ -41,7 +41,7 @@ export const Header = () => {
 
     useEffect(() => {
         if (isAuthenticated()) {
-            setName(user.name);
+            setName(user.firstname + ' ' + user.lastname);
         } else {
             setName(randomUser?.name?.first + ' ' + randomUser?.name?.last);
         }
@@ -55,7 +55,7 @@ export const Header = () => {
             <div className="flex items-center gap-10">
                 <nav className="flex gap-7 text-xl text-white underline">
                     {isAuthenticated() ? (
-                        <NavLink to={ROUTES.DASHBOARD} end>
+                        <NavLink to={ROUTES.HOME} end>
                             Home
                         </NavLink>
                     ) : (

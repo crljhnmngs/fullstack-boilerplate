@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router';
 import { PageMeta } from '../components/PageMeta';
 import { GridShape } from '../components/Common/GridShape';
-import { Error503 } from '../assets/icons';
+import { Error403 } from '../assets/icons';
 import { ROUTES } from '@/lib/routes';
 
-export const ServiceUnavailable = () => {
+export const Forbidden = () => {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
@@ -14,9 +14,10 @@ export const ServiceUnavailable = () => {
             navigate(ROUTES.HOME);
         }
     };
+
     return (
         <>
-            <PageMeta title="Error 503" description="Error 503" />
+            <PageMeta title="Error 403" description="Error 403 - Forbidden" />
             <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1 dark:bg-gray-900">
                 <GridShape />
                 <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
@@ -24,16 +25,16 @@ export const ServiceUnavailable = () => {
                         ERROR
                     </h1>
 
-                    <img src={Error503} alt="503" className="dark:hidden" />
+                    <img src={Error403} alt="403" className="dark:hidden" />
                     <img
-                        src={Error503}
-                        alt="503"
+                        src={Error403}
+                        alt="403"
                         className="hidden dark:block"
                     />
 
                     <p className="mt-4 text-gray-800 mt-10 mb-7 dark:text-white/90">
-                        The service is temporarily unavailable. Please try again
-                        later.
+                        Access denied. You don’t have permission to view this
+                        page.
                     </p>
 
                     <h3

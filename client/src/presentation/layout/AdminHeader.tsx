@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-
 import { Link } from 'react-router';
 import { useSidebar } from '../context/SidebarContext';
 import { UserDropdown } from '../components/UserDropdown';

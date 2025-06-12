@@ -8,7 +8,7 @@ import {
     StatisticsChart,
 } from '../components/Dashboard';
 
-const Dashboard = () => {
+const AdminDashboard = () => {
     return (
         <>
             <PageMeta
@@ -42,4 +42,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default AdminDashboard;

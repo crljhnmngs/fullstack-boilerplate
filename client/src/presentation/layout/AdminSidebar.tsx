@@ -18,7 +18,7 @@ const navItems: NavItem[] = [
     {
         icon: <RxDashboard className="size-5 mt-1" />,
         name: 'Dashboard',
-        path: ROUTES.DASHBOARD,
+        path: ROUTES.ADMIN,
     },
     {
         icon: <IoCalendarClearOutline className="size-5 mt-1" />,
@@ -28,33 +28,35 @@ const navItems: NavItem[] = [
     {
         icon: <UserCircle strokeWidth={1.5} className="size-5.5 mt-1" />,
         name: 'User Profile',
-        path: '/profile',
+        path: ROUTES.PROFILE,
     },
     {
         name: 'Forms',
         icon: <CiViewList strokeWidth={0.5} className="size-6" />,
         subItems: [
-            { name: 'Form Elements', path: '/form-elements' },
-            { name: 'Form Layout', path: '/form-layout' },
+            { name: 'Form Elements', path: ROUTES.FORM_ELEMENTS },
+            { name: 'Form Layout', path: ROUTES.FORM_LAYOUT },
         ],
     },
     {
         name: 'Tables',
         icon: <LuTable strokeWidth={1.5} className="size-5.5 mt-1" />,
         subItems: [
-            { name: 'Basic Tables', path: '/basic-tables' },
-            { name: 'Data Tables', path: '/data-tables' },
+            { name: 'Basic Tables', path: ROUTES.BASIC_TABLES },
+            { name: 'Data Tables', path: ROUTES.DATA_TABLES },
         ],
     },
     {
         name: 'Pages',
         icon: <PageIcon />,
         subItems: [
-            { name: 'Blank Page', path: '/blank' },
-            { name: '500 Error', path: '/error-500' },
-            { name: '503 Error', path: '/error-503' },
-            { name: 'Maintenance', path: '/maintenance' },
-            { name: 'Success', path: '/success' },
+            { name: 'Blank Page', path: ROUTES.BLANK },
+            { name: '404 Error', path: ROUTES.NOT_FOUND },
+            { name: '403 Error', path: ROUTES.FORBIDDEN },
+            { name: '500 Error', path: ROUTES.INTERNALSERVERERROR },
+            { name: '503 Error', path: ROUTES.SERVICEUNAVAILABLE },
+            { name: 'Maintenance', path: ROUTES.MAINTENANCE },
+            { name: 'Success', path: ROUTES.SUCCESS },
         ],
     },
 ];

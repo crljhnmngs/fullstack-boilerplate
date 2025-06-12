@@ -3,9 +3,11 @@ import { Button } from '../../ui/Button/Button';
 import { Input } from '../../Form/Input/InputField';
 import { Label } from '../../Form/Label/Label';
 import { useModal } from '@/presentation/hooks/modal/useModal';
+import { useGetUserProfile } from '@/presentation/hooks/user';
 
 export const UserAddressCard = () => {
     const { isOpen, openModal, closeModal } = useModal();
+    const { userProfile } = useGetUserProfile();
     const handleSave = () => {
         // Handle save logic here
         console.log('Saving changes...');
@@ -26,16 +28,25 @@ export const UserAddressCard = () => {
                                     Country
                                 </p>
                                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                    Philippines
+                                    {userProfile?.data?.country}
                                 </p>
                             </div>
 
                             <div>
                                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                                    City/State
+                                    State/Province
                                 </p>
                                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                    Cebu
+                                    {userProfile?.data?.state}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                                    City
+                                </p>
+                                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                                    {userProfile?.data?.city}
                                 </p>
                             </div>
 
@@ -45,15 +56,6 @@ export const UserAddressCard = () => {
                                 </p>
                                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                                     6015
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                                    TAX ID
-                                </p>
-                                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                    ABC123456
                                 </p>
                             </div>
                         </div>
@@ -101,22 +103,30 @@ export const UserAddressCard = () => {
                             <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                                 <div>
                                     <Label>Country</Label>
-                                    <Input type="text" value="Philippines" />
+                                    <Input
+                                        type="text"
+                                        value={userProfile?.data?.country}
+                                    />
                                 </div>
 
                                 <div>
-                                    <Label>City/State</Label>
-                                    <Input type="text" value="Cebu" />
+                                    <Label>State/Province</Label>
+                                    <Input
+                                        type="text"
+                                        value={userProfile?.data?.state}
+                                    />
                                 </div>
 
+                                <div>
+                                    <Label>City</Label>
+                                    <Input
+                                        type="text"
+                                        value={userProfile?.data?.city}
+                                    />
+                                </div>
                                 <div>
                                     <Label>Postal Code</Label>
                                     <Input type="text" value="6015" />
-                                </div>
-
-                                <div>
-                                    <Label>TAX ID</Label>
-                                    <Input type="text" value="ABC123456" />
                                 </div>
                             </div>
                         </div>

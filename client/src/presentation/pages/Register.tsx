@@ -13,9 +13,10 @@ import defaultImage from '../assets/images/defaultImage.png';
 import locationsData from '../../presentation/assets/data/world-cities.json';
 import { FormDropdown } from '../components/FormDropdown';
 import { DropdownPropsData } from '../types';
-import { transformRegisterData } from '@/lib/utils';
 import { useRegisterUser } from '../hooks/user';
 import { useRegisterErrorStore } from '@/application/store/errorStore';
+import { UserWithoutId } from '@/domain/entities/user';
+import { ProfileWithoutUserId } from '@/domain/entities/profile';
 
 const Register = () => {
     const {
@@ -147,29 +148,32 @@ const Register = () => {
             return;
         }
 
-        registerUser(transformRegisterData(data));
+        const userData: UserWithoutId & ProfileWithoutUserId = {
+            firstname: data.firstname,
+            middlename: data.middlename,
+            lastname: data.lastname,
+            email: data.email,
+            password: data.password,
+            role: 'user',
+            country: data.country,
+            state: data.state ?? '',
+            city: data.city ?? '',
+            phone: data.phone,
+            birthdate: data.birthdate,
+            profileImage: data.profileImage,
+        };
+
+        registerUser(userData);
     };
 
     useEffect(() => {
         if (isError && apiError) {
             if (Array.isArray(apiError)) {
                 apiError.forEach((err) => {
-                    console.log(err.field);
-                    if (err.field === 'name') {
-                        setError('firstname', {
-                            type: 'manual',
-                            message: err.message,
-                        });
-                        setError('lastname', {
-                            type: 'manual',
-                            message: err.message,
-                        });
-                    } else {
-                        setError(err.field, {
-                            type: 'manual',
-                            message: err.message,
-                        });
-                    }
+                    setError(err.field, {
+                        type: 'manual',
+                        message: err.message,
+                    });
                 });
             } else if ('field' in apiError && 'message' in apiError) {
                 setError(apiError.field as keyof RegisterFormData, {
