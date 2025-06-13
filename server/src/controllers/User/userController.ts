@@ -204,7 +204,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         res.status(200).json({
             success: true,
             data: result.user,
-            message: 'User profile updated successfully',
+            message: 'Profile updated successfully!',
             error: null,
         });
     } catch (error) {

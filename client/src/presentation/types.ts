@@ -61,7 +61,10 @@ export type FormInputProps<
     type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'file';
     placeholder?: string;
     label?: string;
-    className?: string;
+    classNames?: {
+        label?: string;
+        input?: string;
+    };
     register: UseFormRegister<T>;
     rules?: RegisterOptions<T, Path<T>>;
     error?: string;
@@ -74,8 +77,12 @@ export interface FormDropdownProps<T> {
         value: T | undefined | ((prevValue: T | undefined) => T | undefined)
     ) => void;
     defaultText?: string;
-    contentWith?: string;
-    triggerHeight?: string;
+    classNames?: {
+        trigger?: string;
+        content?: string;
+        button?: string;
+        label?: string;
+    };
     search?: boolean;
     searchPlaceholder?: string;
     searchEmptyText?: string;

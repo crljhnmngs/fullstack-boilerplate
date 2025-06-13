@@ -3,16 +3,163 @@ import { Button } from '../../ui/Button/Button';
 import { Input } from '../../Form/Input/InputField';
 import { Label } from '../../Form/Label/Label';
 import { useModal } from '@/presentation/hooks/modal/useModal';
-import { useGetUserProfile } from '@/presentation/hooks/user';
+import {
+    useGetUserProfile,
+    useUpdateUserProfile,
+} from '@/presentation/hooks/user';
+import { useForm } from 'react-hook-form';
+import {
+    UpdateProfileFormData,
+    partialUpdateProfileValidation,
+} from '@/presentation/validation/registerValidation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useUpdateProfileErrorStore } from '@/application/store/errorStore';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { DropdownPropsData } from '@/presentation/types';
+import { FormDropdown } from '../../FormDropdown';
+import { useLocations } from '@/presentation/hooks/useLocations';
 
 export const UserAddressCard = () => {
     const { isOpen, openModal, closeModal } = useModal();
     const { userProfile } = useGetUserProfile();
-    const handleSave = () => {
-        // Handle save logic here
-        console.log('Saving changes...');
-        closeModal();
+    const { updateUserProfile, isError } = useUpdateUserProfile();
+    const { apiError, clearApiError } = useUpdateProfileErrorStore();
+    const locations = useLocations();
+
+    const [statesOrProvinces, setStatesOrProvinces] = useState<
+        DropdownPropsData<string>[]
+    >([]);
+    const [cities, setCities] = useState<DropdownPropsData<string>[]>([]);
+
+    const hasCountryChanged = useRef(false);
+    const hasStateChanged = useRef(false);
+
+    const {
+        handleSubmit,
+        formState: { errors },
+        reset,
+        setError,
+        watch,
+        setValue,
+        clearErrors,
+    } = useForm<Partial<UpdateProfileFormData>>({
+        resolver: zodResolver(partialUpdateProfileValidation),
+    });
+
+    const countries = useMemo(() => {
+        const uniqueCountries = Array.from(
+            new Set(locations.map((loc) => loc.country))
+        );
+        return uniqueCountries.map((country) => ({
+            value: country,
+            label: country,
+        }));
+    }, [locations]);
+
+    const selectedCountry = watch('country');
+    const selectedState = watch('state');
+    const selectedCity = watch('city');
+
+    useEffect(() => {
+        if (!selectedCountry) return;
+
+        const filteredLocations = locations.filter(
+            (loc) => loc.country === selectedCountry
+        );
+        const uniqueStates = Array.from(
+            new Set(filteredLocations.map((loc) => loc.subcountry))
+        );
+
+        setStatesOrProvinces(
+            uniqueStates.map((state) => ({
+                value: state ?? '',
+                label: state ?? '',
+            }))
+        );
+
+        if (hasCountryChanged.current) {
+            setValue('state', undefined);
+            setValue('city', undefined);
+        }
+    }, [selectedCountry, locations]);
+
+    useEffect(() => {
+        if (!selectedCountry || !selectedState) return;
+
+        const filteredCities = locations
+            .filter(
+                (loc) =>
+                    loc.country === selectedCountry &&
+                    loc.subcountry === selectedState
+            )
+            .map((loc) => ({
+                value: loc.name,
+                label: loc.name,
+            }));
+
+        setCities(filteredCities);
+
+        if (hasStateChanged.current) {
+            setValue('city', undefined);
+        }
+    }, [selectedCountry, selectedState, locations]);
+
+    useEffect(() => {
+        if (userProfile?.data) {
+            reset({
+                country: userProfile.data.country,
+                state: userProfile.data.state,
+                city: userProfile.data.city,
+            });
+
+            hasCountryChanged.current = false;
+            hasStateChanged.current = false;
+        }
+    }, [userProfile?.data]);
+
+    const handleSave = async (data: Partial<UpdateProfileFormData>) => {
+        if (statesOrProvinces.length && !data.state) {
+            setError('state', {
+                type: 'manual',
+                message: 'State/Province is required',
+            });
+            return;
+        }
+
+        if (cities.length && !data.city) {
+            setError('city', {
+                type: 'manual',
+                message: 'City is required',
+            });
+            return;
+        }
+
+        await updateUserProfile(data);
+
+        if (!isError) {
+            closeModal();
+        }
     };
+
+    useEffect(() => {
+        if (isError && apiError) {
+            if (Array.isArray(apiError)) {
+                apiError.forEach((err) => {
+                    setError(err.field as keyof UpdateProfileFormData, {
+                        type: 'manual',
+                        message: err.message,
+                    });
+                });
+            } else if ('field' in apiError && 'message' in apiError) {
+                setError(apiError.field as keyof UpdateProfileFormData, {
+                    type: 'manual',
+                    message: apiError.message,
+                });
+            }
+            clearApiError();
+        }
+    }, [isError, apiError]);
+
     return (
         <>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -86,7 +233,10 @@ export const UserAddressCard = () => {
             </div>
             <Modal
                 isOpen={isOpen}
-                onClose={closeModal}
+                onClose={() => {
+                    reset();
+                    closeModal();
+                }}
                 className="max-w-[700px] m-4"
             >
                 <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
@@ -98,30 +248,90 @@ export const UserAddressCard = () => {
                             Update your details to keep your profile up-to-date.
                         </p>
                     </div>
-                    <form className="flex flex-col">
-                        <div className="px-2 overflow-y-auto custom-scrollbar">
+                    <form
+                        className="flex flex-col pt-2"
+                        onSubmit={handleSubmit(handleSave)}
+                    >
+                        <div className="px-2 overflow-y-auto custom-scrollbar pt-3">
                             <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                                 <div>
-                                    <Label>Country</Label>
-                                    <Input
-                                        type="text"
-                                        value={userProfile?.data?.country}
+                                    <FormDropdown
+                                        label="Country"
+                                        data={countries}
+                                        value={selectedCountry}
+                                        defaultText="Country"
+                                        search={true}
+                                        searchPlaceholder="Search country"
+                                        searchEmptyText="No country found"
+                                        setValue={(value) => {
+                                            setValue(
+                                                'country',
+                                                value as string
+                                            );
+                                            clearErrors('country');
+                                            hasCountryChanged.current = true;
+                                        }}
+                                        classNames={{
+                                            button: 'h-11.5 text-sm font-normal dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800 disabled:text-gray-500 disabled:border-gray-300 disabled:opacity-40 disabled:bg-gray-100 disabled:cursor-not-allowed',
+                                            content: 'z-99999',
+                                            label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                        }}
+                                        error={errors?.country?.message}
                                     />
                                 </div>
 
                                 <div>
-                                    <Label>State/Province</Label>
-                                    <Input
-                                        type="text"
-                                        value={userProfile?.data?.state}
+                                    <FormDropdown
+                                        label="State/Province"
+                                        data={statesOrProvinces}
+                                        value={selectedState}
+                                        defaultText={
+                                            selectedCountry
+                                                ? 'State/Province'
+                                                : 'Select country first'
+                                        }
+                                        search={true}
+                                        searchPlaceholder="Search state/province"
+                                        searchEmptyText="No state/province found"
+                                        setValue={(value) => {
+                                            setValue('state', value as string);
+                                            clearErrors('state');
+                                            hasStateChanged.current = true;
+                                        }}
+                                        classNames={{
+                                            button: 'h-11.5 text-sm font-normal dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800 disabled:text-gray-500 disabled:border-gray-300 disabled:opacity-40 disabled:bg-gray-100 disabled:cursor-not-allowed',
+                                            content: 'z-99999',
+                                            label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                        }}
+                                        error={errors?.state?.message}
+                                        disable={selectedCountry ? false : true}
                                     />
                                 </div>
 
                                 <div>
-                                    <Label>City</Label>
-                                    <Input
-                                        type="text"
-                                        value={userProfile?.data?.city}
+                                    <FormDropdown
+                                        label="City"
+                                        data={cities}
+                                        value={selectedCity}
+                                        defaultText={
+                                            selectedState
+                                                ? 'City'
+                                                : 'Select State/Province first'
+                                        }
+                                        search={true}
+                                        searchPlaceholder="Search city"
+                                        searchEmptyText="No city found"
+                                        setValue={(value) => {
+                                            setValue('city', value as string);
+                                            clearErrors('city');
+                                        }}
+                                        classNames={{
+                                            button: 'h-11.5 text-sm font-normal dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800 disabled:text-gray-500 disabled:border-gray-300 disabled:opacity-40 disabled:bg-gray-100 disabled:cursor-not-allowed',
+                                            content: 'z-99999',
+                                            label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                        }}
+                                        error={errors?.city?.message}
+                                        disable={selectedState ? false : true}
                                     />
                                 </div>
                                 <div>
@@ -134,11 +344,14 @@ export const UserAddressCard = () => {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={closeModal}
+                                onClick={() => {
+                                    reset();
+                                    closeModal();
+                                }}
                             >
                                 Close
                             </Button>
-                            <Button size="sm" onClick={handleSave}>
+                            <Button size="sm" type="submit">
                                 Save Changes
                             </Button>
                         </div>

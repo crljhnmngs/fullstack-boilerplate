@@ -48,6 +48,7 @@ export type Counter = {
 
 export type UserData = {
     firstname: string;
+    middlename: string;
     lastname: string;
     email: string;
     role: string;
@@ -57,5 +58,6 @@ export type AuthState = {
     user: UserData;
     accessToken: string;
     setAuth: (user: UserData, accessToken: string) => void;
+    updateUser: (updatedUser: UserData) => void;
     clearAuth: () => void;
 };

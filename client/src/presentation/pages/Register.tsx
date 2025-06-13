@@ -10,13 +10,13 @@ import { FormInput } from '../components/FormInput';
 import { DateTimePicker } from '../components/DateTimePicker';
 import { useEffect, useMemo, useState } from 'react';
 import defaultImage from '../assets/images/defaultImage.png';
-import locationsData from '../../presentation/assets/data/world-cities.json';
 import { FormDropdown } from '../components/FormDropdown';
 import { DropdownPropsData } from '../types';
 import { useRegisterUser } from '../hooks/user';
 import { useRegisterErrorStore } from '@/application/store/errorStore';
 import { UserWithoutId } from '@/domain/entities/user';
 import { ProfileWithoutUserId } from '@/domain/entities/profile';
+import { useLocations } from '../hooks/useLocations';
 
 const Register = () => {
     const {
@@ -40,10 +40,9 @@ const Register = () => {
         },
     });
 
-    const locations = useMemo(() => locationsData, []);
     const { registerUser, isError } = useRegisterUser();
     const { apiError, clearApiError } = useRegisterErrorStore();
-
+    const locations = useLocations();
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [statesOrProvinces, setStatesOrProvinces] = useState<
         DropdownPropsData<string>[]
@@ -98,7 +97,7 @@ const Register = () => {
     useEffect(() => {
         if (!selectedCountry || !selectedState) return;
 
-        const filteredCities = locationsData
+        const filteredCities = locations
             .filter(
                 (location) =>
                     location.country === selectedCountry &&
@@ -204,7 +203,9 @@ const Register = () => {
                                 placeholder="First Name"
                                 register={register}
                                 error={errors?.firstname?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                             <FormInput
                                 name="middlename"
@@ -212,7 +213,9 @@ const Register = () => {
                                 placeholder="Middle Name(Optional)"
                                 register={register}
                                 error={errors?.middlename?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                             <FormInput
                                 name="lastname"
@@ -220,7 +223,9 @@ const Register = () => {
                                 placeholder="Last Name"
                                 register={register}
                                 error={errors?.lastname?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                         </div>
                         <div className="flex gap-2">
@@ -235,7 +240,9 @@ const Register = () => {
                                     setValue('country', value as string);
                                     clearErrors('country');
                                 }}
-                                triggerHeight="h-15"
+                                classNames={{
+                                    button: 'h-15',
+                                }}
                                 error={errors?.country?.message}
                             />
                             <FormDropdown
@@ -253,7 +260,9 @@ const Register = () => {
                                     setValue('state', value as string);
                                     clearErrors('state');
                                 }}
-                                triggerHeight="h-15"
+                                classNames={{
+                                    button: 'h-15',
+                                }}
                                 error={errors?.state?.message}
                                 disable={selectedCountry ? false : true}
                             />
@@ -272,7 +281,9 @@ const Register = () => {
                                     setValue('city', value as string);
                                     clearErrors('city');
                                 }}
-                                triggerHeight="h-15"
+                                classNames={{
+                                    button: 'h-15',
+                                }}
                                 error={errors?.city?.message}
                                 disable={selectedState ? false : true}
                             />
@@ -284,7 +295,9 @@ const Register = () => {
                                 placeholder="Phone number"
                                 register={register}
                                 error={errors?.phone?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                             <Controller
                                 control={control}
@@ -310,7 +323,9 @@ const Register = () => {
                             placeholder="Email"
                             register={register}
                             error={errors?.email?.message}
-                            className="h-15"
+                            classNames={{
+                                input: 'h-15',
+                            }}
                         />
                         <div className="flex gap-2 justify-center">
                             <FormInput
@@ -319,7 +334,9 @@ const Register = () => {
                                 placeholder="Password"
                                 register={register}
                                 error={errors?.password?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                             <FormInput
                                 name="confirmPassword"
@@ -327,7 +344,9 @@ const Register = () => {
                                 placeholder="Confirm Password"
                                 register={register}
                                 error={errors?.confirmPassword?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                         </div>
                         <div className="flex gap-2">
@@ -335,7 +354,9 @@ const Register = () => {
                                 name="profileImage"
                                 type="file"
                                 register={register}
-                                className="h-15 pt-4"
+                                classNames={{
+                                    input: 'h-15 pt-4',
+                                }}
                                 accept="image/*"
                                 label="Profile Image(Optional)"
                                 error={errors?.profileImage?.message as string}

@@ -6,7 +6,7 @@ export const GlobalLoader = () => {
     if (!isLoading) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-100">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-99999">
             <div className="flex justify-center items-center relative">
                 <div id="ring"></div>
                 <div id="ring"></div>

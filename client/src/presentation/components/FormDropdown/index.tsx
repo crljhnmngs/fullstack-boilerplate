@@ -20,8 +20,7 @@ export const FormDropdown = <T,>({
     value,
     setValue,
     defaultText,
-    contentWith,
-    triggerHeight,
+    classNames,
     search,
     searchPlaceholder,
     searchEmptyText,
@@ -41,7 +40,10 @@ export const FormDropdown = <T,>({
         <div className="flex flex-col w-full">
             <div className="flex justify-between items-center">
                 <label
-                    className="text-[#231D15] text-base font-medium"
+                    className={cn(
+                        'text-[#231D15] text-base font-medium',
+                        classNames?.label
+                    )}
                     htmlFor="dropdown"
                 >
                     {label}
@@ -56,13 +58,13 @@ export const FormDropdown = <T,>({
                             transition={{ duration: 0.2 }}
                         >
                             <MdError
-                                className="cursor-pointer text-2xl "
+                                className="cursor-pointer text-xl "
                                 onMouseEnter={() => setIsHovered(true)}
                                 onMouseLeave={() => setIsHovered(false)}
                             />
 
                             {isHovered && (
-                                <div className="absolute right-full mr-1 top-1/8 -translate-y-1/2 bg-white text-red-400 text-[14px] rounded-md px-3 py-1 shadow-md border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                                <div className="absolute right-full mr-1 top-1/8 -translate-y-1/2 bg-white text-red-400 text-[14px] rounded-md px-3 py-1 shadow-md border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-99999">
                                     {error}
                                 </div>
                             )}
@@ -80,14 +82,14 @@ export const FormDropdown = <T,>({
                     asChild
                     className={cn(
                         `h-11 ${error && 'border-red-600'}`,
-                        triggerHeight
+                        classNames?.trigger
                     )}
                 >
                     <Button
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className={cn('justify-between', contentWith)}
+                        className={cn('justify-between', classNames?.button)}
                         disabled={disable}
                     >
                         {value !== undefined
@@ -98,7 +100,10 @@ export const FormDropdown = <T,>({
                 </PopoverTrigger>
                 <PopoverContent
                     align="start"
-                    className="w-[var(--radix-popover-trigger-width)] p-1"
+                    className={cn(
+                        'w-[var(--radix-popover-trigger-width)] p-1',
+                        classNames?.content
+                    )}
                 >
                     <Command>
                         {search && (

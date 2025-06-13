@@ -4,7 +4,7 @@ A modern fullstack boilerplate for rapid web application development, featuring 
 
 ## Features
 
-- **Frontend:** React 18, Vite, TailwindCSS, TanStack Query, Zod validation, TailAdmin (admin UI), modular component structure
+- **Frontend:** React 18, Vite, TailwindCSS, Shadcn, Zustand, TanStack Query, Zod validation, TailAdmin (admin UI), modular component structure
 - **Backend:** Express.js, TypeScript, MongoDB, JWT authentication, modular architecture
 - **Media & Email Services:**
     - **Cloudinary** – file/image upload and storage

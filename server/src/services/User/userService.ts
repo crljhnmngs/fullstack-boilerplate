@@ -194,6 +194,7 @@ export const updateUserProfileService = async (
             message: 'User profile updated successfully',
             user: {
                 firstname: user.firstname,
+                middlename: user.middlename,
                 lastname: user.lastname,
                 email: user.email,
                 role: user.role,

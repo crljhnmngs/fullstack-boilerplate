@@ -48,6 +48,7 @@ export const loginUserService = async (loginData: ILoginData) => {
             message: 'Login successful',
             user: {
                 firstname: user.firstname,
+                middlename: user.middlename,
                 lastname: user.lastname,
                 email: user.email,
                 role: user.role,
@@ -80,6 +81,7 @@ export const refreshAccessTokenService = async (refreshToken: string) => {
             accessToken,
             user: {
                 firstname: user.firstname,
+                middlename: user.middlename,
                 lastname: user.lastname,
                 email: user.email,
                 role: user.role,

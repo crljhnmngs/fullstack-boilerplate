@@ -12,7 +12,7 @@ export const FormInput = <T extends Record<string, unknown>>({
     placeholder,
     label,
     error,
-    className,
+    classNames,
     register,
     rules,
     ...props
@@ -28,7 +28,10 @@ export const FormInput = <T extends Record<string, unknown>>({
         <div className="flex flex-col w-full">
             <div className="flex justify-between items-center">
                 <label
-                    className="text-[#231D15] text-base font-medium"
+                    className={cn(
+                        'text-[#231D15] text-base font-medium',
+                        classNames?.label
+                    )}
                     htmlFor={name}
                 >
                     {label}
@@ -43,7 +46,7 @@ export const FormInput = <T extends Record<string, unknown>>({
                             transition={{ duration: 0.2 }}
                         >
                             <MdError
-                                className="cursor-pointer text-2xl "
+                                className="cursor-pointer text-xl "
                                 onMouseEnter={() => setIsHovered(true)}
                                 onMouseLeave={() => setIsHovered(false)}
                             />
@@ -75,7 +78,7 @@ export const FormInput = <T extends Record<string, unknown>>({
                     placeholder={placeholder}
                     className={cn(
                         `h-12 w-full text-sm border ${error && 'border-red-500 focus:outline-none'} ${type === 'password' && 'pr-3'} rounded-md mx-0 my-2 px-4 py-0 mt-1`,
-                        className
+                        classNames?.input
                     )}
                     {...register(name, rules)}
                     {...props}
