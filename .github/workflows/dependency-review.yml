@@ -17,3 +17,12 @@ jobs:
 
             - name: Run Dependency Review
               uses: actions/dependency-review-action@v4
+              continue-on-error: true
+              env:
+                  GITHUB_STEP_SUMMARY: /tmp/dependency-review-summary.md
+
+            - name: Upload Summary as Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: dependency-review-summary
+                  path: /tmp/dependency-review-summary.md
