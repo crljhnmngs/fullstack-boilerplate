@@ -38,7 +38,7 @@ jobs:
                   cd client
                   npm run build
 
-            - name: Build server (optional, if server is buildable)
+            - name: Build server
               run: |
                   cd server
                   npm run build
