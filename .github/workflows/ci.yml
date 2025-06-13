@@ -1,0 +1,41 @@
+name: CI
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+jobs:
+    build-and-lint:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [20.x]
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - name: Install dependencies (client & server)
+              run: npm run install
+
+            - name: Lint code (client & server)
+              run: npm run lint
+
+            - name: Build client
+              run: |
+                  cd client
+                  npm run build
+
+            - name: Build server (optional, if server is buildable)
+              run: |
+                  cd server
+                  npm run build
