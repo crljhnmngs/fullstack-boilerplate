@@ -1,4 +1,7 @@
-import { RegisterFormData } from '@/presentation/validation/registerValidation';
+import {
+    RegisterFormData,
+    UpdateProfileFormData,
+} from '@/presentation/validation/registerValidation';
 import { ProfileWithoutUserId } from '../entities/profile';
 import { UserWithoutId } from '../entities/user';
 import {
@@ -7,10 +10,14 @@ import {
     RegistrationResData,
     UserProfileResponse,
 } from '../types/api';
+import { UserData } from '@/application/types';
 
 export interface UserPort {
     registerUser(
         userData: UserWithoutId & ProfileWithoutUserId
     ): Promise<ApiResponse<RegistrationResData, FormError<RegisterFormData>>>;
     getUserProfile(): Promise<ApiResponse<UserProfileResponse>>;
+    updateUserProfile(
+        userData: Partial<UpdateProfileFormData>
+    ): Promise<ApiResponse<UserData, FormError<UpdateProfileFormData>>>;
 }

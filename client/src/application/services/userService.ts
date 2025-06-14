@@ -6,7 +6,11 @@ import {
     UserProfileResponse,
 } from '@/domain/types/api';
 import http from '@/infrastructure/httpService';
-import { RegisterFormData } from '@/presentation/validation/registerValidation';
+import {
+    RegisterFormData,
+    UpdateProfileFormData,
+} from '@/presentation/validation/registerValidation';
+import { UserData } from '../types';
 
 export const UserService: UserPort = {
     async registerUser(userData) {
@@ -44,6 +48,30 @@ export const UserService: UserPort = {
             await http.get<ApiResponse<UserProfileResponse>>(
                 '/v1/users/profile'
             );
+        return response.data;
+    },
+    async updateUserProfile(userData) {
+        const formData = new FormData();
+
+        Object.entries(userData).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                if (key === 'birthdate' && value instanceof Date) {
+                    formData.append(key, value.toISOString());
+                } else if (key === 'profileImage' && value instanceof File) {
+                    formData.append(key, value);
+                } else {
+                    formData.append(key, value.toString());
+                }
+            }
+        });
+
+        const response = await http.patch<
+            ApiResponse<UserData, FormError<UpdateProfileFormData>>
+        >('/v1/users/update-profile', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     },
 };

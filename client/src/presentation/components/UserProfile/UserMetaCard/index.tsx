@@ -2,19 +2,85 @@ import { Modal } from '../../ui/modal';
 import { Button } from '../../ui//Button/Button';
 import { Input } from '../../Form/Input/InputField';
 import { Label } from '../../Form/Label/Label';
-import { useGetUserProfile } from '@/presentation/hooks/user';
+import {
+    useGetUserProfile,
+    useUpdateUserProfile,
+} from '@/presentation/hooks/user';
 import { useAuthStore } from '@/application/store/authStore';
 import { useModal } from '@/presentation/hooks/modal/useModal';
+import { useForm } from 'react-hook-form';
+import {
+    UpdateProfileFormData,
+    partialUpdateProfileValidation,
+} from '@/presentation/validation/registerValidation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormInput } from '../../FormInput';
+import { useEffect } from 'react';
+import { useUpdateProfileErrorStore } from '@/application/store/errorStore';
 
 export const UserMetaCard = () => {
     const { isOpen, openModal, closeModal } = useModal();
     const { user } = useAuthStore();
     const { userProfile } = useGetUserProfile();
-    const handleSave = () => {
-        // Handle save logic here
-        console.log('Saving changes...');
-        closeModal();
+    const { updateUserProfile, isError } = useUpdateUserProfile();
+    const { apiError, clearApiError } = useUpdateProfileErrorStore();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isDirty },
+        reset,
+        setError,
+    } = useForm<Partial<UpdateProfileFormData>>({
+        resolver: zodResolver(partialUpdateProfileValidation),
+        defaultValues: {
+            firstname: user.firstname,
+            middlename: user.middlename,
+            lastname: user.lastname,
+            email: user.email,
+            phone: '',
+        },
+    });
+
+    const handleSave = async (data: Partial<UpdateProfileFormData>) => {
+        await updateUserProfile(data);
+
+        if (!isError) {
+            closeModal();
+        }
     };
+
+    useEffect(() => {
+        if (isError && apiError) {
+            if (Array.isArray(apiError)) {
+                apiError.forEach((err) => {
+                    setError(err.field, {
+                        type: 'manual',
+                        message: err.message,
+                    });
+                });
+            } else if ('field' in apiError && 'message' in apiError) {
+                setError(apiError.field as keyof UpdateProfileFormData, {
+                    type: 'manual',
+                    message: apiError.message,
+                });
+            }
+            clearApiError();
+        }
+    }, [isError, apiError]);
+
+    useEffect(() => {
+        if (user || userProfile?.data) {
+            reset({
+                firstname: user.firstname,
+                middlename: user.middlename,
+                lastname: user.lastname,
+                email: user.email,
+                phone: userProfile?.data?.phone,
+            });
+        }
+    }, [user, userProfile?.data]);
+
     return (
         <>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -36,6 +102,7 @@ export const UserMetaCard = () => {
                                 </p>
                                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    {userProfile?.data?.city},{' '}
                                     {userProfile?.data?.country}
                                 </p>
                             </div>
@@ -151,7 +218,10 @@ export const UserMetaCard = () => {
             </div>
             <Modal
                 isOpen={isOpen}
-                onClose={closeModal}
+                onClose={() => {
+                    reset();
+                    closeModal();
+                }}
                 className="max-w-[700px] m-4"
             >
                 <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
@@ -163,7 +233,10 @@ export const UserMetaCard = () => {
                             Update your details to keep your profile up-to-date.
                         </p>
                     </div>
-                    <form className="flex flex-col">
+                    <form
+                        className="flex flex-col"
+                        onSubmit={handleSubmit(handleSave)}
+                    >
                         <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
                             <div>
                                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -210,30 +283,78 @@ export const UserMetaCard = () => {
                                 </h5>
 
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                                    <div className="col-span-2 lg:col-span-1">
-                                        <Label>First Name</Label>
-                                        <Input type="text" value="Carl John" />
-                                    </div>
-
-                                    <div className="col-span-2 lg:col-span-1">
-                                        <Label>Last Name</Label>
-                                        <Input type="text" value="Manigos" />
-                                    </div>
-
-                                    <div className="col-span-2 lg:col-span-1">
-                                        <Label>Email Address</Label>
-                                        <Input type="text" value={user.email} />
-                                    </div>
-
-                                    <div className="col-span-2 lg:col-span-1">
-                                        <Label>Phone</Label>
-                                        <Input
+                                    <div className="col-span-3 lg:col-span-1">
+                                        <FormInput
+                                            name="firstname"
                                             type="text"
-                                            value={userProfile?.data?.phone}
+                                            label="First Name"
+                                            register={register}
+                                            error={errors?.firstname?.message}
+                                            classNames={{
+                                                label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                                input: 'h-11 text-gray-800 dark:text-white/90 dark:focus:border-brand-800 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800',
+                                            }}
                                         />
                                     </div>
 
-                                    <div className="col-span-2">
+                                    <div className="col-span-2 lg:col-span-1">
+                                        <FormInput
+                                            name="middlename"
+                                            type="text"
+                                            label="Middle Name"
+                                            register={register}
+                                            error={errors?.middlename?.message}
+                                            classNames={{
+                                                label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                                input: 'h-11 text-gray-800 dark:text-white/90 dark:focus:border-brand-800 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800',
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2 lg:col-span-1">
+                                        <FormInput
+                                            name="lastname"
+                                            type="text"
+                                            label="Last Name"
+                                            register={register}
+                                            error={errors?.lastname?.message}
+                                            classNames={{
+                                                label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                                input: 'h-11 text-gray-800 dark:text-white/90 dark:focus:border-brand-800 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800',
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2 lg:col-span-1">
+                                        <FormInput
+                                            name="email"
+                                            type="text"
+                                            label="Email Address"
+                                            register={register}
+                                            error={errors?.email?.message}
+                                            disabled
+                                            classNames={{
+                                                label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                                input: 'h-11 text-gray-800 disabled:text-gray-500 disabled:border-gray-300 disabled:opacity-40 disabled:bg-gray-100 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 opacity-40',
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2 lg:col-span-1">
+                                        <FormInput
+                                            name="phone"
+                                            type="text"
+                                            label="Phone"
+                                            register={register}
+                                            error={errors?.phone?.message}
+                                            classNames={{
+                                                label: 'text-sm font-medium text-gray-700 dark:text-gray-400',
+                                                input: 'h-11 text-gray-800 dark:text-white/90 dark:focus:border-brand-800 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800',
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2 lg:col-span-1">
                                         <Label>Bio</Label>
                                         <Input
                                             type="text"
@@ -247,11 +368,14 @@ export const UserMetaCard = () => {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={closeModal}
+                                onClick={() => {
+                                    reset();
+                                    closeModal();
+                                }}
                             >
                                 Close
                             </Button>
-                            <Button size="sm" onClick={handleSave}>
+                            <Button size="sm" disabled={!isDirty} type="submit">
                                 Save Changes
                             </Button>
                         </div>

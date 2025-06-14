@@ -11,6 +11,7 @@ import { generateConfirmationEmail } from '../../utils/emailTemplates';
 import { generateSecureToken } from '../../utils/generateToken';
 import { Token } from '../../models/Token/tokens';
 import { hashPassword } from '../../utils/hashPassword';
+import { assignFields } from '../../utils/helper';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -124,5 +125,99 @@ export const getUserProfileService = async (userId: string) => {
     } catch (error) {
         console.log(error);
         return { error: 'Internal server error', status: 500 };
+    }
+};
+
+export const updateUserProfileService = async (
+    userId: string,
+    userData: Partial<
+        IUser & IUserProfile & { profileImage?: Express.Multer.File }
+    >
+) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const userObjectId = new Types.ObjectId(userId);
+
+        const user = await User.findById(userObjectId).session(session);
+        const profile = await Profile.findOne({ userId: userObjectId }).session(
+            session
+        );
+
+        if (!user || !profile) {
+            await session.abortTransaction();
+            return { error: 'User or profile not found', status: 404 };
+        }
+
+        const userFields: (keyof IUser)[] = [
+            'firstname',
+            'middlename',
+            'lastname',
+            'email',
+        ];
+        const profileFields: (keyof IUserProfile)[] = [
+            'country',
+            'state',
+            'city',
+            'phone',
+            'birthdate',
+        ];
+
+        assignFields<IUser>(user, userData, userFields);
+
+        if (userData.password) {
+            user.password = await hashPassword(userData.password);
+        }
+
+        assignFields<IUserProfile>(profile, userData, profileFields);
+
+        if (userData.profileImage) {
+            try {
+                const uploadedUrl = await uploadSingleFile(
+                    userData.profileImage,
+                    'profile_images'
+                );
+                profile.profileImage = uploadedUrl;
+            } catch (err) {
+                console.error('Upload failed:', err);
+                throw { code: 500, message: 'Profile image upload failed' };
+            }
+        }
+
+        await user.save({ session });
+        await profile.save({ session });
+
+        await session.commitTransaction();
+
+        return {
+            message: 'User profile updated successfully',
+            user: {
+                firstname: user.firstname,
+                middlename: user.middlename,
+                lastname: user.lastname,
+                email: user.email,
+                role: user.role,
+            },
+        };
+    } catch (error) {
+        await session.abortTransaction();
+        console.error('Update profile error:', error);
+
+        let tempError;
+        if (error?.code === EMAIL_EXIST_ERROR_CODE) {
+            tempError = {
+                code: error.code,
+                message: 'Email already exists',
+            };
+        } else {
+            tempError = {
+                code: 500,
+                message: 'Failed to update user profile',
+            };
+        }
+        throw tempError;
+    } finally {
+        session.endSession();
     }
 };

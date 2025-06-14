@@ -94,7 +94,9 @@ const Login = () => {
                                 placeholder="Email"
                                 register={register}
                                 error={errors?.email?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                             <FormInput
                                 name="password"
@@ -102,7 +104,9 @@ const Login = () => {
                                 placeholder="Password"
                                 register={register}
                                 error={errors?.password?.message}
-                                className="h-15"
+                                classNames={{
+                                    input: 'h-15',
+                                }}
                             />
                             <div className="w-full text-right mb-4">
                                 <NavLink

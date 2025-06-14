@@ -9,7 +9,7 @@ type ButtonProps = {
     onClick?: () => void;
     disabled?: boolean;
     className?: string;
-};
+} & Record<string, unknown>;
 
 export const Button = ({
     children,
@@ -20,6 +20,7 @@ export const Button = ({
     onClick,
     className = '',
     disabled = false,
+    ...props
 }: ButtonProps) => {
     // Size Classes
     const sizeClasses = {
@@ -44,6 +45,7 @@ export const Button = ({
             }`}
             onClick={onClick}
             disabled={disabled}
+            {...props}
         >
             {startIcon && (
                 <span className="flex items-center">{startIcon}</span>
