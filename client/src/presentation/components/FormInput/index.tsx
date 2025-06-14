@@ -59,7 +59,7 @@ export const FormInput = <T extends Record<string, unknown>>({
                         </motion.div>
                     ) : (
                         <div className="h-full opacity-0 pointer-events-none">
-                            <MdError className="text-2xl" />
+                            <MdError className="text-xl" />
                         </div>
                     )}
                 </AnimatePresence>

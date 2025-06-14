@@ -29,7 +29,7 @@ type TableCellProps = {
     children: ReactNode; // Cell content
     isHeader?: boolean; // If true, renders as <th>, otherwise <td>
     className?: string; // Optional className for styling
-};
+} & Record<string, unknown>;
 
 // Table Component
 const Table = ({ children, className }: TableProps) => {
@@ -56,9 +56,14 @@ const TableCell = ({
     children,
     isHeader = false,
     className,
+    ...props
 }: TableCellProps) => {
     const CellTag = isHeader ? 'th' : 'td';
-    return <CellTag className={` ${className}`}>{children}</CellTag>;
+    return (
+        <CellTag {...props} className={` ${className}`}>
+            {children}
+        </CellTag>
+    );
 };
 
 export { Table, TableHeader, TableBody, TableRow, TableCell };

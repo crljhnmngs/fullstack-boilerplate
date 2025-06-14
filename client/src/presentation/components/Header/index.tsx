@@ -63,9 +63,6 @@ export const Header = () => {
                             Home
                         </NavLink>
                     )}
-                    <NavLink to={ROUTES.SALES} end>
-                        Sales
-                    </NavLink>
                     {isAuthenticated() ? (
                         <NavLink to={ROUTES.LOGIN} onClick={handleLogout} end>
                             Logout

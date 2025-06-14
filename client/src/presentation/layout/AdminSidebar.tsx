@@ -8,6 +8,8 @@ import { CiViewList } from 'react-icons/ci';
 import { TbChartPie2 } from 'react-icons/tb';
 import { LuTable } from 'react-icons/lu';
 import { UserCircle } from 'lucide-react';
+import { PiUsers } from 'react-icons/pi';
+import { HiOutlineChartBar } from 'react-icons/hi';
 import { useSidebar } from '../context/SidebarContext';
 import logo2 from '../assets/icons/logo2.png';
 import { PageIcon } from '../assets/icons';
@@ -19,6 +21,16 @@ const navItems: NavItem[] = [
         icon: <RxDashboard className="size-5 mt-1" />,
         name: 'Dashboard',
         path: ROUTES.ADMIN,
+    },
+    {
+        icon: <PiUsers strokeWidth={1.5} className="size-5 mt-1" />,
+        name: 'User Management',
+        path: ROUTES.USER_MANAGEMENT,
+    },
+    {
+        icon: <HiOutlineChartBar strokeWidth={1.5} className="size-5 mt-1" />,
+        name: 'Sale Management',
+        path: ROUTES.SALE_MANAGEMENT,
     },
     {
         icon: <IoCalendarClearOutline className="size-5 mt-1" />,

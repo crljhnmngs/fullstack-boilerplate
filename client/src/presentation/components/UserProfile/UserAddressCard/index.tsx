@@ -36,7 +36,7 @@ export const UserAddressCard = () => {
 
     const {
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isDirty },
         reset,
         setError,
         watch,
@@ -266,7 +266,8 @@ export const UserAddressCard = () => {
                                         setValue={(value) => {
                                             setValue(
                                                 'country',
-                                                value as string
+                                                value as string,
+                                                { shouldDirty: true }
                                             );
                                             clearErrors('country');
                                             hasCountryChanged.current = true;
@@ -294,7 +295,9 @@ export const UserAddressCard = () => {
                                         searchPlaceholder="Search state/province"
                                         searchEmptyText="No state/province found"
                                         setValue={(value) => {
-                                            setValue('state', value as string);
+                                            setValue('state', value as string, {
+                                                shouldDirty: true,
+                                            });
                                             clearErrors('state');
                                             hasStateChanged.current = true;
                                         }}
@@ -322,7 +325,9 @@ export const UserAddressCard = () => {
                                         searchPlaceholder="Search city"
                                         searchEmptyText="No city found"
                                         setValue={(value) => {
-                                            setValue('city', value as string);
+                                            setValue('city', value as string, {
+                                                shouldDirty: true,
+                                            });
                                             clearErrors('city');
                                         }}
                                         classNames={{
@@ -351,7 +356,7 @@ export const UserAddressCard = () => {
                             >
                                 Close
                             </Button>
-                            <Button size="sm" type="submit">
+                            <Button size="sm" type="submit" disabled={!isDirty}>
                                 Save Changes
                             </Button>
                         </div>

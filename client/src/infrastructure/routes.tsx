@@ -4,7 +4,6 @@ import { lazy } from 'react';
 
 import { ROUTES } from '@/lib/routes';
 
-const Sales = lazy(() => import('@/presentation/pages/Sales'));
 const NotFound = lazy(() => import('@/presentation/pages/NotFound'));
 const Login = lazy(() => import('@/presentation/pages/Login'));
 const Register = lazy(() => import('@/presentation/pages/Register'));
@@ -26,6 +25,9 @@ const DataTables = lazy(() => import('@/presentation/pages/DataTables'));
 const LineChart = lazy(() => import('@/presentation/pages/LineChart'));
 const BarChart = lazy(() => import('@/presentation/pages/BarChart'));
 const PieChart = lazy(() => import('@/presentation/pages/PieChart'));
+const SaleManagement = lazy(
+    () => import('@/presentation/pages/SaleManagement')
+);
 
 import { ProtectedRoute } from '@/presentation/components/ProtectedRoute/ProtectedRoute';
 import { AdminLayout } from '@/presentation/layout/AdminLayout';
@@ -53,6 +55,10 @@ export const AppRouter = createBrowserRouter([
                         path: ROUTES.ADMIN,
                         index: true,
                         element: <AdminDashboard />,
+                    },
+                    {
+                        path: ROUTES.SALE_MANAGEMENT,
+                        element: <SaleManagement />,
                     },
                     { path: ROUTES.CALENDAR, element: <Calendar /> },
                     { path: ROUTES.FORM_ELEMENTS, element: <FormElements /> },
@@ -99,7 +105,6 @@ export const AppRouter = createBrowserRouter([
     { path: ROUTES.RESET_PASSWORD, element: <ResetPassword /> },
     { path: ROUTES.CONFIRM_EMAIL, element: <ConfirmEmail /> },
     { path: ROUTES.RESEND_VERIFICATION, element: <ResendVerification /> },
-    { path: ROUTES.SALES, element: <Sales /> },
     {
         path: ROUTES.INTERNALSERVERERROR,
         element: <InternalServerError />,
