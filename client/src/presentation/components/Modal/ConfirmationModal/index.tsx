@@ -22,7 +22,7 @@ export const ConfirmationModal = ({
     return (
         <AlertDialog>
             <AlertDialogTrigger>{triggerText}</AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="z-99999">
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>

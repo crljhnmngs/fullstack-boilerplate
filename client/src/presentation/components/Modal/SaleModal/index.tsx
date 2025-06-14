@@ -114,7 +114,7 @@ export const SaleModal = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
-            <DialogContent className="sm:max-w-[660px] max-h-[80vh] overflow-y-auto [&>button]:hidden">
+            <DialogContent className="sm:max-w-[660px] max-h-[90vh] overflow-y-auto [&>button]:hidden z-99999 dark:bg-gray-dark dark:text-white">
                 <DialogHeader>
                     <DialogTitle>
                         {mode === 'add' ? 'Add Sale' : 'Edit Sale'}
@@ -136,7 +136,7 @@ export const SaleModal = ({
                 </DialogHeader>
                 <form
                     onSubmit={handleSubmit(handleFormSubmit)}
-                    className="grid gap-4"
+                    className="grid gap-4 "
                 >
                     <FormInput
                         name="storeLocation"
@@ -144,6 +144,9 @@ export const SaleModal = ({
                         label="Store Location"
                         register={register}
                         error={errors.storeLocation?.message}
+                        classNames={{
+                            label: 'dark:text-white',
+                        }}
                     />
 
                     <FormDropdown
@@ -161,6 +164,10 @@ export const SaleModal = ({
                             );
                         }}
                         error={errors?.purchaseMethod?.message}
+                        classNames={{
+                            content: 'z-99999',
+                            label: 'dark:text-white',
+                        }}
                     />
 
                     <Label>
@@ -193,6 +200,10 @@ export const SaleModal = ({
                                 );
                             }}
                             error={errors?.purchaseMethod?.message}
+                            classNames={{
+                                content: 'z-99999',
+                                label: 'dark:text-white',
+                            }}
                         />
 
                         <FormInput
@@ -207,6 +218,9 @@ export const SaleModal = ({
                             register={register}
                             error={errors.customer?.age?.message}
                             rules={{ valueAsNumber: true }}
+                            classNames={{
+                                label: 'dark:text-white',
+                            }}
                         />
 
                         <FormInput
@@ -215,6 +229,9 @@ export const SaleModal = ({
                             label="Email"
                             register={register}
                             error={errors.customer?.email?.message}
+                            classNames={{
+                                label: 'dark:text-white',
+                            }}
                         />
 
                         <FormInput
@@ -230,6 +247,9 @@ export const SaleModal = ({
                             register={register}
                             error={errors.customer?.satisfaction?.message}
                             rules={{ valueAsNumber: true }}
+                            classNames={{
+                                label: 'dark:text-white',
+                            }}
                         />
                     </div>
                     <div className="border p-4 rounded">
@@ -255,6 +275,9 @@ export const SaleModal = ({
                                         error={
                                             errors.items?.[index]?.name?.message
                                         }
+                                        classNames={{
+                                            label: 'dark:text-white',
+                                        }}
                                     />
 
                                     <FormInput
@@ -272,6 +295,9 @@ export const SaleModal = ({
                                                 ?.message
                                         }
                                         rules={{ valueAsNumber: true }}
+                                        classNames={{
+                                            label: 'dark:text-white',
+                                        }}
                                     />
 
                                     <FormInput
