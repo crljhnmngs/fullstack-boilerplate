@@ -221,3 +221,76 @@ export const updateUserProfileService = async (
         session.endSession();
     }
 };
+
+export const getAllUsersService = async (
+    page: number,
+    limit: number,
+    search?: string,
+    userId?: string,
+    role?: string,
+    isEmailVerified?: boolean
+) => {
+    const skip = (page - 1) * limit;
+    const query: any = {};
+
+    if (userId) {
+        query._id = { $ne: userId };
+    }
+
+    if (search) {
+        const regex = new RegExp(search, 'i');
+
+        const matchedProfiles = await Profile.find({
+            $or: [
+                { country: regex },
+                { state: regex },
+                { city: regex },
+                { phone: regex },
+            ],
+        }).select('userId');
+
+        const matchedUserIds = matchedProfiles.map((profile) => profile.userId);
+
+        query.$or = [
+            { firstname: regex },
+            { middlename: regex },
+            { lastname: regex },
+            { email: regex },
+            { role: regex },
+            { _id: { $in: matchedUserIds } },
+        ];
+    }
+
+    if (role) {
+        query.role = role;
+    }
+
+    if (isEmailVerified !== undefined) {
+        query.isEmailVerified = isEmailVerified;
+    }
+
+    const users = await User.find(query)
+        .select('-password')
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    const total = await User.countDocuments(query);
+
+    const userIds = users.map((user) => user._id);
+    const profiles = await Profile.find({
+        userId: { $in: userIds },
+    }).lean();
+
+    const result = users.map((user) => {
+        const profile = profiles.find(
+            (p) => p.userId.toString() === user._id.toString()
+        );
+        return {
+            ...user,
+            profile: profile || null,
+        };
+    });
+
+    return { users: result, total };
+};

@@ -17,7 +17,7 @@ export const requireAuth = async (
             message: 'Authentication Required',
             error: {
                 code: 401,
-                message: 'No token provided',
+                message: 'You must be logged in to access this resource.',
                 timestamp: new Date().toISOString(),
             },
         });

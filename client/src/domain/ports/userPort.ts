@@ -7,8 +7,11 @@ import { UserWithoutId } from '../entities/user';
 import {
     ApiResponse,
     FormError,
+    PaginatedApiResponse,
     RegistrationResData,
     UserProfileResponse,
+    UserWithProfile,
+    GetAllUserParams,
 } from '../types/api';
 import { UserData } from '@/application/types';
 
@@ -20,4 +23,7 @@ export interface UserPort {
     updateUserProfile(
         userData: Partial<UpdateProfileFormData>
     ): Promise<ApiResponse<UserData, FormError<UpdateProfileFormData>>>;
+    getAllUsers(
+        params: GetAllUserParams
+    ): Promise<PaginatedApiResponse<UserWithProfile[]>>;
 }

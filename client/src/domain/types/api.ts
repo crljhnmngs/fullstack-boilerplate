@@ -2,6 +2,7 @@ import { UserData } from '@/application/types';
 import { Pagination } from './global';
 import { Profile } from '../entities/profile';
 import { FieldErrorsResponse } from '@/application/store/errorStore';
+import { User } from '../entities/user';
 
 export type LoginResponse = {
     user: UserData;
@@ -44,4 +45,24 @@ export type RegistrationResData = {
     lastname: string;
     email: string;
     isEmailVerified: string;
+};
+
+export type UserWithProfile = Omit<User, 'password'> & {
+    profile: Profile & { _id: string };
+};
+
+export type GetSalesParams = {
+    page: number;
+    limit: number;
+    search?: string;
+    couponUsed?: boolean;
+    purchaseMethod?: string;
+};
+
+export type GetAllUserParams = {
+    page: number;
+    limit: number;
+    search?: string;
+    role?: string;
+    isEmailVerified?: boolean;
 };

@@ -2,8 +2,10 @@ import { UserPort } from '@/domain/ports/userPort';
 import {
     ApiResponse,
     FormError,
+    PaginatedApiResponse,
     RegistrationResData,
     UserProfileResponse,
+    UserWithProfile,
 } from '@/domain/types/api';
 import http from '@/infrastructure/httpService';
 import {
@@ -71,6 +73,14 @@ export const UserService: UserPort = {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+        });
+        return response.data;
+    },
+    async getAllUsers(params) {
+        const response = await http.get<
+            PaginatedApiResponse<UserWithProfile[]>
+        >('/v1/users', {
+            params,
         });
         return response.data;
     },

@@ -210,3 +210,14 @@ export const showAlert = ({
         html,
     });
 };
+
+export const calculateAge = (birthdate: Date): number => {
+    const now = new Date();
+    const dob = new Date(birthdate);
+    let age = now.getFullYear() - dob.getFullYear();
+    const monthDiff = now.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) {
+        age--;
+    }
+    return age;
+};

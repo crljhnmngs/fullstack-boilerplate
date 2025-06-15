@@ -15,156 +15,122 @@ import {
     flexRender,
     SortingState,
 } from '@tanstack/react-table';
-import { HiOutlinePencil } from 'react-icons/hi';
-import { IoTrashOutline } from 'react-icons/io5';
-import { Checkbox } from '@/presentation/components/Form/Input/Checkbox';
+
 import { Pagination } from '../Pagination';
-import { Button } from '@/presentation/components/ui/Button/Button';
-import {
-    useAddSale,
-    useDeleteSale,
-    useGetSales,
-    useMultipleDeleteSale,
-    useUpdateSale,
-} from '@/presentation/hooks/sales';
-import { useSaleStore } from '@/application/store/salesStore';
-import { ConfirmationModal } from '../../Modal/ConfirmationModal';
-import { useSaleModalStore } from '@/application/store/modalStore';
-import { SaleModal } from '../../Modal/SaleModal';
-import { Sale, Item } from '@/domain/entities/sale';
-import { capitalizeFirstLetter, formatDate } from '@/lib/utils';
-import { SaleFormData } from '@/presentation/validation/saleValidation';
+import { calculateAge, capitalizeFirstLetter } from '@/lib/utils';
+import { useGetAllUsers } from '@/presentation/hooks/user';
+import { UserWithProfile } from '@/domain/types/api';
+import { AvatarText } from '../../ui/avatar-text';
+import { Badge } from '../../ui/badge';
 import { FilterPopover } from './FilterPopover';
 
-export const SalesTable = () => {
+export const UsersTable = () => {
     const {
-        sales,
+        users,
         isLoading,
         pagination,
         setPage,
         setPerPage,
         searchInput,
         setSearchInput,
-        couponValue,
-        setCouponValue,
-        purchaseValue,
-        setPurchaseValue,
-    } = useGetSales();
-    const openModal = useSaleModalStore((state) => state.openModal);
-    const mode = useSaleModalStore((state) => state.mode);
-    const { resetSelectedSales, selectedSales, setSelectedSales } =
-        useSaleStore();
-    const { deleteSale } = useDeleteSale();
-    const { addSale } = useAddSale();
-    const { updateSale } = useUpdateSale();
-    const { deleteMultipleSale } = useMultipleDeleteSale();
+        role,
+        setRole,
+        isEmailVerified,
+        setIsEmailVerified,
+    } = useGetAllUsers();
+
     const [sorting, setSorting] = useState<SortingState>([]);
 
-    const handleEdit = (sale: Sale) => {
-        openModal('edit', sale);
-    };
-
-    const handleDelete = (sale: Sale) => {
-        deleteSale(sale._id);
-    };
-
-    const handleSubmit = (data: SaleFormData) =>
-        mode === 'add'
-            ? addSale(data)
-            : updateSale({ id: data._id ?? '', saleData: data });
-
-    const handleMultipleDelete = () => {
-        deleteMultipleSale(selectedSales);
-        resetSelectedSales();
-    };
-
-    const columns: ColumnDef<Sale>[] = useMemo(
+    const columns: ColumnDef<UserWithProfile>[] = useMemo(
         () => [
             {
-                id: 'select',
-                size: 50,
-                header: () => {
-                    const isAllSelected =
-                        selectedSales.length === sales.length &&
-                        sales.length > 0;
+                header: 'User',
+                accessorFn: (row) =>
+                    `${row.firstname} ${row.middlename || ''} ${row.lastname}`.trim(),
+                cell: ({ row }) => (
+                    <div className="flex items-center gap-2">
+                        {row.original.profile?.profileImage ? (
+                            <img
+                                src={row.original.profile?.profileImage}
+                                alt="Profile"
+                                className="size-10 rounded-full object-cover"
+                            />
+                        ) : (
+                            <AvatarText
+                                name={
+                                    row.original.firstname +
+                                    ' ' +
+                                    row.original.lastname
+                                }
+                                classNames={{
+                                    div: 'size-10',
+                                }}
+                            />
+                        )}
 
-                    return (
-                        <Checkbox
-                            checked={isAllSelected}
-                            onChange={(checked) => {
-                                setSelectedSales(
-                                    checked ? sales.map((sale) => sale._id) : []
-                                );
-                            }}
-                        />
-                    );
-                },
-                cell: ({ row }) => (
-                    <Checkbox
-                        checked={selectedSales.includes(row.original._id)}
-                        onChange={(checked) => {
-                            setSelectedSales((prev: string[]) =>
-                                checked
-                                    ? [...prev, row.original._id]
-                                    : prev.filter(
-                                          (id) => id !== row.original._id
-                                      )
-                            );
-                        }}
-                    />
-                ),
-            },
-            {
-                header: 'Sale Date',
-                accessorKey: 'saleDate',
-                cell: ({ getValue }) => formatDate(getValue() as string),
-            },
-            {
-                header: 'Items Name',
-                accessorKey: 'items',
-                cell: ({ getValue }) =>
-                    (getValue() as Item[])
-                        .map((item) => capitalizeFirstLetter(item.name))
-                        .join(', '),
-            },
-            { header: 'Store Location', accessorKey: 'storeLocation' },
-            { header: 'Customer Email', accessorKey: 'customer.email' },
-            {
-                header: 'Coupon Used',
-                accessorKey: 'couponUsed',
-                cell: ({ getValue }) => (getValue() ? 'Yes' : 'No'),
-            },
-            { header: 'Purchase Method', accessorKey: 'purchaseMethod' },
-            {
-                header: 'Actions',
-                accessorKey: 'actions',
-                cell: ({ row }) => (
-                    <div className="flex items-center w-full gap-2">
-                        <button
-                            className="  text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90"
-                            onClick={() => handleEdit(row.original)}
-                        >
-                            <HiOutlinePencil className="size-5" />
-                        </button>
-                        <ConfirmationModal
-                            triggerText={
-                                <IoTrashOutline className="size-5 text-gray-500 hover:text-error-500 dark:text-gray-400 dark:hover:text-error-500" />
-                            }
-                            title="Delete Sale?"
-                            description="Are you sure you want to delete this sale? This action cannot be undone."
-                            confirmText="Yes, Delete"
-                            cancelText="Cancel"
-                            onConfirm={() => handleDelete(row.original)}
-                        />
+                        <span>
+                            {row.original.firstname}{' '}
+                            {row.original.middlename ?? ''}{' '}
+                            {row.original.lastname}
+                        </span>
                     </div>
                 ),
             },
+            {
+                header: 'Role',
+                accessorKey: 'role',
+                cell: ({ getValue }) => {
+                    return (
+                        <Badge
+                            size="sm"
+                            color={
+                                getValue() === 'admin' ? 'success' : 'primary'
+                            }
+                        >
+                            {capitalizeFirstLetter(getValue() as string)}
+                        </Badge>
+                    );
+                },
+            },
+            {
+                header: 'Email',
+                accessorKey: 'email',
+            },
+            {
+                header: 'Location',
+                accessorFn: (row) =>
+                    `${row.profile?.country || ''}, ${row.profile?.state || ''}, ${row.profile?.city || ''}`,
+            },
+            {
+                header: 'Phone',
+                accessorFn: (row) => row.profile?.phone || '',
+            },
+            {
+                header: 'Age',
+                accessorKey: 'age',
+                accessorFn: (row) =>
+                    calculateAge(new Date(row.profile?.birthdate)),
+            },
+            {
+                header: 'Email Verified',
+                accessorKey: 'isEmailVerified',
+                cell: ({ getValue }) => {
+                    return (
+                        <Badge
+                            size="sm"
+                            color={getValue() ? 'success' : 'warning'}
+                        >
+                            {getValue() ? 'Yes' : 'No'}
+                        </Badge>
+                    );
+                },
+            },
         ],
-        [sales, selectedSales]
+        []
     );
 
     const table = useReactTable({
-        data: sales,
+        data: users,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -188,14 +154,12 @@ export const SalesTable = () => {
 
             setPage(newPagination.pageIndex + 1);
             setPerPage(newPagination.pageSize);
-            resetSelectedSales();
         },
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
     });
     return (
         <>
-            <SaleModal onSubmit={handleSubmit} />
             <div className="overflow-hidden  rounded-xl  bg-white  dark:bg-white/[0.03]">
                 <div className="flex flex-col gap-2 px-4 py-4 border border-b-0 border-gray-100 dark:border-white/[0.05] rounded-t-xl sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
@@ -209,7 +173,6 @@ export const SalesTable = () => {
                                 onChange={(e) => {
                                     setPerPage(Number(e.target.value));
                                     setPage(1);
-                                    resetSelectedSales();
                                 }}
                             >
                                 {[10, 20, 50, 100].map((size) => (
@@ -248,27 +211,11 @@ export const SalesTable = () => {
                     </div>
 
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                        {selectedSales.length > 1 && (
-                            <ConfirmationModal
-                                triggerText={
-                                    <IoTrashOutline
-                                        size={30}
-                                        className=" text-gray-500 hover:text-error-500 dark:text-gray-400 dark:hover:text-error-500"
-                                    />
-                                }
-                                title="Delete Sales?"
-                                description={`Are you sure you want to delete this ${selectedSales.length} sales? This action cannot be undone.`}
-                                confirmText="Yes, Delete"
-                                cancelText="Cancel"
-                                onConfirm={() => handleMultipleDelete()}
-                            />
-                        )}
                         <FilterPopover
-                            couponValue={couponValue}
-                            setCouponValue={setCouponValue}
-                            purchaseValue={purchaseValue}
-                            setPurchaseValue={setPurchaseValue}
-                            resetSelectedSales={resetSelectedSales}
+                            role={role}
+                            setRole={setRole}
+                            isEmailVerified={isEmailVerified}
+                            setIsEmailVerified={setIsEmailVerified}
                         />
                         <div className="relative">
                             <button className="absolute text-gray-500 -translate-y-1/2 left-4 top-1/2 dark:text-gray-400">
@@ -296,34 +243,9 @@ export const SalesTable = () => {
                                 value={searchInput}
                                 onChange={(e) => {
                                     setSearchInput(e.target.value);
-                                    resetSelectedSales();
                                 }}
                             />
                         </div>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                openModal('add');
-                            }}
-                        >
-                            Add
-                            <svg
-                                className="fill-current"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M12 4.5C12.4142 4.5 12.75 4.83579 12.75 5.25V11.25H18.75C19.1642 11.25 19.5 11.5858 19.5 12C19.5 12.4142 19.1642 12.75 18.75 12.75H12.75V18.75C12.75 19.1642 12.4142 19.5 12 19.5C11.5858 19.5 11.25 19.1642 11.25 18.75V12.75H5.25C4.83579 12.75 4.5 12.4142 4.5 12C4.5 11.5858 4.83579 11.25 5.25 11.25H11.25V5.25C11.25 4.83579 11.5858 4.5 12 4.5Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
-                        </Button>
                     </div>
                 </div>
 
@@ -337,14 +259,7 @@ export const SalesTable = () => {
                                             <TableCell
                                                 isHeader
                                                 key={header.id}
-                                                className={`px-4 py-3 border border-gray-100 dark:border-white/[0.05] ${
-                                                    header.id === 'select'
-                                                        ? 'w-[50px]'
-                                                        : header.id ===
-                                                            'actions'
-                                                          ? 'w-[80px]'
-                                                          : ''
-                                                }`}
+                                                className={`px-4 py-3 border border-gray-100 dark:border-white/[0.05] ${header.id === 'role' || header.id === 'age' ? 'min-w-24' : ''}`}
                                             >
                                                 <div
                                                     className="flex items-center justify-between cursor-pointer"
@@ -407,10 +322,10 @@ export const SalesTable = () => {
                                             }
                                             className="px-4 py-4 font-normal text-gray-800 border border-gray-100 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap"
                                         >
-                                            <span> Loading sales data...</span>
+                                            <span> Loading users data...</span>
                                         </TableCell>
                                     </TableRow>
-                                ) : sales.length > 0 ? (
+                                ) : users.length > 0 ? (
                                     table.getRowModel().rows.map((row) => (
                                         <TableRow key={row.id}>
                                             {row
@@ -419,9 +334,20 @@ export const SalesTable = () => {
                                                     <TableCell
                                                         key={cell.id}
                                                         className={`px-4 py-4 font-normal text-gray-800 border border-gray-100 dark:border-white/[0.05] text-theme-sm dark:text-gray-400  ${
-                                                            cell.column.id !==
-                                                                'items' &&
-                                                            'whitespace-nowrap'
+                                                            cell.column.id ===
+                                                            'Location'
+                                                                ? ''
+                                                                : cell.column
+                                                                        .id ===
+                                                                        'age' ||
+                                                                    cell.column
+                                                                        .id ===
+                                                                        'role' ||
+                                                                    cell.column
+                                                                        .id ===
+                                                                        'isEmailVerified'
+                                                                  ? 'text-center'
+                                                                  : 'whitespace-nowrap'
                                                         }`}
                                                     >
                                                         <span>
@@ -444,7 +370,7 @@ export const SalesTable = () => {
                                             }
                                             className="px-4 py-4 font-normal text-center text-gray-800 border border-gray-100 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap"
                                         >
-                                            <span>No sales data found</span>
+                                            <span>No users data found</span>
                                         </TableCell>
                                     </TableRow>
                                 )}
