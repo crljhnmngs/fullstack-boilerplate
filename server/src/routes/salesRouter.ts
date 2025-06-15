@@ -7,13 +7,20 @@ import {
     deleteMultipleSales,
 } from '../controllers/Sale/saleController';
 import { requireAuth } from '../middlewares/requireAuth';
+import { requireRole } from '../middlewares/requireRole';
+import { ROLES } from '../utils/const';
 
 const salesRouter = Router();
 
-salesRouter.get('/', requireAuth, getSales);
-salesRouter.post('/', requireAuth, addSale);
-salesRouter.patch('/:id', requireAuth, updateSale);
-salesRouter.delete('/:id', requireAuth, deleteSale);
-salesRouter.delete('/', requireAuth, deleteMultipleSales);
+salesRouter.get('/', requireAuth, requireRole([ROLES.ADMIN]), getSales);
+salesRouter.post('/', requireAuth, requireRole([ROLES.ADMIN]), addSale);
+salesRouter.patch('/:id', requireAuth, requireRole([ROLES.ADMIN]), updateSale);
+salesRouter.delete('/:id', requireAuth, requireRole([ROLES.ADMIN]), deleteSale);
+salesRouter.delete(
+    '/',
+    requireAuth,
+    requireRole([ROLES.ADMIN]),
+    deleteMultipleSales
+);
 
 export default salesRouter;

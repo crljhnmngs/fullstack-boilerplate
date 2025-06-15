@@ -1,6 +1,7 @@
+import { cn } from '@/lib/utils';
 import { AvatarTextProps } from '@/presentation/types';
 
-export const AvatarText = ({ name, className = '' }: AvatarTextProps) => {
+export const AvatarText = ({ name, classNames }: AvatarTextProps) => {
     // Generate initials from name
     const initials = name
         .split(' ')
@@ -30,11 +31,16 @@ export const AvatarText = ({ name, className = '' }: AvatarTextProps) => {
 
     return (
         <div
-            className={`flex h-10 w-10 ${className} items-center justify-center rounded-full ${getColorClass(
-                name
-            )}`}
+            className={cn(
+                `flex h-10 w-10 items-center justify-center rounded-full ${getColorClass(
+                    name
+                )}`,
+                classNames?.div
+            )}
         >
-            <span className="text-sm font-medium">{initials}</span>
+            <span className={cn('text-sm font-medium', classNames?.span)}>
+                {initials}
+            </span>
         </div>
     );
 };

@@ -1,15 +1,13 @@
 import { SaleFormData } from '@/presentation/validation/saleValidation';
-import { PaginatedApiResponse, ApiResponse } from '@/domain/types/api';
+import {
+    PaginatedApiResponse,
+    ApiResponse,
+    GetSalesParams,
+} from '@/domain/types/api';
 import { Sale } from '../entities/sale';
 
 export interface SalePort {
-    getAllSales(params: {
-        page: number;
-        limit: number;
-        search?: string;
-        couponUsed?: boolean;
-        purchaseMethod?: string;
-    }): Promise<PaginatedApiResponse<Sale[]>>;
+    getAllSales(params: GetSalesParams): Promise<PaginatedApiResponse<Sale[]>>;
 
     addSale(saleData: SaleFormData): Promise<ApiResponse<Sale>>;
 

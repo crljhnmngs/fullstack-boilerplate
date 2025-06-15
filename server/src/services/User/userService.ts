@@ -11,7 +11,7 @@ import { generateConfirmationEmail } from '../../utils/emailTemplates';
 import { generateSecureToken } from '../../utils/generateToken';
 import { Token } from '../../models/Token/tokens';
 import { hashPassword } from '../../utils/hashPassword';
-import { assignFields } from '../../utils/helper';
+import { assignFields, escapeRegex } from '../../utils/helper';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -220,4 +220,82 @@ export const updateUserProfileService = async (
     } finally {
         session.endSession();
     }
+};
+
+export const getAllUsersService = async (
+    page: number,
+    limit: number,
+    search?: string,
+    userId?: string,
+    role?: string,
+    isEmailVerified?: boolean
+) => {
+    const skip = (page - 1) * limit;
+    const andConditions: unknown[] = [];
+
+    if (userId) {
+        andConditions.push({ _id: { $ne: userId } });
+    }
+
+    if (role) {
+        andConditions.push({ role });
+    }
+
+    if (isEmailVerified !== undefined) {
+        andConditions.push({ isEmailVerified });
+    }
+
+    if (search && search.trim()) {
+        const regex = new RegExp(escapeRegex(search.trim()), 'i');
+
+        const matchedProfiles = await Profile.find({
+            $or: [
+                { country: regex },
+                { state: regex },
+                { city: regex },
+                { phone: regex },
+            ],
+        }).select('userId');
+
+        const matchedUserIds = matchedProfiles.map((p) => p.userId.toString());
+
+        const searchOrConditions = [
+            { firstname: regex },
+            { middlename: regex },
+            { lastname: regex },
+            { email: regex },
+            { role: regex },
+            { _id: { $in: matchedUserIds } },
+        ];
+
+        andConditions.push({ $or: searchOrConditions });
+    }
+
+    const query = andConditions.length > 0 ? { $and: andConditions } : {};
+
+    const users = await User.find(query)
+        .select('-password')
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    const total = await User.countDocuments(query);
+
+    const userIds = users.map((user) => user._id.toString());
+
+    const profiles = await Profile.find({
+        userId: { $in: userIds },
+    }).lean();
+
+    const result = users.map((user) => {
+        const profile = profiles.find(
+            (p) => p.userId.toString() === user._id.toString()
+        );
+        return {
+            ...user,
+            profile: profile || null,
+        };
+    });
+
+    return { users: result, total };
 };

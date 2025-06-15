@@ -17,6 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormInput } from '../../FormInput';
 import { useEffect } from 'react';
 import { useUpdateProfileErrorStore } from '@/application/store/errorStore';
+import { AvatarText } from '../../ui/avatar-text';
 
 export const UserMetaCard = () => {
     const { isOpen, openModal, closeModal } = useModal();
@@ -87,10 +88,20 @@ export const UserMetaCard = () => {
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                     <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
                         <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-                            <img
-                                src={userProfile?.data?.profileImage}
-                                alt="user"
-                            />
+                            {userProfile?.data?.profileImage ? (
+                                <img
+                                    src={userProfile?.data?.profileImage}
+                                    alt="User"
+                                />
+                            ) : (
+                                <AvatarText
+                                    name={user.firstname + ' ' + user.lastname}
+                                    classNames={{
+                                        div: 'w-20 h-20',
+                                        span: 'text-2xl',
+                                    }}
+                                />
+                            )}
                         </div>
                         <div className="order-3 xl:order-2">
                             <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">

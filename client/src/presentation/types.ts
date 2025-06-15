@@ -266,5 +266,8 @@ export type AvatarProps = {
 
 export type AvatarTextProps = {
     name: string;
-    className?: string;
+    classNames?: {
+        div?: string;
+        span?: string;
+    };
 };

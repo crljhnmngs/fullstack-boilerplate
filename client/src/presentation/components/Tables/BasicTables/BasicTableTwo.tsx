@@ -275,7 +275,9 @@ export const BasicTableTwo = () => {
                                     <div className="flex items-center gap-3">
                                         <AvatarText
                                             name={row.user.name}
-                                            className="w-10 h-10"
+                                            classNames={{
+                                                div: 'size-10',
+                                            }}
                                         />
                                         <div>
                                             <span className="mb-0.5 block text-theme-sm font-medium text-gray-700 dark:text-gray-400">

@@ -9,3 +9,7 @@ export const assignFields = <T extends object>(
         }
     }
 };
+
+export const escapeRegex = (str: string) => {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};

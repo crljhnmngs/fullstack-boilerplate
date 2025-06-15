@@ -35,3 +35,19 @@ export const ROLES = {
     ADMIN: 'admin',
     USER: 'user',
 };
+
+export const isEmailVerifiedData: {
+    label: string;
+    value: boolean;
+}[] = [
+    { value: true, label: 'Yes' },
+    { value: false, label: 'No' },
+];
+
+export const RolesData: {
+    label: string;
+    value: string;
+}[] = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'user', label: 'User' },
+];

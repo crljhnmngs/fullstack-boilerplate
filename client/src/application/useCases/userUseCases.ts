@@ -57,4 +57,7 @@ export const UserUseCases = {
             throw error;
         }
     },
+    getAllUsers: async (...args: Parameters<UserPort['getAllUsers']>) => {
+        return await userPort.getAllUsers(...args);
+    },
 };

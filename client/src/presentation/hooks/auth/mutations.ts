@@ -18,7 +18,7 @@ import {
 } from '@/lib/utils';
 import { LoginParams, ResetPasswordParams } from '@/presentation/types';
 import { LoginFormData } from '@/presentation/validation/loginValidation';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useNavigate } from 'react-router';
 
@@ -26,6 +26,7 @@ export const useLoginUser = () => {
     const setLoading = useLoadingStore((state) => state.setLoading);
     const navigate = useNavigate();
     const { setAuth } = useAuthStore();
+    const queryClient = useQueryClient();
 
     const mutation = useMutation({
         mutationFn: (data: LoginParams) => AuthUseCases.login(data),
@@ -39,6 +40,7 @@ export const useLoginUser = () => {
                     navigate(ROUTES.USER);
                 }
                 setAuth(res.data.user, res.data.accessToken);
+                queryClient.invalidateQueries({ queryKey: ['userProfile'] });
             } else {
                 throw Error();
             }

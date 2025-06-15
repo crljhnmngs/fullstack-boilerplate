@@ -28,6 +28,9 @@ const PieChart = lazy(() => import('@/presentation/pages/PieChart'));
 const SaleManagement = lazy(
     () => import('@/presentation/pages/SaleManagement')
 );
+const UserManagement = lazy(
+    () => import('@/presentation/pages/UserManagement')
+);
 
 import { ProtectedRoute } from '@/presentation/components/ProtectedRoute/ProtectedRoute';
 import { AdminLayout } from '@/presentation/layout/AdminLayout';
@@ -55,6 +58,10 @@ export const AppRouter = createBrowserRouter([
                         path: ROUTES.ADMIN,
                         index: true,
                         element: <AdminDashboard />,
+                    },
+                    {
+                        path: ROUTES.USER_MANAGEMENT,
+                        element: <UserManagement />,
                     },
                     {
                         path: ROUTES.SALE_MANAGEMENT,

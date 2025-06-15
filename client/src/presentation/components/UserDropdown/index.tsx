@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { DropdownItem } from '../ui/dropdown-item';
 import { Dropdown } from '../ui/dropdown';
-import defaultImage from '../../assets/images/defaultImage.png';
 import { useAuthStore } from '@/application/store/authStore';
 import { useGetUserProfile } from '@/presentation/hooks/user';
 import { useLogoutUser } from '@/presentation/hooks/auth';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '@/lib/routes';
+import { AvatarText } from '../ui/avatar-text';
 
 export const UserDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -35,10 +35,14 @@ export const UserDropdown = () => {
                 className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
             >
                 <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-                    <img
-                        src={userProfile?.data?.profileImage || defaultImage}
-                        alt="User"
-                    />
+                    {userProfile?.data?.profileImage ? (
+                        <img src={userProfile?.data?.profileImage} alt="User" />
+                    ) : (
+                        <AvatarText
+                            name={user.firstname + ' ' + user.lastname}
+                            classNames={{ div: 'w-11 h-11' }}
+                        />
+                    )}
                 </span>
 
                 <span className="block mr-1 font-medium text-theme-sm">
