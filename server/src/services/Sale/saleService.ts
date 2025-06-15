@@ -1,3 +1,4 @@
+import { escapeRegex } from '../../utils/helper';
 import { Sale } from '../../models/Sale/sales';
 import { ISale } from '../../utils/interface/sales';
 
@@ -9,29 +10,34 @@ export const getAllSalesService = async (
     purchaseMethod?: string
 ) => {
     const skip = (page - 1) * limit;
-    const query: any = {};
+    const andConditions: unknown[] = [];
 
-    // Apply search filter
     if (search) {
-        query.$or = [
-            { 'customer.email': { $regex: search, $options: 'i' } },
-            { storeLocation: { $regex: search, $options: 'i' } },
-            { 'items.name': { $regex: search, $options: 'i' } },
-        ];
+        const regex = new RegExp(escapeRegex(search.trim()), 'i');
+        andConditions.push({
+            $or: [
+                { 'customer.email': regex },
+                { storeLocation: regex },
+                { 'items.name': regex },
+            ],
+        });
     }
 
     if (couponUsed !== undefined) {
-        query.couponUsed = couponUsed;
+        andConditions.push({ couponUsed });
     }
 
     if (purchaseMethod) {
-        query.purchaseMethod = purchaseMethod;
+        andConditions.push({ purchaseMethod });
     }
+
+    const query = andConditions.length > 0 ? { $and: andConditions } : {};
 
     const sales: ISale[] = await Sale.find(query)
         .sort({ saleDate: -1 })
         .skip(skip)
         .limit(limit);
+
     const total = await Sale.countDocuments(query);
 
     return { sales, total };

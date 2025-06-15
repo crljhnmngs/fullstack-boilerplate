@@ -11,7 +11,7 @@ import { generateConfirmationEmail } from '../../utils/emailTemplates';
 import { generateSecureToken } from '../../utils/generateToken';
 import { Token } from '../../models/Token/tokens';
 import { hashPassword } from '../../utils/hashPassword';
-import { assignFields } from '../../utils/helper';
+import { assignFields, escapeRegex } from '../../utils/helper';
 
 export const registerUserService = async (
     userData: IUser & IUserProfile & { profileImage?: Express.Multer.File }
@@ -231,14 +231,22 @@ export const getAllUsersService = async (
     isEmailVerified?: boolean
 ) => {
     const skip = (page - 1) * limit;
-    const query: any = {};
+    const andConditions: unknown[] = [];
 
     if (userId) {
-        query._id = { $ne: userId };
+        andConditions.push({ _id: { $ne: userId } });
     }
 
-    if (search) {
-        const regex = new RegExp(search, 'i');
+    if (role) {
+        andConditions.push({ role });
+    }
+
+    if (isEmailVerified !== undefined) {
+        andConditions.push({ isEmailVerified });
+    }
+
+    if (search && search.trim()) {
+        const regex = new RegExp(escapeRegex(search.trim()), 'i');
 
         const matchedProfiles = await Profile.find({
             $or: [
@@ -249,9 +257,9 @@ export const getAllUsersService = async (
             ],
         }).select('userId');
 
-        const matchedUserIds = matchedProfiles.map((profile) => profile.userId);
+        const matchedUserIds = matchedProfiles.map((p) => p.userId.toString());
 
-        query.$or = [
+        const searchOrConditions = [
             { firstname: regex },
             { middlename: regex },
             { lastname: regex },
@@ -259,15 +267,11 @@ export const getAllUsersService = async (
             { role: regex },
             { _id: { $in: matchedUserIds } },
         ];
+
+        andConditions.push({ $or: searchOrConditions });
     }
 
-    if (role) {
-        query.role = role;
-    }
-
-    if (isEmailVerified !== undefined) {
-        query.isEmailVerified = isEmailVerified;
-    }
+    const query = andConditions.length > 0 ? { $and: andConditions } : {};
 
     const users = await User.find(query)
         .select('-password')
@@ -277,7 +281,8 @@ export const getAllUsersService = async (
 
     const total = await User.countDocuments(query);
 
-    const userIds = users.map((user) => user._id);
+    const userIds = users.map((user) => user._id.toString());
+
     const profiles = await Profile.find({
         userId: { $in: userIds },
     }).lean();
